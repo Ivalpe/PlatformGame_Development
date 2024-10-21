@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Module.h"
+#include "Physics.h"
 #include <list>
 #include <vector>
 
@@ -131,5 +132,6 @@ private:
     bool mapLoaded;
     // L06: DONE 1: Declare a variable data of the struct MapData
     MapData mapData;
+    std::list<PhysBody*> collisions;
 
 };

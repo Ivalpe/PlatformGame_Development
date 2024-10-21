@@ -59,7 +59,7 @@ bool Map::Update(float dt)
 								//Get the screen coordinates from the tile coordinates
 								Vector2D mapCoord = MapToWorld(i, j);
 								//Draw the texture
-								Engine::GetInstance().render->DrawTexture(tileSet->texture, SDL_FLIP_NONE,  mapCoord.getX(), mapCoord.getY(), &tileRect);
+								Engine::GetInstance().render->DrawTexture(tileSet->texture, SDL_FLIP_NONE, mapCoord.getX(), mapCoord.getY(), &tileRect);
 							}
 						}
 					}
@@ -158,6 +158,7 @@ bool Map::Load(std::string path, std::string fileName)
 		}
 
 		// L07: TODO 3: Iterate all layers in the TMX and load each of them
+		/*
 		for (pugi::xml_node layerNode = mapFileXML.child("map").child("layer"); layerNode != NULL; layerNode = layerNode.next_sibling("layer")) {
 
 			// L07: TODO 4: Implement the load of a single layer 
@@ -178,6 +179,14 @@ bool Map::Load(std::string path, std::string fileName)
 
 			//add the layer to the map
 			mapData.layers.push_back(mapLayer);
+		}
+		*/
+
+		//Collisions
+		for (pugi::xml_node tileNode = mapFileXML.child("map").child("objectgroup").child("object"); tileNode != NULL; tileNode = tileNode.next_sibling("object")) {
+			PhysBody* pb = Engine::GetInstance().physics.get()->CreateRectangle(tileNode.attribute("x").as_int() + (tileNode.attribute("width").as_int() / 2), tileNode.attribute("y").as_int() + (tileNode.attribute("height").as_int() / 2), tileNode.attribute("width").as_int(), tileNode.attribute("height").as_int(), STATIC);
+			pb->ctype = ColliderType::GROUND;
+			collisions.push_back(pb);
 		}
 
 		// L08 TODO 3: Create colliders
