@@ -1,0 +1,62 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "Map1.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "Map1.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 279,
+                "y": 119.33333333333334
+            }
+        },
+        "Map1.tmx#MapMetadata": {
+            "scaleInDock": 1
+        },
+        "Map1.tmx#Tileset": {
+            "scaleInDock": 4,
+            "scaleInEditor": 1
+        },
+        "MapMetadata.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "Tileset.tsx": {
+            "scaleInDock": 4,
+            "scaleInEditor": 1
+        },
+        "industrial.v2.tsx": {
+            "scaleInDock": 1
+        }
+    },
+    "last.imagePath": "C:/Users/ivanap1/Downloads/PlatformGame-L9_Map_Collision_Solution/PlatformGame-L9_Map_Collision_Solution/Assets/Maps",
+    "map.height": 23,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "map.width": 40,
+    "openFiles": [
+        "Map1.tmx"
+    ],
+    "project": "Map2d.tiled-project",
+    "property.type": "bool",
+    "recentFiles": [
+        "Map1.tmx",
+        "Tileset.tsx",
+        "MapMetadata.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
