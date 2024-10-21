@@ -158,7 +158,6 @@ bool Map::Load(std::string path, std::string fileName)
 		}
 
 		// L07: TODO 3: Iterate all layers in the TMX and load each of them
-		/*
 		for (pugi::xml_node layerNode = mapFileXML.child("map").child("layer"); layerNode != NULL; layerNode = layerNode.next_sibling("layer")) {
 
 			// L07: TODO 4: Implement the load of a single layer 
@@ -180,11 +179,17 @@ bool Map::Load(std::string path, std::string fileName)
 			//add the layer to the map
 			mapData.layers.push_back(mapLayer);
 		}
-		*/
 
 		//Collisions
 		for (pugi::xml_node tileNode = mapFileXML.child("map").child("objectgroup").child("object"); tileNode != NULL; tileNode = tileNode.next_sibling("object")) {
-			PhysBody* pb = Engine::GetInstance().physics.get()->CreateRectangle(tileNode.attribute("x").as_int() + (tileNode.attribute("width").as_int() / 2), tileNode.attribute("y").as_int() + (tileNode.attribute("height").as_int() / 2), tileNode.attribute("width").as_int(), tileNode.attribute("height").as_int(), STATIC);
+			int h;
+			std::string p = tileNode.child("properties").child("property").attribute("value").as_string();
+			if (p == "PLATFORM")
+				h = 1;
+			else
+				h = tileNode.attribute("height").as_int();
+
+			PhysBody* pb = Engine::GetInstance().physics.get()->CreateRectangle(tileNode.attribute("x").as_int() + (tileNode.attribute("width").as_int() / 2), tileNode.attribute("y").as_int() + (tileNode.attribute("height").as_int() / 2), tileNode.attribute("width").as_int(), h, STATIC);
 			pb->ctype = ColliderType::GROUND;
 			collisions.push_back(pb);
 		}
@@ -216,21 +221,6 @@ bool Map::Load(std::string path, std::string fileName)
 							Vector2D mapCoord = MapToWorld(i, j);
 							PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX() + 8, mapCoord.getY() + 8, 16, 16, STATIC);
 							c1->ctype = ColliderType::GROUND;
-						}
-						else if (gid == 1026) {
-							Vector2D mapCoord = MapToWorld(i, j);
-							PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX() + 8, mapCoord.getY() + 11, 16, 4, STATIC);
-							c1->ctype = ColliderType::PLATFORM_DOWN;
-						}
-						else if (gid == 1027) {
-							Vector2D mapCoord = MapToWorld(i, j);
-							PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX() + 8, mapCoord.getY(), 16, 4, STATIC);
-							c1->ctype = ColliderType::PLATFORM_UP;
-						}
-						else if (gid == 1028) {
-							Vector2D mapCoord = MapToWorld(i, j);
-							PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX() + 8, mapCoord.getY() + 8, 16, 16, STATIC);
-							c1->ctype = ColliderType::WALL;
 						}
 					}
 				}
