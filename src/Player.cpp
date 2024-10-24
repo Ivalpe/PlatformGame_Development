@@ -22,6 +22,7 @@ bool Player::Awake() {
 	//L03: TODO 2: Initialize Player parameters
 	position = Vector2D(100, 100);
 	dp = DirectionPlayer::RIGHT;
+	stPlayer = StatePlayer::IDLE;
 	return true;
 }
 
@@ -40,7 +41,7 @@ bool Player::Start() {
 	}
 	idle.speed = 0.1f;
 
-	// Cargar la animación run (4 cuadros de 16x16, en la segunda fila del sprite)
+	// Cargar la animaciï¿½n run (4 cuadros de 16x16, en la segunda fila del sprite)
 	for (int i = 0; i < 4; ++i) {
 		run.PushBack({ i * 16, 16, 16, 16 });
 	}
@@ -66,24 +67,29 @@ bool Player::Update(float dt)
 {
 	// L08 TODO 5: Add physics to the player - updated player position using physics
 	b2Vec2 velocity = b2Vec2(0, -GRAVITY_Y);
+	stPlayer = StatePlayer::IDLE;
 
 	// Move left
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
 		velocity.x = -speed * dt;
 		dp = DirectionPlayer::LEFT;
+
 		state = StatePlayer::RUN;
+
 	}
 
 	// Move right
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
 		velocity.x = speed * dt;
 		dp = DirectionPlayer::RIGHT;
+
 		state = StatePlayer::RUN;
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_IDLE &&
 		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_IDLE) {
 		state = StatePlayer::IDLE;  // Cambia a estado "idle"
+
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
@@ -109,7 +115,14 @@ bool Player::Update(float dt)
 	// Apply the velocity to the player
 	pbody->body->SetLinearVelocity(velocity);
 
+
 	b2Transform pbodyPos = pbody->body->GetTransform();
+	if (isJumping == true) {
+		if ((int)position.getY() > METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2)
+			stPlayer = StatePlayer::JUMP;
+		else if ((int)position.getY() < METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2)
+			stPlayer = StatePlayer::FALL;
+	}
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
@@ -119,6 +132,7 @@ bool Player::Update(float dt)
 	else if (state == StatePlayer::RUN) {
 		currentAnimation = &run;
 	}
+
 
 	if (dp == DirectionPlayer::LEFT)
 		flipType = SDL_FLIP_HORIZONTAL;
@@ -143,21 +157,10 @@ bool Player::CleanUp()
 void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
-	case ColliderType::PLATFORM_UP:
-		LOG("Collision PLATFORM");
-		//reset the jump flag when touching the ground
-		isJumping = false;
-		break;
-	case ColliderType::PLATFORM_DOWN:
-		LOG("Collision PLATFORM");
-		//reset the jump flag when touching the ground
-		isJumping = false;
-		break;
 	case ColliderType::GROUND:
 		LOG("Collision PLATFORM");
 		//reset the jump flag when touching the ground
 		isJumping = false;
-		break;
 	case ColliderType::ITEM:
 		LOG("Collision ITEM");
 		break;
@@ -167,16 +170,14 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	default:
 		break;
 	}
+
 }
 
 void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 {
 	switch (physB->ctype)
 	{
-	case ColliderType::PLATFORM_UP:
-		LOG("End Collision PLATFORM UP");
-		break;
-	case ColliderType::PLATFORM_DOWN:
+	case ColliderType::GROUND:
 		LOG("End Collision PLATFORM DOWN");
 		break;
 	case ColliderType::ITEM:

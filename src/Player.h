@@ -8,7 +8,7 @@
 struct SDL_Texture;
 
 enum class StatePlayer {
-	IDLE, RUN
+	IDLE, RUN, JUMP, FALL
 };
 
 enum class DirectionPlayer {
@@ -40,6 +40,10 @@ public:
 		this->parameters = parameters;
 	}
 
+	StatePlayer GetState() {
+		return stPlayer;
+	}
+
 public:
 
 	//Declare player parameters
@@ -62,6 +66,6 @@ public:
 	DirectionPlayer dp;
 	SDL_RendererFlip flipType;
 
+
 	StatePlayer state = StatePlayer::IDLE;
 
-};
