@@ -36,8 +36,19 @@ bool Player::Start() {
 	texH = parameters.attribute("h").as_int();
 
 	//Load animations
-	idle.LoadAnimations(parameters.child("animations").child("idle"));
+	for (int i = 0; i < 4; ++i) {
+		idle.PushBack({ i * 16, 0, 16, 16 });
+	}
+	idle.speed = 0.1f;
+
+	// Cargar la animaci�n run (4 cuadros de 16x16, en la segunda fila del sprite)
+	for (int i = 0; i < 4; ++i) {
+		run.PushBack({ i * 16, 16, 16, 16 });
+	}
+	run.speed = 0.1f;
+
 	currentAnimation = &idle;
+
 
 	// L08 TODO 5: Add physics to the player - initialize physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texW / 2, bodyType::DYNAMIC);
@@ -62,14 +73,23 @@ bool Player::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
 		velocity.x = -speed * dt;
 		dp = DirectionPlayer::LEFT;
-		stPlayer = StatePlayer::RUN;
+
+		state = StatePlayer::RUN;
+
 	}
 
 	// Move right
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
 		velocity.x = speed * dt;
 		dp = DirectionPlayer::RIGHT;
-		stPlayer = StatePlayer::RUN;
+
+		state = StatePlayer::RUN;
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_IDLE &&
+		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_IDLE) {
+		state = StatePlayer::IDLE;  // Cambia a estado "idle"
+
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
@@ -105,6 +125,13 @@ bool Player::Update(float dt)
 	}
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+
+	if (state == StatePlayer::IDLE) {
+		currentAnimation = &idle;
+	}
+	else if (state == StatePlayer::RUN) {
+		currentAnimation = &run;
+	}
 
 
 	if (dp == DirectionPlayer::LEFT)
