@@ -65,4 +65,5 @@ public:
 	DirectionPlayer dp;
 	SDL_RendererFlip flipType;
 	StatePlayer stPlayer;
+	PhysBody* sensorPlayer;
 };

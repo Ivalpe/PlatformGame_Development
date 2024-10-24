@@ -26,8 +26,8 @@ enum class ColliderType {
 	PLAYER, 
 	ITEM,
 	GROUND,
+	SENSOR,
 	UNKNOWN
-	// ..
 };
 
 // Small class to return to other modules to track position and rotation of physics bodies
