@@ -14,7 +14,7 @@
 #############################################
 # localized /showIncludes string
 
-msvc_deps_prefix = Nota: inclusión del archivo: 
+msvc_deps_prefix = Note: including file: 
 
 
 #############################################
@@ -29,7 +29,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = C:\Users\bernatlc1\AppData\Local\vcpkg\downloads\tools\cmake-3.27.1-windows\cmake-3.27.1-windows-i386\bin\cmake.exe --regenerate-during-build -S"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg\scripts\detect_compiler" -BC:\Users\bernatlc1\Documents\GitHub\PlatformGame_Development\vcpkg_installed\x64-windows\vcpkg\blds\detect_compiler\x64-windows-rel
+  command = C:\Users\Ivalpe2\AppData\Local\vcpkg\downloads\tools\cmake-3.27.1-windows\cmake-3.27.1-windows-i386\bin\cmake.exe --regenerate-during-build -S"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg\scripts\detect_compiler" -BC:\Users\Ivalpe2\Documents\GitHub\PlatformGame_Development\vcpkg_installed\x64-windows\vcpkg\blds\detect_compiler\x64-windows-rel
   description = Re-running CMake...
   generator = 1
 
@@ -38,7 +38,7 @@ rule RERUN_CMAKE
 # Rule for cleaning all built files.
 
 rule CLEAN
-  command = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe" $FILE_ARG -t clean $TARGETS
+  command = C:\Users\Ivalpe2\AppData\Local\vcpkg\downloads\tools\ninja\1.10.2-windows\ninja.exe $FILE_ARG -t clean $TARGETS
   description = Cleaning all built files...
 
 
@@ -46,6 +46,6 @@ rule CLEAN
 # Rule for printing all primary targets available.
 
 rule HELP
-  command = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe" -t targets
+  command = C:\Users\Ivalpe2\AppData\Local\vcpkg\downloads\tools\ninja\1.10.2-windows\ninja.exe -t targets
   description = All primary targets available:
 

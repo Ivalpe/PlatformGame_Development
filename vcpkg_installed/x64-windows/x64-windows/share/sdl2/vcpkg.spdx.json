@@ -3,13 +3,13 @@
   "spdxVersion": "SPDX-2.2",
   "dataLicense": "CC0-1.0",
   "SPDXID": "SPDXRef-DOCUMENT",
-  "documentNamespace": "https://spdx.org/spdxdocs/sdl2-x64-windows-2.30.0-bfc6ec51-29ac-4b40-af05-002da4db75fc",
-  "name": "sdl2:x64-windows@2.30.0 39098a667f180c0f1f631bd9b1951c30e23ae9beef5c1987ebc2f53701876bdc",
+  "documentNamespace": "https://spdx.org/spdxdocs/sdl2-x64-windows-2.28.5#1-4f381b73-8915-4078-b6d2-cf1159acd5d8",
+  "name": "sdl2:x64-windows@2.28.5#1 2f8590f3787e2932755a714a6c9bce0c28f5f14a267de9dab09fa3504d5b8847",
   "creationInfo": {
     "creators": [
-      "Tool: vcpkg-7d353e869753e5609a1f1a057df3db8fd356e49d"
+      "Tool: vcpkg-1c9ec1978a6b0c2b39c9e9554a96e3e275f7556e"
     ],
-    "created": "2024-09-23T06:18:33Z"
+    "created": "2024-10-24T19:40:47Z"
   },
   "relationships": [
     {
@@ -77,8 +77,8 @@
     {
       "name": "sdl2",
       "SPDXID": "SPDXRef-port",
-      "versionInfo": "2.30.0",
-      "downloadLocation": "git+https://github.com/microsoft/vcpkg@4ab64007873e4e383360819f5227ad0747c649d1",
+      "versionInfo": "2.28.5#1",
+      "downloadLocation": "git+https://github.com/microsoft/vcpkg@46ab8ddbed64fe98dab84eb0d95b8bb6e6d2d531",
       "homepage": "https://www.libsdl.org/download-2.0.php",
       "licenseConcluded": "Zlib",
       "licenseDeclared": "NOASSERTION",
@@ -89,7 +89,7 @@
     {
       "name": "sdl2:x64-windows",
       "SPDXID": "SPDXRef-binary",
-      "versionInfo": "39098a667f180c0f1f631bd9b1951c30e23ae9beef5c1987ebc2f53701876bdc",
+      "versionInfo": "2f8590f3787e2932755a714a6c9bce0c28f5f14a267de9dab09fa3504d5b8847",
       "downloadLocation": "NONE",
       "licenseConcluded": "Zlib",
       "licenseDeclared": "NOASSERTION",
@@ -99,21 +99,21 @@
     {
       "SPDXID": "SPDXRef-resource-1",
       "name": "libsdl-org/SDL",
-      "downloadLocation": "git+https://github.com/libsdl-org/SDL@release-2.30.0",
+      "downloadLocation": "git+https://github.com/libsdl-org/SDL@release-2.28.5",
       "licenseConcluded": "NOASSERTION",
       "licenseDeclared": "NOASSERTION",
       "copyrightText": "NOASSERTION",
       "checksums": [
         {
           "algorithm": "SHA512",
-          "checksumValue": "c7635a83a52f3970a372b804a8631f0a7e6b8d89aed1117bcc54a2040ad0928122175004cf2b42cf84a4fd0f86236f779229eaa63dfa6ca9c89517f999c5ff1c"
+          "checksumValue": "d3cf7d356b79184dd211c9fbbfcb2a83d1acb68ee549ab82be109cd899039f18f0dbf3aedbf0800793c3a68580688014863b5d9bf79bcd366ff0e88252955e3c"
         }
       ]
     }
   ],
   "files": [
     {
-      "fileName": "./C:/Users/ivanap1/AppData/Local/vcpkg/registries/git-trees/4ab64007873e4e383360819f5227ad0747c649d1/alsa-dep-fix.patch",
+      "fileName": "./C:/Users/Ivalpe2/AppData/Local/vcpkg/registries/git-trees/46ab8ddbed64fe98dab84eb0d95b8bb6e6d2d531/alsa-dep-fix.patch",
       "SPDXID": "SPDXRef-file-0",
       "checksums": [
         {
@@ -125,7 +125,7 @@
       "copyrightText": "NOASSERTION"
     },
     {
-      "fileName": "./C:/Users/ivanap1/AppData/Local/vcpkg/registries/git-trees/4ab64007873e4e383360819f5227ad0747c649d1/deps.patch",
+      "fileName": "./C:/Users/Ivalpe2/AppData/Local/vcpkg/registries/git-trees/46ab8ddbed64fe98dab84eb0d95b8bb6e6d2d531/deps.patch",
       "SPDXID": "SPDXRef-file-1",
       "checksums": [
         {
@@ -137,19 +137,19 @@
       "copyrightText": "NOASSERTION"
     },
     {
-      "fileName": "./C:/Users/ivanap1/AppData/Local/vcpkg/registries/git-trees/4ab64007873e4e383360819f5227ad0747c649d1/portfile.cmake",
+      "fileName": "./C:/Users/Ivalpe2/AppData/Local/vcpkg/registries/git-trees/46ab8ddbed64fe98dab84eb0d95b8bb6e6d2d531/portfile.cmake",
       "SPDXID": "SPDXRef-file-2",
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "4ef09828397ae78f3c5afcaf9dacf66e754c11e6b4bb5db7b9ec0b795958abfc"
+          "checksumValue": "9bfabac36a3d7dac1090b2e6bee6735b3d731cf2136c7221ba4e7817c0d352e5"
         }
       ],
       "licenseConcluded": "NOASSERTION",
       "copyrightText": "NOASSERTION"
     },
     {
-      "fileName": "./C:/Users/ivanap1/AppData/Local/vcpkg/registries/git-trees/4ab64007873e4e383360819f5227ad0747c649d1/usage",
+      "fileName": "./C:/Users/Ivalpe2/AppData/Local/vcpkg/registries/git-trees/46ab8ddbed64fe98dab84eb0d95b8bb6e6d2d531/usage",
       "SPDXID": "SPDXRef-file-3",
       "checksums": [
         {
@@ -161,12 +161,12 @@
       "copyrightText": "NOASSERTION"
     },
     {
-      "fileName": "./C:/Users/ivanap1/AppData/Local/vcpkg/registries/git-trees/4ab64007873e4e383360819f5227ad0747c649d1/vcpkg.json",
+      "fileName": "./C:/Users/Ivalpe2/AppData/Local/vcpkg/registries/git-trees/46ab8ddbed64fe98dab84eb0d95b8bb6e6d2d531/vcpkg.json",
       "SPDXID": "SPDXRef-file-4",
       "checksums": [
         {
           "algorithm": "SHA256",
-          "checksumValue": "7b439cfb9f4355851d256a48bd5b696de1a2bdc4fd9a5891b16cbb8cce8b36c2"
+          "checksumValue": "51e0b3e13284fc1288dfefea1dbcdd61340c9e6008aaebdd8e0c13fc347434ed"
         }
       ],
       "licenseConcluded": "NOASSERTION",
