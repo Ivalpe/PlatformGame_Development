@@ -58,6 +58,10 @@ public:
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;
+	Animation run;
 	DirectionPlayer dp;
 	SDL_RendererFlip flipType;
+
+	StatePlayer state = StatePlayer::IDLE;
+
 };

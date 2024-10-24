@@ -29,7 +29,7 @@ rule CUSTOM_COMMAND
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = C:\Users\ivanap1\AppData\Local\vcpkg\downloads\tools\cmake-3.27.1-windows\cmake-3.27.1-windows-i386\bin\cmake.exe --regenerate-during-build -S"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg\scripts\detect_compiler" -BC:\Users\ivanap1\Downloads\PlatformGame-L9_Map_Collision_Solution\PlatformGame-L9_Map_Collision_Solution\vcpkg_installed\x64-windows\vcpkg\blds\detect_compiler\x64-windows-rel
+  command = C:\Users\bernatlc1\AppData\Local\vcpkg\downloads\tools\cmake-3.27.1-windows\cmake-3.27.1-windows-i386\bin\cmake.exe --regenerate-during-build -S"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg\scripts\detect_compiler" -BC:\Users\bernatlc1\Documents\GitHub\PlatformGame_Development\vcpkg_installed\x64-windows\vcpkg\blds\detect_compiler\x64-windows-rel
   description = Re-running CMake...
   generator = 1
 
