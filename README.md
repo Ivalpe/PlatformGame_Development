@@ -7,4 +7,4 @@ Controls:
   - D = Right
   - Shift = Run
   - F9 = Enter debug mode
-
+  - Space = Jump
