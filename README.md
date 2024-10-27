@@ -12,7 +12,7 @@ Controls:
   - F9 = Enter debug mode
   - Space = Jump
 
-Implemented Features
+Implemented Features:
 
   -Collisions with Ground
   -Player with animations (Idle, Run, Jump, Death)
