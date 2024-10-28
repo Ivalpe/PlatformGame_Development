@@ -14,7 +14,7 @@ Controls:
 
 Implemented Features:
 
-  -Collisions with Ground
-  -Player with animations (Idle, Run, Jump, Death)
-  -Camera follows Player
-  -Code read XML files for load map and collisions, load player sprite and coord and load config
+  - Collisions with Ground
+  - Player with animations (Idle, Run, Jump, Death)
+  - Camera follows Player
+  - Code read XML files for load map and collisions, load player sprite and coord and load config
