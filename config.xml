@@ -1,50 +1,47 @@
-<!-- Config file for the engine -->
+<?xml version="1.0"?>
 <config>
 	<engine>
 		<title>My platformer game</title>
-		<maxFrameDuration value="16"/>
+		<maxFrameDuration value="16" />
 	</engine>
-
 	<render>
-		<vsync value="false"/>
+		<vsync value="false" />
 	</render>
-
 	<window>
-		<resolution width="1280" height="736" scale="2"/>
-		<fullscreen value="false"/>
-		<borderless value="false"/>
-		<resizable value="false"/>
-		<fullscreen_window value="false"/>
+		<resolution width="1280" height="736" scale="2" />
+		<fullscreen value="false" />
+		<borderless value="false" />
+		<resizable value="false" />
+		<fullscreen_window value="false" />
 	</window>
-
 	<scene>
-		<map path="Assets/Maps/" name="Map1.tmx"/>
+		<map path="Assets/Maps/" name="Map1.tmx" />
 		<entities>
-			<player x="100" y="100" w="16" h ="16" texture="Assets/Textures/Player.png">
+			<player x="317" y="207" w="16" h="16" texture="Assets/Textures/Player.png">
 				<animations>
-					<idle loop="true" speed ="0.06">
-						<frame x="0" y="0" w="16" h="16"/>
-						<frame x="16" y="0" w="16" h="16"/>
-						<frame x="32" y="0" w="16" h="16"/>
-						<frame x="48" y="0" w="16" h="16"/>
+					<idle loop="true" speed="0.06">
+						<frame x="0" y="0" w="16" h="16" />
+						<frame x="16" y="0" w="16" h="16" />
+						<frame x="32" y="0" w="16" h="16" />
+						<frame x="48" y="0" w="16" h="16" />
 					</idle>
-					<run loop="true" speed ="0.12">
-						<frame x="0" y="16" w="16" h="16"/>
-						<frame x="16" y="16" w="16" h="16"/>
-						<frame x="32" y="16" w="16" h="16"/>
-						<frame x="48" y="16" w="16" h="16"/>
+					<run loop="true" speed="0.12">
+						<frame x="0" y="16" w="16" h="16" />
+						<frame x="16" y="16" w="16" h="16" />
+						<frame x="32" y="16" w="16" h="16" />
+						<frame x="48" y="16" w="16" h="16" />
 					</run>
-					<jump loop="true" speed ="0">
-						<frame x="0" y="32" w="16" h="16"/>
+					<jump loop="true" speed="0">
+						<frame x="0" y="32" w="16" h="16" />
 					</jump>
-					<fall loop="true" speed ="0">
-						<frame x="16" y="32" w="16" h="16"/>
+					<fall loop="true" speed="0">
+						<frame x="16" y="32" w="16" h="16" />
 					</fall>
-					<die loop="false" speed ="0.12">
-						<frame x="0" y="48" w="16" h="16"/>
-						<frame x="16" y="48" w="16" h="16"/>
-						<frame x="32" y="48" w="16" h="16"/>
-						<frame x="48" y="48" w="16" h="16"/>
+					<die loop="false" speed="0.12">
+						<frame x="0" y="48" w="16" h="16" />
+						<frame x="16" y="48" w="16" h="16" />
+						<frame x="32" y="48" w="16" h="16" />
+						<frame x="48" y="48" w="16" h="16" />
 					</die>
 				</animations>
 			</player>

@@ -286,6 +286,16 @@ bool Engine::LoadConfig()
         LOG("Error loading config.xml: %s", result.description());
     }
 
+    pugi::xml_parse_result resultSave = saveFile.load_file("save.xml");
+    if (resultSave)
+    {
+        LOG("save.xml parsed without errors");
+    }
+    else
+    {
+        LOG("Error loading save.xml: %s", resultSave.description());
+    }
+
     return ret;
 }
 

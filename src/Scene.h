@@ -26,6 +26,9 @@ public:
 	// Called each loop iteration
 	bool Update(float dt);
 
+	void LoadState();
+	void SaveState();
+
 	// Called before all Updates
 	bool PostUpdate();
 

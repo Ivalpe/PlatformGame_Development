@@ -85,6 +85,37 @@ bool Scene::Update(float dt)
 	return true;
 }
 
+void Scene::LoadState() {
+	pugi::xml_document loadFile;
+	pugi::xml_parse_result result = loadFile.load_file("config.xml");
+	LOG("AAAAAAAAAAAAAAAAAAAAAAAA");
+
+	if (result == NULL) {
+		LOG("Error");
+	}
+
+	Vector2D posPlayer;
+	posPlayer.setX(loadFile.child("config").child("scene").child("entities").child("player").attribute("x").as_int());
+	posPlayer.setY(loadFile.child("config").child("scene").child("entities").child("player").attribute("y").as_int());
+
+	player->SetPosition(posPlayer);
+}
+
+void Scene::SaveState() {
+	pugi::xml_document saveFile;
+	pugi::xml_parse_result result = saveFile.load_file("config.xml");
+
+	if (result == NULL) {
+		LOG("Error");
+	}
+
+	Vector2D playerPos = player->GetPosition();
+	saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(playerPos.getX());
+	saveFile.child("config").child("scene").child("entities").child("player").attribute("y").set_value(playerPos.getY());
+
+	saveFile.save_file("config.xml");
+}
+
 // Called each loop iteration
 bool Scene::PostUpdate()
 {
@@ -92,6 +123,12 @@ bool Scene::PostUpdate()
 
 	if(Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 		ret = false;
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F6) == KEY_DOWN){ 
+		SaveState();
+		ret = false;
+	}
+		
 
 	return ret;
 }
