@@ -73,6 +73,7 @@ bool Player::Update(float dt)
 			stPlayer = StatePlayer::RUN;
 		}
 
+		// Run
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
 			speed = 0.16;
 		}
@@ -127,11 +128,12 @@ bool Player::Update(float dt)
 			currentAnimation = &die;
 
 
-	}else {
+	}
+	else {
 		currentAnimation = &die;
 	}
 
-	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW/3, (int)position.getY() - texH/4, &currentAnimation->GetCurrentFrame());
+	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 	return true;
 }
@@ -151,6 +153,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision PLATFORM");
 		//reset the jump flag when touching the ground
 		isJumping = false;
+		break;
 	case ColliderType::ITEM:
 		LOG("Collision ITEM");
 		break;

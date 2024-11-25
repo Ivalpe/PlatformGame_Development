@@ -63,7 +63,7 @@ void Pathfinding::DrawPath() {
     // Draw visited
     for (const auto& pathTile : visited) {
     	Vector2D pathTileWorld = Engine::GetInstance().map.get()->MapToWorld(pathTile.getX(), pathTile.getY());
-        SDL_Rect rect = { 16,0,16,16 };
+        SDL_Rect rect = { 8,0,8,8 };
         Engine::GetInstance().render.get()->DrawTexture(pathTex, SDL_FLIP_NONE, pathTileWorld.getX(), pathTileWorld.getY(),&rect);
     }
 
@@ -80,7 +80,7 @@ void Pathfinding::DrawPath() {
         //Get the position of the frontier tile in the world
         Vector2D pos = Engine::GetInstance().map.get()->MapToWorld(frontierTile.getX(), frontierTile.getY());
         //Draw the frontier tile
-        SDL_Rect rect = { 0,0,16,16 };
+        SDL_Rect rect = { 0,0,8,8 };
         Engine::GetInstance().render.get()->DrawTexture(pathTex, SDL_FLIP_NONE, pos.getX(), pos.getY(), &rect);
         //Remove the front element from the queue
         frontierCopy.pop();
@@ -99,7 +99,7 @@ void Pathfinding::DrawPath() {
         //Get the position of the frontier tile in the world
         Vector2D pos = Engine::GetInstance().map.get()->MapToWorld(frontierTile.getX(), frontierTile.getY());
         //Draw the frontier tile
-        SDL_Rect rect = { 0,0,16,16 };
+        SDL_Rect rect = { 0,0,8,8 };
         Engine::GetInstance().render.get()->DrawTexture(pathTex, SDL_FLIP_NONE, pos.getX(), pos.getY(), &rect);
         //Remove the front element from the queue
         frontierDijkstraCopy.pop();
@@ -118,7 +118,7 @@ void Pathfinding::DrawPath() {
         //Get the position of the frontier tile in the world
         Vector2D pos = Engine::GetInstance().map.get()->MapToWorld(frontierTile.getX(), frontierTile.getY());
         //Draw the frontier tile
-        SDL_Rect rect = { 0,0,16,16 };
+        SDL_Rect rect = { 0,0,8,8 };
         Engine::GetInstance().render.get()->DrawTexture(pathTex, SDL_FLIP_NONE, pos.getX(), pos.getY(), &rect);
         //Remove the front element from the queue
         frontierAStarCopy.pop();

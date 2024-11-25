@@ -17,12 +17,12 @@
 	<scene>
 		<map path="Assets/Maps/" name="Map2.tmx" />
 		<entities>
-			<player x="100" y="100" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
+			<player x="100" y="80" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
 					<idle loop="true" speed="0.06">
-						<frame x="0" y="64" w="16" h="32" />
-						<frame x="16" y="64" w="16" h="32" />
-						<frame x="32" y="64" w="16" h="32" />
+						<frame x="0" y="32" w="16" h="32" />
+						<frame x="16" y="32" w="16" h="32" />
+						<frame x="32" y="32" w="16" h="32" />
 					</idle>
 					<run loop="true" speed="0.12">
 						<frame x="0" y="0" w="16" h="32" />
