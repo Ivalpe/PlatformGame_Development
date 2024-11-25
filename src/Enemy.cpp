@@ -53,12 +53,13 @@ bool Enemy::Start() {
 
 bool Enemy::Update(float dt)
 {
-
+	/*
 	if (pathfinding->PropagateAStar(MANHATTAN)) {
 		Vector2D pos = GetPosition();
 		Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 		pathfinding->ResetPath(tilePos);
 	}
+	*/
 
 
 	// Pathfinding testing inputs

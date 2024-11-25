@@ -34,6 +34,7 @@ bool Player::Start() {
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	run.LoadAnimations(parameters.child("animations").child("run"));
 	jump.LoadAnimations(parameters.child("animations").child("jump"));
+	jump.LoadAnimations(parameters.child("animations").child("jump"));
 	fall.LoadAnimations(parameters.child("animations").child("fall"));
 	die.LoadAnimations(parameters.child("animations").child("die"));
 	currentAnimation = &idle;
@@ -130,7 +131,7 @@ bool Player::Update(float dt)
 		currentAnimation = &die;
 	}
 
-	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW/3, (int)position.getY() - texH/4, &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 	return true;
 }
