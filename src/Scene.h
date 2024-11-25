@@ -1,4 +1,5 @@
 #pragma once
+#pragma once
 
 #include "Module.h"
 #include "Player.h"
@@ -44,4 +45,5 @@ private:
 	//L03: TODO 3b: Declare a Player attribute
 	Player* player;
 	std::vector<Enemy*> enemyList;
+	int level;
 };
