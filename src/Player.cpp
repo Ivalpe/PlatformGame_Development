@@ -18,7 +18,6 @@ Player::~Player() {
 }
 
 bool Player::Awake() {
-	position = Vector2D(100, 100);
 	dp = DirectionPlayer::RIGHT;
 	stPlayer = StatePlayer::IDLE;
 	return true;
@@ -44,6 +43,13 @@ bool Player::Start() {
 	pbody->ctype = ColliderType::PLAYER;
 
 	return true;
+}
+
+void Player::SetPosition(Vector2D posPlayer) {
+	posPlayer.setX(posPlayer.getX() + texW / 2);
+	posPlayer.setY(posPlayer.getY() + texH / 2);
+	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(posPlayer.getX()), PIXEL_TO_METERS(posPlayer.getY()));
+	pbody->body->SetTransform(bodyPos, 0);
 }
 
 bool Player::Update(float dt)

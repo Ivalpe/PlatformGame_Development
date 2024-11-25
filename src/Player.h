@@ -40,6 +40,12 @@ public:
 		this->parameters = parameters;
 	}
 
+	void SetPosition(Vector2D posPlayer);
+	
+	Vector2D GetPosition() {
+		return position;
+	}
+
 	StatePlayer GetState() {
 		return stPlayer;
 	}

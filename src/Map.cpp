@@ -268,6 +268,16 @@ Vector2D Map::MapToWorld(int x, int y) const
 	return ret;
 }
 
+Vector2D Map::WorldToMap(int x, int y) {
+
+	Vector2D ret(0, 0);
+
+	ret.setX(x / mapData.tileWidth);
+	ret.setY(y / mapData.tileHeight);
+
+	return ret;
+}
+
 // L09: TODO 6: Load a group of properties from a node and fill a list with it
 bool Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 {
@@ -283,6 +293,17 @@ bool Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 	}
 
 	return ret;
+}
+
+MapLayer* Map::GetNavigationLayer() {
+	for (const auto& layer : mapData.layers) {
+		if (layer->properties.GetProperty("Navigation") != NULL &&
+			layer->properties.GetProperty("Navigation")->value) {
+			return layer;
+		}
+	}
+
+	return nullptr;
 }
 
 // L09: TODO 7: Implement a method to get the value of a custom property
