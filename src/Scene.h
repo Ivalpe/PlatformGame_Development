@@ -2,6 +2,7 @@
 
 #include "Module.h"
 #include "Player.h"
+#include "Enemy.h"
 
 struct SDL_Texture;
 
@@ -35,9 +36,12 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
+	Vector2D GetPlayerPosition();
+
 private:
 	SDL_Texture* img;
 
 	//L03: TODO 3b: Declare a Player attribute
 	Player* player;
+	std::vector<Enemy*> enemyList;
 };
