@@ -73,6 +73,6 @@ private:
 	float idleDuration = 2.0f;   
 	float moveDuration = 3.0f;   
 	bool isIdle = false;         
-	int moveDirection = 1;
+	int moveDirection = true;
 	
 };

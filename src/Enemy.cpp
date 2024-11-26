@@ -126,30 +126,26 @@ bool Enemy::Update(float dt)
 
 	if (type == EnemyType::EV_WIZARD)
 	{
-		static float timer = 0.0f; 
-		static bool movingRight = true; 
+		moveTimer += dt;
 
-		timer += dt; 
-
-		if (timer >= 2.0f) 
-		{
-			timer = 0.0f;
-			if (currentAnimation == &idle) 
-			{
-				movingRight = !movingRight; 
-				currentAnimation = &walk; 
-			}
-			else
-			{
-				currentAnimation = &idle; 
+		if (isIdle) {
+			
+			if (moveTimer >= idleDuration) {
+				moveTimer = 0.0f;
+				isIdle = false;
 			}
 		}
-
-		if (currentAnimation == &walk)
-		{
+		else {
 			
-			float movement = movingRight ? ENEMY_SPEED * dt : -ENEMY_SPEED * dt;
-			SetPosition(Vector2D(position.getX() + movement, position.getY()));
+			position.setX(position.getX() + moveDirection * ENEMY_SPEED * dt);
+
+			
+			if (moveTimer >= moveDuration) {
+				moveTimer = 0.0f;
+				isIdle = true;
+				
+				moveDirection *= -1;
+			}
 		}
 	}
 
