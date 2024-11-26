@@ -124,8 +124,48 @@ bool Enemy::Update(float dt)
 	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 
+	if (type == EnemyType::EV_WIZARD)
+	{
+		static float timer = 0.0f; 
+		static bool movingRight = true; 
+
+		timer += dt; 
+
+		if (timer >= 2.0f) 
+		{
+			timer = 0.0f;
+			if (currentAnimation == &idle) 
+			{
+				movingRight = !movingRight; 
+				currentAnimation = &walk; 
+			}
+			else
+			{
+				currentAnimation = &idle; 
+			}
+		}
+
+		if (currentAnimation == &walk)
+		{
+			
+			float movement = movingRight ? ENEMY_SPEED * dt : -ENEMY_SPEED * dt;
+			SetPosition(Vector2D(position.getX() + movement, position.getY()));
+		}
+	}
+
+	b2Transform pbodyPos = pbody->body->GetTransform();
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+
+	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	if (!isIdle) {
+		currentAnimation->Update();
+	}
+
 	// Draw pathfinding 
 	pathfinding->DrawPath();
+
+
 
 	return true;
 }
@@ -147,6 +187,7 @@ Vector2D Enemy::GetPosition() {
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
 }
+
 
 void Enemy::ResetPath() {
 	Vector2D pos = GetPosition();
