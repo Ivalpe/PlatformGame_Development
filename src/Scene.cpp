@@ -93,6 +93,15 @@ bool Scene::Update(float dt)
 
 	}
 
+	// Shoot
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
+		Fireball* fireball = (Fireball*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALL);
+		fireball->SetParameters(configParameters.child("entities").child("fireball"));
+		fireball->Start();
+		fireball->SetPosition(player->GetPosition());
+		fireballList.push_back(fireball);
+	}
+
 	return true;
 }
 
@@ -139,6 +148,7 @@ bool Scene::PostUpdate()
 		ret = false;
 	}
 
+	//Load Level 1 when you are in level 0 and press number 1
 	if (level == 0 && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_1) == KEY_DOWN) {
 		level = 1;
 		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
@@ -159,6 +169,8 @@ bool Scene::CleanUp()
 	LOG("Freeing scene");
 
 	SDL_DestroyTexture(img);
+	enemyList.clear();
+	fireballList.clear();
 
 	return true;
 }
@@ -167,4 +179,8 @@ bool Scene::CleanUp()
 Vector2D Scene::GetPlayerPosition()
 {
 	return player->GetPosition();
+}
+
+int Scene::GetActualLevel() {
+	return level;
 }

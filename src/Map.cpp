@@ -184,11 +184,13 @@ bool Map::Load(std::string path, std::string fileName)
 
 			PhysBody* pb = Engine::GetInstance().physics.get()->CreateRectangle(tileNode.attribute("x").as_int() + (tileNode.attribute("width").as_int() / 2), tileNode.attribute("y").as_int() + (tileNode.attribute("height").as_int() / 2), tileNode.attribute("width").as_int(), h, STATIC);
 			if (p == "WALL")
-				pb->ctype = ColliderType::GROUND;
+				pb->ctype = ColliderType::WALL;
 			else if (p == "PLATFORM")
 				pb->ctype = ColliderType::GROUND;
 			else if (p == "DIE")
 				pb->ctype = ColliderType::DIE;
+			else
+				pb->ctype = ColliderType::GROUND;
 
 			collisions.push_back(pb);
 		}

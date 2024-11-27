@@ -319,6 +319,10 @@ bool Physics::PostUpdate()
 		}
 	}
 
+	for (PhysBody* physBody : bodiesToDelete) {
+		world->DestroyBody(physBody->body);
+	}
+	bodiesToDelete.clear();
 
 	return ret;
 }
@@ -332,6 +336,10 @@ bool Physics::CleanUp()
 	delete world;
 
 	return true;
+}
+
+void Physics::DeletePhysBody(PhysBody* physBody) {
+	bodiesToDelete.push_back(physBody);
 }
 
 // Callback function to collisions with Box2D

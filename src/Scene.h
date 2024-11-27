@@ -39,11 +39,14 @@ public:
 
 	Vector2D GetPlayerPosition();
 
+	int GetActualLevel();
+
 private:
 	SDL_Texture* img;
 
 	//L03: TODO 3b: Declare a Player attribute
 	Player* player;
 	std::vector<Enemy*> enemyList;
+	std::vector<Fireball*> fireballList;
 	int level;
 };

@@ -11087,11 +11087,7 @@
   </data>
  </layer>
  <objectgroup id="4" name="Capa de Objetos 1">
-  <object id="38" x="0" y="120" width="640" height="248">
-   <properties>
-    <property name="TYPE" value="WALL"/>
-   </properties>
-  </object>
+  <object id="38" x="0" y="120" width="640" height="248"/>
   <object id="40" x="632" y="40" width="8" height="80">
    <properties>
     <property name="TYPE" value="WALL"/>
