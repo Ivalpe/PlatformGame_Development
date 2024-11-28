@@ -19,8 +19,10 @@ bool Fireball::Awake() {
 	return true;
 }
 
-bool Fireball::Start() {
+bool Fireball::Start(bool inv) {
 
+	inverted = inv;
+	col = false;
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	texW = parameters.attribute("w").as_int();
@@ -35,6 +37,7 @@ bool Fireball::Start() {
 
 	//Assign collider type
 	pbody->ctype = ColliderType::FIREBALL;
+	pbody->listener = this;
 
 	// Set the gravity of the body
 	pbody->body->SetGravityScale(0);
@@ -46,7 +49,8 @@ bool Fireball::Update(float dt)
 {
 
 	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
-	pbody->body->SetLinearVelocity({ 10,0 });
+	if (inverted) float speed = -10; float speed = 10;
+	pbody->body->SetLinearVelocity({ speed,0 });
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
@@ -73,4 +77,32 @@ Vector2D Fireball::GetPosition() {
 	b2Vec2 bodyPos = pbody->body->GetTransform().p;
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
+}
+
+void Fireball::OnCollision(PhysBody* physA, PhysBody* physB) {
+	switch (physB->ctype)
+	{
+	case ColliderType::GROUND:
+		LOG("Collision PLATFORM");
+		break;
+	case ColliderType::ITEM:
+		LOG("Collision ITEM");
+		break;
+	case ColliderType::UNKNOWN:
+		LOG("Collision UNKNOWN");
+		break;
+	case ColliderType::DIE:
+		LOG("Collision DIE");
+		break;
+	default:
+		break;
+	}
+
+	col = true;
+
+	LOG("-----------------------------------------");
+}
+
+bool Fireball::HasCollision() {
+	return col;
 }

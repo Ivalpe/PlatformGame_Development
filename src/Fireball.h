@@ -16,7 +16,7 @@ public:
 
 	bool Awake();
 
-	bool Start();
+	bool Start(bool inv);
 
 	bool Update(float dt);
 
@@ -30,6 +30,13 @@ public:
 
 	Vector2D GetPosition();
 
+	void OnCollision(PhysBody* physA, PhysBody* physB);
+	bool HasCollision();
+
+	b2Body* getBody() {
+		return pbody->body;
+	}
+
 public:
 
 private:
@@ -40,5 +47,7 @@ private:
 	Animation* currentAnimation = nullptr;
 	Animation idle;
 	PhysBody* pbody;
+	bool col;
+	bool inverted;
 };
 #pragma once

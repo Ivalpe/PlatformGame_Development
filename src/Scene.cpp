@@ -97,10 +97,21 @@ bool Scene::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
 		Fireball* fireball = (Fireball*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALL);
 		fireball->SetParameters(configParameters.child("entities").child("fireball"));
-		fireball->Start();
+		if (player->GetDirection() == DirectionPlayer::LEFT) fireball->Start(true);
+		else fireball->Start(false);
+
 		Vector2D playerPos = player->GetPosition();
-		fireball->SetPosition({ playerPos.getX() + 16, playerPos.getY() + 14 });
+		fireball->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
 		fireballList.push_back(fireball);
+	}
+
+	for (int i = 0; i < fireballList.size(); i++) {
+		if (fireballList[i]->HasCollision()) {
+			Engine::GetInstance().physics->DeleteBody(fireballList[i]->getBody());
+			Engine::GetInstance().entityManager->DestroyEntity(fireballList[i]);
+			fireballList.erase(fireballList.begin() + i);
+			i--;
+		}
 	}
 
 	return true;

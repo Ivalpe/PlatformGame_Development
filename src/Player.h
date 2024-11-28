@@ -58,6 +58,10 @@ public:
 	int GetY() {
 		return position.getY();
 	}
+
+	DirectionPlayer GetDirection() {
+		return dp;
+	}
 public:
 
 	//Declare player parameters
