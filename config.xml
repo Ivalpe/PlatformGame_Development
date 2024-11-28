@@ -61,13 +61,17 @@
 				</animations>
 			</player>
 			<enemies>
-				<enemy name="evilwizard" x="150" y="100" w="16" h="16" texture="Assets/Textures/Player.png" gravity="true" level="0">
+				<enemy name="evilwizard" x="150" y="100" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="0">
 					<animations>
 						<idle loop="true" speed ="0.06">
-							<frame x="0" y="0" w="16" h="16" />
-							<frame x="16" y="0" w="16" h="16" />
-							<frame x="32" y="0" w="16" h="16" />
-							<frame x="48" y="0" w="16" h="16" />
+							<frame x="0" y="96" w="16" h="32" />
+							<frame x="16" y="96" w="16" h="32" />
+						</idle>
+						<idle loop="true" speed ="0.12">
+							<frame x="0" y="64" w="16" h="32" />
+							<frame x="16" y="64" w="16" h="32" />
+							<frame x="32" y="64" w="16" h="32" />
+							<frame x="48" y="64" w="16" h="32" />
 						</idle>
 					</animations>
 				</enemy>
