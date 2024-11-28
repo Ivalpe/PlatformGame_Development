@@ -107,6 +107,10 @@ bool Map::CleanUp()
 // Load new map
 bool Map::Load(std::string path, std::string fileName)
 {
+	for (const auto& layer : collisions){
+		Engine::GetInstance().physics->DeletePhysBody(layer);
+	}
+
 	bool ret = false;
 
 	// Assigns the name of the map file and the path
@@ -211,13 +215,12 @@ bool Map::Load(std::string path, std::string fileName)
 						}
 					}
 				}
-
 			}
 		}
 
 		ret = true;
 
-		// L06: TODO 5: LOG all the data loaded iterate all tilesetsand LOG everything
+		// LOG all the data loaded iterate all tilesetsand LOG everything
 		if (ret == true)
 		{
 			LOG("Successfully parsed map XML file :%s", fileName.c_str());

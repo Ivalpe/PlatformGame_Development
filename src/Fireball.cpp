@@ -9,7 +9,7 @@
 #include "Physics.h"
 #include "Map.h"
 
-Fireball::Fireball() : Entity(EntityType::FIREBALL){
+Fireball::Fireball() : Entity(EntityType::FIREBALL) {
 }
 
 Fireball::~Fireball() {
@@ -46,6 +46,7 @@ bool Fireball::Update(float dt)
 {
 
 	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
+	pbody->body->SetLinearVelocity({ 10,0 });
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
