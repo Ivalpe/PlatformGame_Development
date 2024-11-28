@@ -7,6 +7,21 @@
 
 struct SDL_Texture;
 
+#define ENEMY_SPEED			1
+
+//enum class StateEnemy {
+//	IDLE, WALKING, DIE
+//};
+
+//enum class DirectionEnemy {
+//	LEFT, RIGHT
+//};
+
+enum class EnemyType { 
+	EV_WIZARD, BAT, KILLERBUNNY, 
+};
+
+
 class Enemy : public Entity
 {
 public:
@@ -34,14 +49,30 @@ public:
 
 public:
 
+	void MoveY();
+	void MoveX();
+	EnemyType getType() const;
+	void Damaged(int dmg);
+	int getLife() const;
+
 private:
 
 	SDL_Texture* texture;
 	const char* texturePath;
 	int texW, texH;
+	
+	EnemyType type;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
-	Animation idle;
+	Animation idle, walk;
+
 	PhysBody* pbody;
 	Pathfinding* pathfinding;
+
+	float moveTimer = 0.0f;       
+	float idleDuration = 2.0f;   
+	float moveDuration = 3.0f;   
+	bool isIdle = false;         
+	int moveDirection = true;
+	
 };

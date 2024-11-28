@@ -117,15 +117,49 @@ bool Enemy::Update(float dt)
 	}
 
 	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
+
+
+	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	currentAnimation->Update();
+
+	if (type == EnemyType::EV_WIZARD)
+	{
+		moveTimer += dt;
+
+		if (isIdle) {
+			
+			if (moveTimer >= idleDuration) {
+				moveTimer = 0.0f;
+				isIdle = false;
+			}
+		}
+		else {
+			
+			position.setX(position.getX() + moveDirection * ENEMY_SPEED * dt);
+
+			
+			if (moveTimer >= moveDuration) {
+				moveTimer = 0.0f;
+				isIdle = true;
+				
+				moveDirection *= -1;
+			}
+		}
+	}
+
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	currentAnimation->Update();
+	if (!isIdle) {
+		currentAnimation->Update();
+	}
 
 	// Draw pathfinding 
 	pathfinding->DrawPath();
+
+
 
 	return true;
 }
@@ -147,6 +181,7 @@ Vector2D Enemy::GetPosition() {
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
 }
+
 
 void Enemy::ResetPath() {
 	Vector2D pos = GetPosition();
