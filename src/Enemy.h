@@ -9,13 +9,13 @@ struct SDL_Texture;
 
 #define ENEMY_SPEED			1
 
-enum class StatePlayer {
-	IDLE, WALKING, DIE
-};
+//enum class StateEnemy {
+//	IDLE, WALKING, DIE
+//};
 
-enum class DirectionPlayer {
-	LEFT, RIGHT
-};
+//enum class DirectionEnemy {
+//	LEFT, RIGHT
+//};
 
 enum class EnemyType { 
 	EV_WIZARD, BAT, KILLERBUNNY, 
