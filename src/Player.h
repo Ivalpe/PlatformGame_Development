@@ -8,6 +8,10 @@
 
 struct SDL_Texture;
 
+enum class Level {
+	NEW, LOAD, DISABLED
+};
+
 enum class StatePlayer {
 	IDLE, RUN, JUMP, FALL, DIE
 };
@@ -62,6 +66,14 @@ public:
 	DirectionPlayer GetDirection() {
 		return dp;
 	}
+
+	Level GetLevel() {
+		return lvl;
+	}
+
+	void SetLevel(Level lv) {
+		lvl = lv;
+	}
 public:
 
 	//Declare player parameters
@@ -85,4 +97,5 @@ public:
 	SDL_RendererFlip flipType;
 	StatePlayer stPlayer;
 	std::list<Fireball*> fireballs;
+	Level lvl;
 };

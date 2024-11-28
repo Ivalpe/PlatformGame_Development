@@ -48,8 +48,12 @@ bool Fireball::Start(bool inv) {
 bool Fireball::Update(float dt)
 {
 
-	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
-	if (inverted) float speed = -10; float speed = 10;
+	// Add a physics to an item - update the position of the object from the physics.  
+	float speed;
+	if (inverted) 
+		speed = -10; 
+	else 
+		speed = 10;
 	pbody->body->SetLinearVelocity({ speed,0 });
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);

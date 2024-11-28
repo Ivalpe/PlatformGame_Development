@@ -33,6 +33,8 @@ public:
 
 	bool Start();
 
+	void CreateHitbox();
+
 	bool Update(float dt);
 
 	bool CleanUp();
@@ -42,10 +44,11 @@ public:
 	}
 
 	void SetPosition(Vector2D pos);
-
 	Vector2D GetPosition();
-
 	void ResetPath();
+	void OnCollision(PhysBody* physA, PhysBody* physB);
+
+	bool IsDead();
 
 public:
 
@@ -54,6 +57,10 @@ public:
 	EnemyType getType() const;
 	void Damaged(int dmg);
 	int getLife() const;
+
+	b2Body* getBody() {
+		return pbody->body;
+	}
 
 private:
 
@@ -69,10 +76,6 @@ private:
 	PhysBody* pbody;
 	Pathfinding* pathfinding;
 
-	float moveTimer = 0.0f;       
-	float idleDuration = 2.0f;   
-	float moveDuration = 3.0f;   
-	bool isIdle = false;         
-	int moveDirection = true;
+	bool dead;
 	
 };

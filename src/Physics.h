@@ -31,6 +31,8 @@ enum class ColliderType {
 	FIREBALL,
 	ENEMY,
 	DIE,
+	NEW,
+	LOAD,
 	UNKNOWN
 };
 

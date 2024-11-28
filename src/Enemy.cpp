@@ -41,6 +41,7 @@ bool Enemy::Start() {
 
 	//Assign collider type
 	pbody->ctype = ColliderType::ENEMY;
+	pbody->listener = this;
 
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
@@ -157,4 +158,36 @@ void Enemy::ResetPath() {
 	Vector2D pos = GetPosition();
 	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 	pathfinding->ResetPath(tilePos);
+}
+
+void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
+	switch (physB->ctype)
+	{
+	case ColliderType::GROUND:
+		LOG("Collision PLATFORM");
+		break;
+	case ColliderType::ITEM:
+		LOG("Collision ITEM");
+		break;
+	case ColliderType::UNKNOWN:
+		LOG("Collision UNKNOWN");
+		break;
+	case ColliderType::DIE:
+		LOG("Collision DIE");
+		break;
+	case ColliderType::FIREBALL:
+		LOG("Collision FIREBALL");
+		dead = true;
+		break;
+	default:
+		break;
+	}
+
+
+
+	LOG("-----------------------------------------");
+}
+
+bool Enemy::IsDead() {
+	return dead;
 }

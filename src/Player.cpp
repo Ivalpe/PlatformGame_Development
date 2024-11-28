@@ -24,6 +24,7 @@ bool Player::Awake() {
 }
 
 bool Player::Start() {
+	lvl = Level::DISABLED;
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	position.setX(parameters.attribute("x").as_int());
 	position.setY(parameters.attribute("y").as_int());
@@ -183,6 +184,14 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision DIE");
 		stPlayer = StatePlayer::DIE;
 		isDying = true;
+		break;
+	case ColliderType::NEW:
+		LOG("Collision NEW");
+		lvl = Level::NEW;
+		break;
+	case ColliderType::LOAD:
+		LOG("Collision LOAD");
+		lvl = Level::LOAD;
 		break;
 	default:
 		break;

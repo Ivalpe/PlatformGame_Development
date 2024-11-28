@@ -193,6 +193,10 @@ bool Map::Load(std::string path, std::string fileName)
 				pb->ctype = ColliderType::GROUND;
 			else if (p == "DIE")
 				pb->ctype = ColliderType::DIE;
+			else if (p == "NEW")
+				pb->ctype = ColliderType::NEW;
+			else if (p == "LOAD")
+				pb->ctype = ColliderType::LOAD;
 			else
 				pb->ctype = ColliderType::GROUND;
 
