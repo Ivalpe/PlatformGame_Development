@@ -45,13 +45,10 @@ bool Map::Update(float dt)
 				for (int i = 0; i < mapData.width; i++) {
 					for (int j = 0; j < mapData.height; j++) {
 
-						// L07 TODO 9: Complete the draw function
-
 						//Get the gid from tile
 						int gid = mapLayer->Get(i, j);
 						//Check if the gid is different from 0 - some tiles are empty
 						if (gid != 0) {
-							//L09: TODO 3: Obtain the tile set using GetTilesetFromTileId
 							TileSet* tileSet = GetTilesetFromTileId(gid);
 							if (tileSet != nullptr) {
 								//Get the Rect from the tileSetTexture;
@@ -110,6 +107,10 @@ bool Map::CleanUp()
 // Load new map
 bool Map::Load(std::string path, std::string fileName)
 {
+	for (const auto& layer : collisions){
+		Engine::GetInstance().physics->DeletePhysBody(layer);
+	}
+
 	bool ret = false;
 
 	// Assigns the name of the map file and the path
@@ -127,14 +128,10 @@ bool Map::Load(std::string path, std::string fileName)
 	}
 	else {
 
-		// L06: TODO 3: Implement LoadMap to load the map properties
-		// retrieve the paremeters of the <map> node and store the into the mapData struct
 		mapData.width = mapFileXML.child("map").attribute("width").as_int();
 		mapData.height = mapFileXML.child("map").attribute("height").as_int();
 		mapData.tileWidth = mapFileXML.child("map").attribute("tilewidth").as_int();
 		mapData.tileHeight = mapFileXML.child("map").attribute("tileheight").as_int();
-
-		// L06: TODO 4: Implement the LoadTileSet function to load the tileset properties
 
 		//Iterate the Tileset
 		for (pugi::xml_node tilesetNode = mapFileXML.child("map").child("tileset"); tilesetNode != NULL; tilesetNode = tilesetNode.next_sibling("tileset"))
@@ -191,11 +188,13 @@ bool Map::Load(std::string path, std::string fileName)
 
 			PhysBody* pb = Engine::GetInstance().physics.get()->CreateRectangle(tileNode.attribute("x").as_int() + (tileNode.attribute("width").as_int() / 2), tileNode.attribute("y").as_int() + (tileNode.attribute("height").as_int() / 2), tileNode.attribute("width").as_int(), h, STATIC);
 			if (p == "WALL")
-				pb->ctype = ColliderType::GROUND;
+				pb->ctype = ColliderType::WALL;
 			else if (p == "PLATFORM")
 				pb->ctype = ColliderType::GROUND;
 			else if (p == "DIE")
 				pb->ctype = ColliderType::DIE;
+			else
+				pb->ctype = ColliderType::GROUND;
 
 			collisions.push_back(pb);
 		}
@@ -216,13 +215,12 @@ bool Map::Load(std::string path, std::string fileName)
 						}
 					}
 				}
-
 			}
 		}
 
 		ret = true;
 
-		// L06: TODO 5: LOG all the data loaded iterate all tilesetsand LOG everything
+		// LOG all the data loaded iterate all tilesetsand LOG everything
 		if (ret == true)
 		{
 			LOG("Successfully parsed map XML file :%s", fileName.c_str());
