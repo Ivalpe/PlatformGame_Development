@@ -1,9 +1,0 @@
-Package: sdl2-mixer
-Version: 2.8.0
-Port-Version: 1
-Depends: libvorbis, sdl2, vcpkg-cmake, vcpkg-cmake-config, wavpack
-Architecture: x64-windows
-Multi-Arch: same
-Abi: ad899bd709c4835183ba4033d94b5f4cb44d4958772a03fdcfef7a090d4d010c
-Description: Multi-channel audio mixer library for SDL.
-Status: install ok half-installed

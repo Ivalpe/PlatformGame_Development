@@ -8,7 +8,7 @@
 struct SDL_Texture;
 
 enum class StatePlayer {
-	IDLE, RUN, JUMP, FALL
+	IDLE, RUN, JUMP, FALL, DIE
 };
 
 enum class DirectionPlayer {
@@ -40,10 +40,23 @@ public:
 		this->parameters = parameters;
 	}
 
+	void SetPosition(Vector2D posPlayer);
+	
+	Vector2D GetPosition() {
+		return position;
+	}
+
 	StatePlayer GetState() {
 		return stPlayer;
 	}
 
+	int GetX() {
+		return position.getX();
+	}
+
+	int GetY() {
+		return position.getY();
+	}
 public:
 
 	//Declare player parameters
@@ -58,10 +71,11 @@ public:
 	PhysBody* pbody;
 	float jumpForce = 0.37f; // The force to apply when jumping
 	bool isJumping = false; // Flag to check if the player is currently jumping
+	bool isDying = false;
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
-	Animation idle;
+	Animation idle, run, jump, fall, die;
 	DirectionPlayer dp;
 	SDL_RendererFlip flipType;
 	StatePlayer stPlayer;

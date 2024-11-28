@@ -1,41 +1,79 @@
-<!-- Config file for the engine -->
+<?xml version="1.0"?>
 <config>
 	<engine>
 		<title>My platformer game</title>
-		<maxFrameDuration value="16"/>
+		<maxFrameDuration value="16" />
 	</engine>
-
 	<render>
-		<vsync value="false"/>
+		<vsync value="false" />
 	</render>
-
 	<window>
-		<resolution width="1280" height="736" scale="2"/>
-		<fullscreen value="false"/>
-		<borderless value="false"/>
-		<resizable value="false"/>
-		<fullscreen_window value="false"/>
+		<resolution width="1280" height="736" scale="2" />
+		<fullscreen value="false" />
+		<borderless value="false" />
+		<resizable value="false" />
+		<fullscreen_window value="false" />
 	</window>
-
 	<scene>
-		<map path="Assets/Maps/" name="Map1.tmx"/>
+		<map path="Assets/Maps/" name="Map2.tmx" />
 		<entities>
-			<player x="100" y="100" w="16" h ="16" texture="Assets/Textures/Player.png">
+			<player x="100" y="80" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
-					<idle loop="true" speed ="0.06">
-						<frame x="0" y="0" w="16" h="16"/>
-						<frame x="16" y="0" w="16" h="16"/>
-						<frame x="32" y="0" w="16" h="16"/>
-						<frame x="48" y="0" w="16" h="16"/>
+					<idle loop="true" speed="0.06">
+						<frame x="0" y="32" w="16" h="32" />
+						<frame x="16" y="32" w="16" h="32" />
+						<frame x="32" y="32" w="16" h="32" />
 					</idle>
-					<run loop="true" speed ="0.06">
-						<frame x="0" y="16" w="16" h="16"/>
-						<frame x="16" y="16" w="16" h="16"/>
-						<frame x="32" y="16" w="16" h="16"/>
-						<frame x="48" y="16" w="16" h="16"/>
+					<run loop="true" speed="0.12">
+						<frame x="0" y="0" w="16" h="32" />
+						<frame x="16" y="0" w="16" h="32" />
+						<frame x="32" y="0" w="16" h="32" />
+						<frame x="48" y="0" w="16" h="32" />
+						<frame x="64" y="0" w="16" h="32" />
+						<frame x="80" y="0" w="16" h="32" />
 					</run>
+					<jump loop="true" speed="0.06">
+						<frame x="0" y="96" w="16" h="32" />
+						<frame x="16" y="96" w="16" h="32" />
+						<frame x="32" y="96" w="16" h="32" />
+					</jump>
+					<fall loop="true" speed="0">
+						<frame x="48" y="96" w="16" h="32" />
+						<frame x="64" y="96" w="16" h="32" />
+						<frame x="80" y="96" w="16" h="32" />
+					</fall>
+					<die loop="false" speed="0.12">
+						<frame x="0" y="160" w="16" h="32" />
+						<frame x="16" y="160" w="16" h="32" />
+						<frame x="32" y="160" w="16" h="32" />
+						<frame x="48" y="160" w="16" h="32" />
+						<frame x="64" y="160" w="16" h="32" />
+						<frame x="80" y="160" w="16" h="32" />
+					</die>
 				</animations>
 			</player>
+			<enemies>
+				<enemy name="evilwizard" x="150" y="100" w="16" h="16" texture="Assets/Textures/Player.png" gravity="true">
+					<animations>
+						<idle loop="true" speed ="0.06">
+							<frame x="0" y="0" w="16" h="16" />
+							<frame x="16" y="0" w="16" h="16" />
+							<frame x="32" y="0" w="16" h="16" />
+							<frame x="48" y="0" w="16" h="16" />
+						</idle>
+					</animations>
+				</enemy>
+				<enemy name="bat" x="180" y="100" w="16" h="16" texture="Assets/Textures/Player.png" gravity="true">
+					<animations>
+						<idle loop="true" speed ="0.06">
+							<frame x="0" y="0" w="16" h="16" />
+							<frame x="16" y="0" w="16" h="16" />
+							<frame x="32" y="0" w="16" h="16" />
+							<frame x="48" y="0" w="16" h="16" />
+						</idle>
+					</animations>
+				</enemy>
+			</enemies>
 		</entities>
 	</scene>
 </config>

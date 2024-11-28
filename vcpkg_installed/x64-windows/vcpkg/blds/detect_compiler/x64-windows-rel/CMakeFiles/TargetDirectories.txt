@@ -1,2 +1,0 @@
-C:/Users/ivanap1/Downloads/PlatformGame-L9_Map_Collision_Solution/PlatformGame-L9_Map_Collision_Solution/vcpkg_installed/x64-windows/vcpkg/blds/detect_compiler/x64-windows-rel/CMakeFiles/edit_cache.dir
-C:/Users/ivanap1/Downloads/PlatformGame-L9_Map_Collision_Solution/PlatformGame-L9_Map_Collision_Solution/vcpkg_installed/x64-windows/vcpkg/blds/detect_compiler/x64-windows-rel/CMakeFiles/rebuild_cache.dir

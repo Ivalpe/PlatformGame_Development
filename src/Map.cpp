@@ -190,23 +190,15 @@ bool Map::Load(std::string path, std::string fileName)
 				h = tileNode.attribute("height").as_int();
 
 			PhysBody* pb = Engine::GetInstance().physics.get()->CreateRectangle(tileNode.attribute("x").as_int() + (tileNode.attribute("width").as_int() / 2), tileNode.attribute("y").as_int() + (tileNode.attribute("height").as_int() / 2), tileNode.attribute("width").as_int(), h, STATIC);
-			pb->ctype = ColliderType::GROUND;
+			if (p == "WALL")
+				pb->ctype = ColliderType::GROUND;
+			else if (p == "PLATFORM")
+				pb->ctype = ColliderType::GROUND;
+			else if (p == "DIE")
+				pb->ctype = ColliderType::DIE;
+
 			collisions.push_back(pb);
 		}
-
-		// L08 TODO 3: Create colliders
-		// L08 TODO 7: Assign collider type
-		// Later you can create a function here to load and create the colliders from the map
-		/*
-		PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(0, 544 + 32, 1000, 64, STATIC);
-		c1->ctype = ColliderType::PLATFORM;
-
-		PhysBody* c2 = Engine::GetInstance().physics.get()->CreateRectangle(352 + 64, 384 + 32, 128, 64, STATIC);
-		c2->ctype = ColliderType::PLATFORM;
-
-		PhysBody* c3 = Engine::GetInstance().physics.get()->CreateRectangle(256, 704 + 32, 576, 64, STATIC);
-		c3->ctype = ColliderType::PLATFORM;
-		*/
 
 		for (const auto& mapLayer : mapData.layers) {
 			//Check if the property Draw exist get the value, if it's true draw the lawyer
@@ -276,6 +268,16 @@ Vector2D Map::MapToWorld(int x, int y) const
 	return ret;
 }
 
+Vector2D Map::WorldToMap(int x, int y) {
+
+	Vector2D ret(0, 0);
+
+	ret.setX(x / mapData.tileWidth);
+	ret.setY(y / mapData.tileHeight);
+
+	return ret;
+}
+
 // L09: TODO 6: Load a group of properties from a node and fill a list with it
 bool Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 {
@@ -291,6 +293,17 @@ bool Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 	}
 
 	return ret;
+}
+
+MapLayer* Map::GetNavigationLayer() {
+	for (const auto& layer : mapData.layers) {
+		if (layer->properties.GetProperty("Navigation") != NULL &&
+			layer->properties.GetProperty("Navigation")->value) {
+			return layer;
+		}
+	}
+
+	return nullptr;
 }
 
 // L09: TODO 7: Implement a method to get the value of a custom property
