@@ -44,11 +44,6 @@ bool Player::Start() {
 	pbody->listener = this;
 	pbody->ctype = ColliderType::PLAYER;
 
-	//Sensor
-	sensorPlayer = Engine::GetInstance().physics.get()->CreateRectangleSensor((int)position.getX(), (int)position.getY() + 10, 10, 10, bodyType::KINEMATIC);
-	sensorPlayer->listener = this;
-	sensorPlayer->ctype = ColliderType::SENSOR;
-
 	return true;
 }
 
@@ -165,9 +160,6 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN  with");
 		break;
-	case ColliderType::SENSOR:
-		LOG("Collision SENSOR with");
-		break;
 	case ColliderType::PLAYER:
 		LOG("Collision PLAYER with");
 		break;
@@ -211,9 +203,6 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 		break;
 	case ColliderType::UNKNOWN:
 		LOG("End Collision UNKNOWN");
-		break;
-	case ColliderType::SENSOR:
-		LOG("End Collision SENSOR");
 		break;
 	default:
 		break;
