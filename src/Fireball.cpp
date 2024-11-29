@@ -49,6 +49,8 @@ bool Fireball::Update(float dt)
 
 	if (stFireball == StateFireball::IDLE)
 		currentAnimation = &idle;
+
+
 	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
 	pbody->body->SetLinearVelocity({ 3.5,0 });
 	b2Transform pbodyPos = pbody->body->GetTransform();
