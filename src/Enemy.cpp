@@ -21,7 +21,7 @@ Enemy::~Enemy() {
 bool Enemy::Awake() {
 	return true;
 }
-
+    
 bool Enemy::Start() {
 
 	//initilize textures
