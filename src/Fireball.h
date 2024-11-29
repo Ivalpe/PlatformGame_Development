@@ -7,6 +7,14 @@
 
 struct SDL_Texture;
 
+enum class StateFireball {
+	IDLE,DIE
+};
+
+enum class DirectionFireball {
+	LEFT, RIGHT
+};
+
 class Fireball : public Entity
 {
 public:
@@ -39,6 +47,9 @@ private:
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle;
+	DirectionFireball df;
+	SDL_RendererFlip flipType;
+	StateFireball stFireball;
 	PhysBody* pbody;
 };
 #pragma once
