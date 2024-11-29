@@ -27,6 +27,7 @@ bool Fireball::Start() {
 	texH = parameters.attribute("h").as_int();
 
 	//Load animations
+	
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	currentAnimation = &idle;
 
@@ -45,8 +46,13 @@ bool Fireball::Start() {
 bool Fireball::Update(float dt)
 {
 
+
+	if (stFireball == StateFireball::IDLE)
+		currentAnimation = &idle;
+
+
 	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
-	pbody->body->SetLinearVelocity({ 10,0 });
+	pbody->body->SetLinearVelocity({ 3.5,0 });
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
