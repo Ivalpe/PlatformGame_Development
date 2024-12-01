@@ -144,6 +144,11 @@ public:
 		return mapData.tileHeight;
 	}
 
+	void ClearListFirecamp() {
+		posFirecamp.clear();
+	}
+
+	std::list<Vector2D*> posFirecamp;
 public:
 	std::string mapFileName;
 	std::string mapPath;
@@ -153,4 +158,5 @@ private:
 	// L06: DONE 1: Declare a variable data of the struct MapData
 	MapData mapData;
 	std::list<PhysBody*> collisions;
+	
 };

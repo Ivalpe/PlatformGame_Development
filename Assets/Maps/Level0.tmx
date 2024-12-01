@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="80" height="46" tilewidth="8" tileheight="8" infinite="0" nextlayerid="7" nextobjectid="47">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="80" height="46" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="48">
  <tileset firstgid="1" name="MapMetadata" tilewidth="8" tileheight="8" tilecount="4" columns="4">
   <grid orientation="orthogonal" width="16" height="16"/>
   <image source="MapMetadata.png" width="32" height="8"/>
@@ -8403,7 +8403,7 @@
    <tile/>
    <tile/>
    <tile/>
-   <tile/>
+   <tile gid="2"/>
    <tile/>
    <tile/>
    <tile/>
@@ -8593,8 +8593,8 @@
    <tile/>
    <tile/>
    <tile/>
-   <tile gid="1073"/>
-   <tile gid="1074"/>
+   <tile/>
+   <tile/>
    <tile/>
    <tile/>
    <tile/>
@@ -11086,7 +11086,7 @@
    <tile gid="168"/>
   </data>
  </layer>
- <objectgroup id="4" name="Capa de Objetos 1">
+ <objectgroup id="4" name="Objects">
   <object id="38" x="0" y="120" width="640" height="248"/>
   <object id="40" x="632" y="40" width="8" height="80">
    <properties>

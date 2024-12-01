@@ -29,6 +29,7 @@ enum class ColliderType {
 	GROUND,
 	WALL,
 	FIREBALL,
+	FIRECAMP,
 	ENEMY,
 	DIE,
 	NEW,

@@ -80,6 +80,10 @@ Entity* EntityManager::CreateEntity(EntityType type)
 		break;
 	case EntityType::FIREBALL:
 		entity = new Fireball();
+		break;
+	case EntityType::FIRECAMP:
+		entity = new Firecamp();
+		break;
 	default:
 		break;
 	}

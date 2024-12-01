@@ -89,11 +89,11 @@
 					</idle>
 				</animations>
 			</fireball>
-			<firecamp texture="Assets/Textures/Firecamp.png" w="16" h="16">
+			<firecamp texture="Assets/Textures/Firecamp.png" x="320" y="100" w="16" h="16">
 				<animations>
-					<off loop="false" speed ="0">
+					<idle loop="false" speed ="0.16">
 						<frame x="0" y="0" w="16" h="16" />
-					</off>
+					</idle>
 					<on loop="true" speed ="0.06">
 						<frame x="0" y="16" w="16" h="16" />
 						<frame x="16" y="16" w="16" h="16" />

@@ -53,7 +53,14 @@ bool Scene::Start()
 {
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
-
+	for (auto firecamp : Engine::GetInstance().map->posFirecamp) {
+		LOG("POS: %f %f", firecamp->getX(), firecamp->getY());
+		Firecamp* fc = (Firecamp*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIRECAMP);
+		fc->SetParameters(configParameters.child("entities").child("firecamp"));
+		fc->SetPosition({ firecamp->getX(), firecamp->getY() });
+		fc->Start();
+		firecampList.push_back(fc);
+	}
 	return true;
 }
 
@@ -109,6 +116,19 @@ bool Scene::Update(float dt)
 			Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
 			enemyList.erase(enemyList.begin() + i);
 			i--;
+		}
+	}
+
+	//Engine::GetInstance().physics.get()->CreateRectangle(firecampList[0]->GetPosition().getX() + 8, firecampList[0]->GetPosition().getY() + 8, 16, 16, bodyType::STATIC);
+
+	//LOG("PLAYER: %f, CAMP: %f", player->GetPosition().getX(), firecampList[0]->GetPosition().getX() - 8);
+	//LOG("PLAYER: %f, CAMP: %f", player->GetPosition().getX(), firecampList[0]->GetPosition().getX() + 8);
+
+	for (auto firecamp : firecampList) {
+		if (firecamp->GetState() == StateFirecamp::IDLE &&
+			player->GetPosition().getX() >= firecamp->GetPosition().getX() - 16 && player->GetPosition().getX() <= firecamp->GetPosition().getX() + 8 &&
+			player->GetPosition().getY() >= firecamp->GetPosition().getY() - 16 && player->GetPosition().getY() <= firecamp->GetPosition().getY() + 8) {
+			firecamp->ActiveFirecamp();
 		}
 	}
 
