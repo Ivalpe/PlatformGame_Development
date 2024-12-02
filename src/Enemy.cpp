@@ -131,6 +131,56 @@ bool Enemy::Update(float dt)
 		pathfinding->DrawPath();
 	}
 
+	if (type == EnemyType::EV_WIZARD) {
+
+		if (!isDying) {
+			actionTimer += dt;
+			idleTimer += dt;
+			b2Vec2 velocity = b2Vec2(0, -GRAVITY_Y);
+			stEnemy = StateEnemy::IDLE;
+
+			if (actionTimer >= idleTimer) {
+				
+				if (stEnemy == StateEnemy::IDLE) {
+					
+					stEnemy = StateEnemy::WALK;
+					de = (rand() % 2 == 0) ? DirectionEnemy::LEFT : DirectionEnemy::RIGHT; 
+					idleTimer = static_cast<float>((rand() % 2) + 2); 
+				}
+				else {
+					
+					stEnemy = StateEnemy::IDLE;
+					idleTimer = static_cast<float>((rand() % 2) + 1); 
+				}
+
+				actionTimer = 0.0f; 
+			}
+			if (stEnemy == StateEnemy::WALK) {
+				if (de == DirectionEnemy::LEFT) {
+					velocity.x = -speed * dt;
+				}
+				else if (de == DirectionEnemy::RIGHT) {
+					velocity.x = speed * dt;
+				}
+			}
+
+			
+			position.setX(position.getX() + METERS_TO_PIXELS(velocity.x));
+
+			
+			stEnemy = (velocity.x != 0) ? StateEnemy::WALK : StateEnemy::IDLE;
+
+		}
+		if (de == DirectionEnemy::LEFT)
+			flipType = SDL_FLIP_HORIZONTAL;
+		else
+			flipType = SDL_FLIP_NONE;
+
+		if (stEnemy == StateEnemy::WALK)
+			currentAnimation = &walk;
+		else if (stEnemy == StateEnemy::IDLE)
+			currentAnimation = &idle;
+	}
 	return true;
 }
 
