@@ -160,7 +160,7 @@ PhysBody* Physics::CreateRectangleSensor(int x, int y, int width, int height, bo
 	// Create our custom PhysBody class
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
-	//b->SetUserData(pbody);
+	b->GetUserData().pointer = (uintptr_t)pbody;
 	pbody->width = width;
 	pbody->height = height;
 
@@ -319,6 +319,10 @@ bool Physics::PostUpdate()
 		}
 	}
 
+	for (PhysBody* physBody : bodiesToDelete) {
+		world->DestroyBody(physBody->body);
+	}
+	bodiesToDelete.clear();
 
 	return ret;
 }
@@ -332,6 +336,10 @@ bool Physics::CleanUp()
 	delete world;
 
 	return true;
+}
+
+void Physics::DeletePhysBody(PhysBody* physBody) {
+	bodiesToDelete.push_back(physBody);
 }
 
 // Callback function to collisions with Box2D

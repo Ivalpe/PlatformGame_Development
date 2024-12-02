@@ -34,10 +34,12 @@ bool Player::Start() {
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	run.LoadAnimations(parameters.child("animations").child("run"));
 	jump.LoadAnimations(parameters.child("animations").child("jump"));
+	jump.LoadAnimations(parameters.child("animations").child("jump"));
 	fall.LoadAnimations(parameters.child("animations").child("fall"));
 	die.LoadAnimations(parameters.child("animations").child("die"));
 	currentAnimation = &idle;
 
+	//Player
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texW / 2, bodyType::DYNAMIC);
 	pbody->listener = this;
 	pbody->ctype = ColliderType::PLAYER;
@@ -72,6 +74,7 @@ bool Player::Update(float dt)
 			stPlayer = StatePlayer::RUN;
 		}
 
+		// Run
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
 			speed = 0.16;
 		}
@@ -126,11 +129,12 @@ bool Player::Update(float dt)
 			currentAnimation = &die;
 
 
-	}else {
+	}
+	else {
 		currentAnimation = &die;
 	}
 
-	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 	return true;
 }
@@ -144,12 +148,31 @@ bool Player::CleanUp()
 
 // L08 TODO 6: Define OnCollision function for the player. 
 void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
+	switch (physA->ctype)
+	{
+	case ColliderType::GROUND:
+		LOG("Collision PLATFORM");
+		isJumping = false;
+		break;
+	case ColliderType::ITEM:
+		LOG("Collision ITEM with");
+		break;
+	case ColliderType::UNKNOWN:
+		LOG("Collision UNKNOWN  with");
+		break;
+	case ColliderType::PLAYER:
+		LOG("Collision PLAYER with");
+		break;
+	default:
+		break;
+	}
+
 	switch (physB->ctype)
 	{
 	case ColliderType::GROUND:
 		LOG("Collision PLATFORM");
-		//reset the jump flag when touching the ground
 		isJumping = false;
+		break;
 	case ColliderType::ITEM:
 		LOG("Collision ITEM");
 		break;
@@ -165,6 +188,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	}
 
+	LOG("-----------------------------------------");
 }
 
 void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)

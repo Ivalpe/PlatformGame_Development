@@ -1,12 +1,14 @@
 {
     "activeFile": "",
     "expandedProjectPaths": [
+        "."
     ],
+    "file.lastUsedOpenFilter": "Todos los archivos (*)",
     "fileStates": {
     },
     "openFiles": [
     ],
-    "project": "Map2D.tiled-project",
+    "project": "MapV2.tiled-project",
     "recentFiles": [
     ]
 }

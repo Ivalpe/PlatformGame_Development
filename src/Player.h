@@ -4,6 +4,7 @@
 #include "SDL2/SDL.h"
 #include "Box2D/Box2D.h"
 #include "Animation.h"
+#include "Fireball.h"
 
 struct SDL_Texture;
 
@@ -79,4 +80,5 @@ public:
 	DirectionPlayer dp;
 	SDL_RendererFlip flipType;
 	StatePlayer stPlayer;
+	std::list<Fireball*> fireballs;
 };

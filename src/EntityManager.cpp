@@ -78,6 +78,8 @@ Entity* EntityManager::CreateEntity(EntityType type)
 	case EntityType::ENEMY:
 		entity = new Enemy();
 		break;
+	case EntityType::FIREBALL:
+		entity = new Fireball();
 	default:
 		break;
 	}
