@@ -25,8 +25,8 @@ bool Firecamp::Start() {
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
-	position.setX(420);
-	position.setY(104);
+	//position.setX(420);
+	//position.setY(104);
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
@@ -58,7 +58,7 @@ bool Firecamp::CleanUp()
 }
 
 void Firecamp::SetPosition(Vector2D pos) {
-	LOG("FIRECAMP SET POSITION: %f %f", pos.getX(), pos.getY());
+	//LOG("FIRECAMP SET POSITION: %f %f", pos.getX(), pos.getY());
 	position.setX(pos.getX() + texW / 2);
 	position.setY(pos.getY() + texH / 2);
 }

@@ -213,7 +213,6 @@ bool Map::Load(std::string path, std::string fileName)
 					//Check if the gid is different from 0 - some tiles are empty
 					if (gid != 0) {
 
-
 						if (gid == 1025) {
 							Vector2D mapCoord = MapToWorld(i, j);
 							PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX() + 8, mapCoord.getY() + 8, 16, 16, STATIC);
@@ -221,7 +220,7 @@ bool Map::Load(std::string path, std::string fileName)
 						}
 						else if (gid == 2) {
 							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
-							posFirecamp.push_back(&mapCoord);
+							posFirecamp.push_back(mapCoord);
 						}
 					}
 				}
@@ -263,6 +262,10 @@ bool Map::Load(std::string path, std::string fileName)
 
 	mapLoaded = ret;
 	return ret;
+}
+
+std::list<Vector2D> Map::GetFirecampList() {
+	return posFirecamp;
 }
 
 // L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions

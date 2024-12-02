@@ -55,42 +55,24 @@ bool Enemy::Start() {
 
 bool Enemy::Update(float dt)
 {
-	/*
-	if (pathfinding->PropagateAStar(MANHATTAN)) {
+
+	if (levelEnemy == Engine::GetInstance().scene.get()->GetActualLevel()) {
+		b2Vec2 velocity = b2Vec2(0, -GRAVITY_Y);
+
+		//Reset
 		Vector2D pos = GetPosition();
 		Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 		pathfinding->ResetPath(tilePos);
-	}
-	*/
 
-	if (levelEnemy == Engine::GetInstance().scene.get()->GetActualLevel()) {
+		while (!pathfinding->PathComplete()) {
+			pathfinding->PropagateAStar(MANHATTAN);
+			pathfinding->DrawPath();
+		}
 
 		// Pathfinding testing inputs
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-			Vector2D pos = GetPosition();
-			Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 			pathfinding->ResetPath(tilePos);
 		}
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN) {
-			pathfinding->PropagateBFS();
-		}
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_J) == KEY_REPEAT &&
-			Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-			pathfinding->PropagateBFS();
-		}
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_DOWN) {
-			pathfinding->PropagateDijkstra();
-		}
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_K) == KEY_REPEAT &&
-			Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-			pathfinding->PropagateDijkstra();
-		}
-
-		// L13: TODO 3:	Add the key inputs to propagate the A* algorithm with different heuristics (Manhattan, Euclidean, Squared)
 
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
 			pathfinding->PropagateAStar(MANHATTAN);
@@ -101,35 +83,28 @@ bool Enemy::Update(float dt)
 			pathfinding->PropagateAStar(MANHATTAN);
 		}
 
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_N) == KEY_DOWN) {
-			pathfinding->PropagateAStar(EUCLIDEAN);
+		if (pathfinding->PathComplete()) {
+			Vector2D posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 3];
+			posBread = Engine::GetInstance().map.get()->WorldToMap(posBread.getX(), posBread.getY());
+			LOG("BREADCRUMBS: %f", posBread.getX());
+			LOG("POSITION: %f", tilePos.getX());
+			if (posBread.getX() <= tilePos.getX()) {
+				velocity.x = -0.1 * dt;
+			}
+			else {
+				velocity.x = 0.1 * dt;
+			}
 		}
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_N) == KEY_REPEAT &&
-			Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-			pathfinding->PropagateAStar(EUCLIDEAN);
-		}
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_M) == KEY_DOWN) {
-			pathfinding->PropagateAStar(SQUARED);
-		}
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_M) == KEY_REPEAT &&
-			Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-			pathfinding->PropagateAStar(SQUARED);
-		}
-
 
 		// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
+		pbody->body->SetLinearVelocity(velocity);
+		
 		b2Transform pbodyPos = pbody->body->GetTransform();
 		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
 		Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
-
-		// Draw pathfinding 
-		pathfinding->DrawPath();
 	}
 
 	return true;

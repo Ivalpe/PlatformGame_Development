@@ -53,11 +53,12 @@ bool Scene::Start()
 {
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
-	for (auto firecamp : Engine::GetInstance().map->posFirecamp) {
-		LOG("POS: %f %f", firecamp->getX(), firecamp->getY());
+	std::list<Vector2D> list = Engine::GetInstance().map->GetFirecampList();
+	for (auto firecamp : list) {
+		//LOG("POS: %f %f", firecamp->getX(), firecamp->getY());
 		Firecamp* fc = (Firecamp*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIRECAMP);
 		fc->SetParameters(configParameters.child("entities").child("firecamp"));
-		fc->SetPosition({ firecamp->getX(), firecamp->getY() });
+		fc->SetPosition({ firecamp.getX(), firecamp.getY() });
 		fc->Start();
 		firecampList.push_back(fc);
 	}

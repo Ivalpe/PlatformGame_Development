@@ -13,6 +13,7 @@ Pathfinding::Pathfinding() {
     tileX = Engine::GetInstance().textures.get()->Load("Assets/Maps/x.png");
     map = Engine::GetInstance().map.get();
     layerNav = map->GetNavigationLayer();
+    path = false;
 
     // Initialize the costSoFar with all elements set to 0
     costSoFar = std::vector<std::vector<int>>(map->GetWidth(), std::vector<int>(map->GetHeight(), 0));
@@ -43,6 +44,7 @@ void Pathfinding::ResetPath(Vector2D pos) {
     visited.clear(); //Clear the visited list
     breadcrumbs.clear(); //Clear the breadcrumbs list
     pathTiles.clear(); //Clear the pathTiles list
+    path = false;
 
     // Inserts the first position in the queue and visited list
     frontier.push(pos); //BFS
@@ -129,6 +131,7 @@ void Pathfinding::DrawPath() {
     for (const auto& pathTile : pathTiles) {
         Vector2D pathTileWorld = map->MapToWorld(pathTile.getX(), pathTile.getY());
         Engine::GetInstance().render.get()->DrawTexture(tileX, SDL_FLIP_NONE, pathTileWorld.getX(), pathTileWorld.getY());
+        path = true;
     }
 
 }
@@ -265,7 +268,7 @@ bool Pathfinding::PropagateAStar(ASTAR_HEURISTICS heuristic) {
     // L13: TODO 2: Adapt Dijkstra algorithm for AStar. Consider the different heuristics
 
     Vector2D playerPos = Engine::GetInstance().scene.get()->GetPlayerPosition();
-    Vector2D playerPosTile = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX(), (int)playerPos.getY());
+    Vector2D playerPosTile = Engine::GetInstance().map.get()->WorldToMap((int)playerPos.getX() + 8, (int)playerPos.getY() + 16);
 
     bool foundDestination = false;
     if (frontierAStar.size() > 0) {
