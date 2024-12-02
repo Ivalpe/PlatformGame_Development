@@ -9,6 +9,7 @@ enum class EntityType
 	ITEM,
 	ENEMY,
 	FIREBALL,
+	FIRECAMP,
 	UNKNOWN
 };
 

@@ -29,8 +29,11 @@ enum class ColliderType {
 	GROUND,
 	WALL,
 	FIREBALL,
+	FIRECAMP,
 	ENEMY,
 	DIE,
+	NEW,
+	LOAD,
 	UNKNOWN
 };
 
@@ -81,6 +84,10 @@ public:
 	void BeginContact(b2Contact* contact);
 	void EndContact(b2Contact* contact);
 	void DeletePhysBody(PhysBody* physBody);
+
+	void DeleteBody(b2Body *body) {
+		world->DestroyBody(body);
+	}
 
 private:
 

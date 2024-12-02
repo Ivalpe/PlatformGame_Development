@@ -53,7 +53,15 @@ bool Scene::Start()
 {
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
-
+	std::list<Vector2D> list = Engine::GetInstance().map->GetFirecampList();
+	for (auto firecamp : list) {
+		//LOG("POS: %f %f", firecamp->getX(), firecamp->getY());
+		Firecamp* fc = (Firecamp*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIRECAMP);
+		fc->SetParameters(configParameters.child("entities").child("firecamp"));
+		fc->SetPosition({ firecamp.getX(), firecamp.getY() });
+		fc->Start();
+		firecampList.push_back(fc);
+	}
 	return true;
 }
 
@@ -66,22 +74,6 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
-	//Make the camera movement independent of framerate
-	float camSpeed = 1;
-
-	/*
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		Engine::GetInstance().render.get()->camera.y -= ceil(camSpeed * dt);
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		Engine::GetInstance().render.get()->camera.y += ceil(camSpeed * dt);
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		Engine::GetInstance().render.get()->camera.x -= ceil(camSpeed * dt);
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		Engine::GetInstance().render.get()->camera.x += ceil(camSpeed * dt);
-		*/
 	if (level != 0) {
 		Engine::GetInstance().render.get()->camera.x = ((player->GetX() * -1) + 200) * 2;
 
@@ -97,10 +89,48 @@ bool Scene::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
 		Fireball* fireball = (Fireball*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALL);
 		fireball->SetParameters(configParameters.child("entities").child("fireball"));
-		fireball->Start();
+		if (player->GetDirection() == DirectionPlayer::LEFT) fireball->Start(true);
+		else fireball->Start(false);
+
 		Vector2D playerPos = player->GetPosition();
-		fireball->SetPosition({ playerPos.getX() + 16, playerPos.getY() + 14 });
+		if (player->GetDirection() == DirectionPlayer::LEFT)
+			fireball->SetPosition({ playerPos.getX() - 8, playerPos.getY() + 14 });
+		else fireball->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
+
 		fireballList.push_back(fireball);
+	}
+
+	// Destroy fireballs collided
+	for (int i = 0; i < fireballList.size(); i++) {
+		if (fireballList[i]->HasCollision()) {
+			Engine::GetInstance().physics->DeleteBody(fireballList[i]->getBody());
+			Engine::GetInstance().entityManager->DestroyEntity(fireballList[i]);
+			fireballList.erase(fireballList.begin() + i);
+			i--;
+		}
+	}
+
+	// Destroy died enemies
+	for (int i = 0; i < enemyList.size(); i++) {
+		if (enemyList[i]->IsDead()) {
+			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
+			Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
+			enemyList.erase(enemyList.begin() + i);
+			i--;
+		}
+	}
+
+	//Engine::GetInstance().physics.get()->CreateRectangle(firecampList[0]->GetPosition().getX() + 8, firecampList[0]->GetPosition().getY() + 8, 16, 16, bodyType::STATIC);
+
+	//LOG("PLAYER: %f, CAMP: %f", player->GetPosition().getX(), firecampList[0]->GetPosition().getX() - 8);
+	//LOG("PLAYER: %f, CAMP: %f", player->GetPosition().getX(), firecampList[0]->GetPosition().getX() + 8);
+
+	for (auto firecamp : firecampList) {
+		if (firecamp->GetState() == StateFirecamp::IDLE &&
+			player->GetPosition().getX() >= firecamp->GetPosition().getX() - 16 && player->GetPosition().getX() <= firecamp->GetPosition().getX() + 8 &&
+			player->GetPosition().getY() >= firecamp->GetPosition().getY() - 16 && player->GetPosition().getY() <= firecamp->GetPosition().getY() + 8) {
+			firecamp->ActiveFirecamp();
+		}
 	}
 
 	return true;
@@ -149,9 +179,8 @@ bool Scene::PostUpdate()
 		ret = false;
 	}
 
-	//Load Level 1 when you are in level 0 and press number 1
-	if (level == 0 && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_1) == KEY_DOWN) {
-		level = 1;
+	if (level == 0 && player->GetLevel() == Level::NEW) {
+		level++;
 		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
 		{
 			if (mapNode.attribute("number").as_int() == level) {
@@ -159,6 +188,7 @@ bool Scene::PostUpdate()
 				break;
 			}
 		}
+		player->SetLevel(Level::DISABLED);
 	}
 
 	return ret;

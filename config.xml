@@ -20,7 +20,7 @@
 			<map path="Assets/Maps/" name="Level1.tmx" number="1"/>
 		</levels>
 		<entities>
-			<player ix="100" iy="80" x="100" y="80" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
+			<player ix="320" iy="100" x="320" y="100" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
 					<idle loop="true" speed="0.06">
 						<frame x="0" y="32" w="16" h="32" />
@@ -133,6 +133,20 @@
 					</idle>
 				</animations>
 			</fireball>
+			<firecamp texture="Assets/Textures/Firecamp.png" x="320" y="100" w="16" h="16">
+				<animations>
+					<idle loop="false" speed ="0.16">
+						<frame x="0" y="0" w="16" h="16" />
+					</idle>
+					<on loop="true" speed ="0.06">
+						<frame x="0" y="16" w="16" h="16" />
+						<frame x="16" y="16" w="16" h="16" />
+						<frame x="32" y="16" w="16" h="16" />
+						<frame x="48" y="16" w="16" h="16" />
+						<frame x="64" y="16" w="16" h="16" />
+					</on>
+				</animations>
+			</firecamp>
 		</entities>
 	</scene>
 </config>

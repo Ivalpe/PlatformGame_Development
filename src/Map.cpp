@@ -107,7 +107,7 @@ bool Map::CleanUp()
 // Load new map
 bool Map::Load(std::string path, std::string fileName)
 {
-	for (const auto& layer : collisions){
+	for (const auto& layer : collisions) {
 		Engine::GetInstance().physics->DeletePhysBody(layer);
 	}
 
@@ -193,6 +193,10 @@ bool Map::Load(std::string path, std::string fileName)
 				pb->ctype = ColliderType::GROUND;
 			else if (p == "DIE")
 				pb->ctype = ColliderType::DIE;
+			else if (p == "NEW")
+				pb->ctype = ColliderType::NEW;
+			else if (p == "LOAD")
+				pb->ctype = ColliderType::LOAD;
 			else
 				pb->ctype = ColliderType::GROUND;
 
@@ -208,10 +212,15 @@ bool Map::Load(std::string path, std::string fileName)
 					int gid = mapLayer->Get(i, j);
 					//Check if the gid is different from 0 - some tiles are empty
 					if (gid != 0) {
+
 						if (gid == 1025) {
 							Vector2D mapCoord = MapToWorld(i, j);
 							PhysBody* c1 = Engine::GetInstance().physics.get()->CreateRectangle(mapCoord.getX() + 8, mapCoord.getY() + 8, 16, 16, STATIC);
 							c1->ctype = ColliderType::GROUND;
+						}
+						else if (gid == 2) {
+							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
+							posFirecamp.push_back(mapCoord);
 						}
 					}
 				}
@@ -253,6 +262,10 @@ bool Map::Load(std::string path, std::string fileName)
 
 	mapLoaded = ret;
 	return ret;
+}
+
+std::list<Vector2D> Map::GetFirecampList() {
+	return posFirecamp;
 }
 
 // L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
