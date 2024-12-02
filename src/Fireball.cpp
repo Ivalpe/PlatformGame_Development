@@ -31,6 +31,7 @@ bool Fireball::Start(bool inv) {
 	//Load animations
 	
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
+	explode.LoadAnimations(parameters.child("animations").child("explode"));
 	currentAnimation = &idle;
 
 	//Add a physics to an item - initialize the physics body
@@ -52,9 +53,9 @@ bool Fireball::Update(float dt)
 	// Add a physics to an item - update the position of the object from the physics.  
 	float speed;
 	if (inverted) 
-		speed = -10; 
+		speed = -3; 
 	else 
-		speed = 10;
+		speed = 3;
 	pbody->body->SetLinearVelocity({ speed,0 });
 
 	if (stFireball == StateFireball::IDLE)
@@ -89,25 +90,14 @@ Vector2D Fireball::GetPosition() {
 }
 
 void Fireball::OnCollision(PhysBody* physA, PhysBody* physB) {
-	switch (physB->ctype)
-	{
-	case ColliderType::GROUND:
-		LOG("Collision PLATFORM");
-		break;
-	case ColliderType::ITEM:
-		LOG("Collision ITEM");
-		break;
-	case ColliderType::UNKNOWN:
-		LOG("Collision UNKNOWN");
-		break;
-	case ColliderType::DIE:
-		LOG("Collision DIE");
-		break;
-	default:
-		break;
-	}
+
+	
+	stFireball = StateFireball::DIE;
+	currentAnimation = &explode;
+	
 
 	col = true;
+
 
 	LOG("-----------------------------------------");
 }

@@ -53,7 +53,7 @@ private:
 	int texW, texH;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
-	Animation idle;
+	Animation idle, explode;
 	DirectionFireball df;
 	SDL_RendererFlip flipType;
 	StateFireball stFireball;

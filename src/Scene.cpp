@@ -9,6 +9,7 @@
 #include "Entity.h"
 #include "EntityManager.h"
 #include "Player.h"
+#include "fireball.h"
 #include "Map.h"
 #include "Item.h"
 #include "Enemy.h"
@@ -120,11 +121,7 @@ bool Scene::Update(float dt)
 		}
 	}
 
-	//Engine::GetInstance().physics.get()->CreateRectangle(firecampList[0]->GetPosition().getX() + 8, firecampList[0]->GetPosition().getY() + 8, 16, 16, bodyType::STATIC);
-
-	//LOG("PLAYER: %f, CAMP: %f", player->GetPosition().getX(), firecampList[0]->GetPosition().getX() - 8);
-	//LOG("PLAYER: %f, CAMP: %f", player->GetPosition().getX(), firecampList[0]->GetPosition().getX() + 8);
-
+	
 	for (auto firecamp : firecampList) {
 		if (firecamp->GetState() == StateFirecamp::IDLE &&
 			player->GetPosition().getX() >= firecamp->GetPosition().getX() - 16 && player->GetPosition().getX() <= firecamp->GetPosition().getX() + 8 &&
