@@ -132,7 +132,7 @@ bool Enemy::Update(float dt)
 	}
 
 	
-	}
+	
 	return true;
 }
 

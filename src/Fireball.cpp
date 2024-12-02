@@ -54,8 +54,8 @@ bool Fireball::Update(float dt)
 	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
 	pbody->body->SetLinearVelocity({ 3.5,0 });
 	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH);
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
@@ -69,7 +69,7 @@ bool Fireball::CleanUp()
 }
 
 void Fireball::SetPosition(Vector2D pos) {
-	pos.setX(pos.getX() + texW / 2);
+	pos.setX(pos.getX());
 	pos.setY(pos.getY() + texH / 2);
 	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
 	pbody->body->SetTransform(bodyPos, 0);
