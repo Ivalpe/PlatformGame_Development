@@ -63,12 +63,12 @@ bool Enemy::Update(float dt)
 		Vector2D pos = GetPosition();
 		Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 		pathfinding->ResetPath(tilePos);
-
+		/*
 		while (!pathfinding->PathComplete()) {
 			pathfinding->PropagateAStar(MANHATTAN);
 			pathfinding->DrawPath();
 		}
-
+		*/
 		// Pathfinding testing inputs
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
 			pathfinding->ResetPath(tilePos);

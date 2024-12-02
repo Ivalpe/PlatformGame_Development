@@ -103,17 +103,17 @@
 						</idle>
 					</animations>
 				</enemy>
-				<enemy name="bat" x="180" y="100" w="16" h="16" texture="Assets/Textures/Enemies.png" gravity="true" level="1">
+				<enemy name="bat" x="180" y="100" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="true" level="1">
 					<animations>
 						<fly loop="true" speed ="0.06">
-							<frame x="0" y="144" w="16" h="16" />
-							<frame x="16" y="144" w="16" h="16" />
-							<frame x="48" y="144" w="16" h="16" />
-							<frame x="80" y="144" w="16" h="16" />
+							<frame x="0" y="160" w="21" h="16" />
+							<frame x="21" y="160" w="21" h="16" />
+							<frame x="42" y="160" w="21" h="16" />
+							<frame x="63" y="160" w="21" h="16" />
 						</fly>
 						<idle loop="true" speed ="0.06">
-							<frame x="0" y="160" w="16" h="16" />
-							<frame x="16" y="160" w="16" h="16" />
+							<frame x="0" y="176" w="21" h="16" />
+							<frame x="21" y="176" w="21" h="16" />
 							
 						</idle>
 					</animations>
@@ -133,7 +133,7 @@
 					</idle>
 				</animations>
 			</fireball>
-			<firecamp texture="Assets/Textures/Firecamp.png" x="320" y="100" w="16" h="16">
+			<firecamp texture="Assets/Textures/Firecamp.png" w="16" h="16">
 				<animations>
 					<idle loop="false" speed ="0.16">
 						<frame x="0" y="0" w="16" h="16" />
@@ -147,6 +147,13 @@
 					</on>
 				</animations>
 			</firecamp>
+			<poison texture="Assets/Textures/Poison.png" w="16" h="32">
+				<animations>
+					<idle loop="false" speed ="0.16">
+						<frame x="0" y="0" w="16" h="32" />
+					</idle>
+				</animations>
+			</poison>
 		</entities>
 	</scene>
 </config>

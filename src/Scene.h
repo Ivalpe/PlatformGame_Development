@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Firecamp.h"
+#include "Poison.h"
 
 struct SDL_Texture;
 
@@ -32,8 +33,12 @@ public:
 	void LoadState();
 	void SaveState();
 
+	void CreateEvents();
+
 	// Called before all Updates
 	bool PostUpdate();
+
+	void CreateEnemies();
 
 	// Called before quitting
 	bool CleanUp();
@@ -50,5 +55,6 @@ private:
 	std::vector<Enemy*> enemyList;
 	std::vector<Fireball*> fireballList;
 	std::vector<Firecamp*> firecampList;
+	std::vector<Poison*> poisonList;
 	int level;
 };

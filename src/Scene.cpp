@@ -39,12 +39,7 @@ bool Scene::Awake()
 	Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 	item->position = Vector2D(200, 672);
 
-	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
-	{
-		Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
-		enemy->SetParameters(enemyNode);
-		enemyList.push_back(enemy);
-	}
+	CreateEnemies();
 	return ret;
 }
 
@@ -53,15 +48,7 @@ bool Scene::Start()
 {
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
-	std::list<Vector2D> list = Engine::GetInstance().map->GetFirecampList();
-	for (auto firecamp : list) {
-		//LOG("POS: %f %f", firecamp->getX(), firecamp->getY());
-		Firecamp* fc = (Firecamp*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIRECAMP);
-		fc->SetParameters(configParameters.child("entities").child("firecamp"));
-		fc->SetPosition({ firecamp.getX(), firecamp.getY() });
-		fc->Start();
-		firecampList.push_back(fc);
-	}
+	CreateEvents();
 	return true;
 }
 
@@ -120,11 +107,7 @@ bool Scene::Update(float dt)
 		}
 	}
 
-	//Engine::GetInstance().physics.get()->CreateRectangle(firecampList[0]->GetPosition().getX() + 8, firecampList[0]->GetPosition().getY() + 8, 16, 16, bodyType::STATIC);
-
-	//LOG("PLAYER: %f, CAMP: %f", player->GetPosition().getX(), firecampList[0]->GetPosition().getX() - 8);
-	//LOG("PLAYER: %f, CAMP: %f", player->GetPosition().getX(), firecampList[0]->GetPosition().getX() + 8);
-
+	// Active firecamp if player touch it
 	for (auto firecamp : firecampList) {
 		if (firecamp->GetState() == StateFirecamp::IDLE &&
 			player->GetPosition().getX() >= firecamp->GetPosition().getX() - 16 && player->GetPosition().getX() <= firecamp->GetPosition().getX() + 8 &&
@@ -166,6 +149,39 @@ void Scene::SaveState() {
 	saveFile.save_file("config.xml");
 }
 
+void Scene::CreateEvents() {
+	std::list<Vector2D> list;
+
+	//Firecamps
+	for (int i = 0; i < firecampList.size();) {
+		Engine::GetInstance().entityManager->DestroyEntity(firecampList[i]);
+		firecampList.erase(firecampList.begin());
+	}
+	list = Engine::GetInstance().map->GetFirecampList();
+	for (auto firecamp : list) {
+		Firecamp* fc = (Firecamp*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIRECAMP);
+		fc->SetParameters(configParameters.child("entities").child("firecamp"));
+		fc->SetPosition({ firecamp.getX(), firecamp.getY() });
+		fc->Start();
+		firecampList.push_back(fc);
+	}
+
+	//Poison
+	for (int i = 0; i < poisonList.size();) {
+		Engine::GetInstance().entityManager->DestroyEntity(poisonList[i]);
+		poisonList.erase(poisonList.begin());
+	}
+	
+	list = Engine::GetInstance().map->GetPoisonList();
+	for (auto poison : list) {
+		Poison* p = (Poison*)Engine::GetInstance().entityManager->CreateEntity(EntityType::POISON);
+		p->SetParameters(configParameters.child("entities").child("poison"));
+		p->SetPosition({ poison.getX(), poison.getY() });
+		p->Start();
+		poisonList.push_back(p);
+	}
+}
+
 // Called each loop iteration
 bool Scene::PostUpdate()
 {
@@ -185,6 +201,8 @@ bool Scene::PostUpdate()
 		{
 			if (mapNode.attribute("number").as_int() == level) {
 				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				CreateEnemies();
+				CreateEvents();
 				break;
 			}
 		}
@@ -192,6 +210,19 @@ bool Scene::PostUpdate()
 	}
 
 	return ret;
+}
+
+void Scene::CreateEnemies() {
+	enemyList.clear();
+	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
+	{
+		if (level == enemyNode.attribute("level").as_int()) {
+			Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
+			enemy->SetParameters(enemyNode);
+			enemy->Start();
+			enemyList.push_back(enemy);
+		}
+	}
 }
 
 // Called before quitting
@@ -202,6 +233,8 @@ bool Scene::CleanUp()
 	SDL_DestroyTexture(img);
 	enemyList.clear();
 	fireballList.clear();
+	firecampList.clear();
+	poisonList.clear();
 
 	return true;
 }
