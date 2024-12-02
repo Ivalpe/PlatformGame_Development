@@ -9,13 +9,13 @@ struct SDL_Texture;
 
 #define ENEMY_SPEED			1
 
-//enum class StateEnemy {
-//	IDLE, WALKING, DIE
-//};
+enum class StateEnemy {
+	IDLE, WALK, DIE
+};
 
-//enum class DirectionEnemy {
-//	LEFT, RIGHT
-//};
+enum class DirectionEnemy {
+	LEFT, RIGHT
+};
 
 enum class EnemyType { 
 	EV_WIZARD, BAT, KILLERBUNNY, 
@@ -48,7 +48,7 @@ public:
 	void ResetPath();
 
 public:
-
+	float speed = 0;
 	void MoveY();
 	void MoveX();
 	EnemyType getType() const;
@@ -60,18 +60,22 @@ private:
 	SDL_Texture* texture;
 	const char* texturePath;
 	int texW, texH;
+	bool isDying = false;
 	
 	EnemyType type;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle, walk;
+	DirectionEnemy de;
+	SDL_RendererFlip flipType;
+	StateEnemy stEnemy;
 
 	PhysBody* pbody;
 	Pathfinding* pathfinding;
 
-	float moveTimer = 0.0f;       
-	float idleDuration = 2.0f;   
-	float moveDuration = 3.0f;   
+	float idleTimer = 6.0f;       
+	float actionTimer = 0.0f;  
+	float actionDuration = 2.0f;
 	bool isIdle = false;         
 	int moveDirection = true;
 	

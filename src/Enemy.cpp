@@ -131,6 +131,8 @@ bool Enemy::Update(float dt)
 		pathfinding->DrawPath();
 	}
 
+	
+	}
 	return true;
 }
 
