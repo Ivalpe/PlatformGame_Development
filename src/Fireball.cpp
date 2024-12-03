@@ -68,6 +68,8 @@ bool Fireball::Update(float dt)
 	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 
+	/*
+	}*/
 	return true;
 }
 
@@ -91,6 +93,12 @@ Vector2D Fireball::GetPosition() {
 
 void Fireball::OnCollision(PhysBody* physA, PhysBody* physB) {
 
+	if (stFireball == StateFireball::DIE) {
+		explosionTimer += 1.0f;
+		if (explosionTimer >= explosionDuration) {
+			col = true;
+		}
+	}
 
 
 	LOG("-----------------------------------------");
