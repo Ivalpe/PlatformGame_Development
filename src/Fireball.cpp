@@ -51,12 +51,6 @@ bool Fireball::Update(float dt)
 {
 
 	// Add a physics to an item - update the position of the object from the physics.  
-	float speed;
-	if (inverted) 
-		speed = -3; 
-	else 
-		speed = 3;
-	pbody->body->SetLinearVelocity({ speed,0 });
 
 	if (stFireball != StateFireball::DIE) {
 		float speed = inverted ? -3.0f : 3.0f;  
