@@ -29,7 +29,10 @@ public:
 	}
 
 	bool HasFinished() {
-		return !loop && !pingpong && loopCount > 0;
+		if (loop || pingpong) {
+			return false; 
+		}
+		return currentFrame >= totalFrames - 1 && loopCount > 0; 
 	}
 
 	void Update() {
