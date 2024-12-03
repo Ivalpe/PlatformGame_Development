@@ -58,6 +58,12 @@ bool Fireball::Update(float dt)
 		speed = 3;
 	pbody->body->SetLinearVelocity({ speed,0 });
 
+	if (stFireball != StateFireball::DIE) {
+		float speed = inverted ? -3.0f : 3.0f;  
+		pbody->body->SetLinearVelocity({ speed, 0 });
+	}
+
+
 	if (stFireball == StateFireball::IDLE)
 		currentAnimation = &idle;
 
@@ -91,12 +97,6 @@ Vector2D Fireball::GetPosition() {
 
 void Fireball::OnCollision(PhysBody* physA, PhysBody* physB) {
 
-	
-	stFireball = StateFireball::DIE;
-	currentAnimation = &explode;
-	
-
-	col = true;
 
 
 	LOG("-----------------------------------------");

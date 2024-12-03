@@ -58,6 +58,8 @@ private:
 	SDL_RendererFlip flipType;
 	StateFireball stFireball;
 	PhysBody* pbody;
+	float explosionTimer = 0.0f;  
+	float explosionDuration = 1.0f;
 	bool col;
 	bool inverted;
 };
