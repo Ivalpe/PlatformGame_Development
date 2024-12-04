@@ -71,7 +71,7 @@ bool Fireball::Update(float dt)
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - texW / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH);
 
-	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	Engine::GetInstance().render.get()->DrawTexture(texture, inverted ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 
 
