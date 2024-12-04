@@ -52,6 +52,8 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
+	Engine::GetInstance().audio->PlayMusic("Assets\Audio\Fx\fireball_land.mp3");
+	Engine::GetInstance().audio->PlayMusic("Assets\Audio\Fx\magic-fireball.wav.mp3");
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
 	std::list<Vector2D> list = Engine::GetInstance().map->GetFirecampList();
