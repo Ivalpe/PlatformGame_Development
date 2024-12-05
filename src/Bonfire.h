@@ -23,6 +23,10 @@ public:
 
 	void ActiveFirecamp();
 
+	void DisableFirecamp();
+
+	bool IsActive();
+
 	bool Update(float dt);
 
 	bool CleanUp();
@@ -54,5 +58,6 @@ private:
 	Animation idle, on;
 	PhysBody* pbody;
 	StateFirecamp sf;
+	bool activeFirecamp;
 };
 #pragma once

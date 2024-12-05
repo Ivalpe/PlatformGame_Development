@@ -16,11 +16,11 @@
 	</window>
 	<scene>
 		<levels>
-			<map path="Assets/Maps/" name="Level0.tmx" number="0"/>
-			<map path="Assets/Maps/" name="Level1.tmx" number="1"/>
+			<map path="Assets/Maps/" name="Level0.tmx" number="0" />
+			<map path="Assets/Maps/" name="Level1.tmx" number="1" />
 		</levels>
 		<entities>
-			<player ix="320" iy="100" x="320" y="100" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
+			<player ix="320" iy="100" x="912" y="136" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
 					<idle loop="true" speed="0.06">
 						<frame x="0" y="32" w="16" h="32" />
@@ -63,11 +63,11 @@
 			<enemies>
 				<enemy name="evilwizard" x="150" y="100" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1">
 					<animations>
-						<idle loop="true" speed ="0.06">
+						<idle loop="true" speed="0.06">
 							<frame x="0" y="96" w="16" h="32" />
 							<frame x="16" y="96" w="16" h="32" />
 						</idle>
-						<idle loop="true" speed ="0.12">
+						<idle loop="true" speed="0.12">
 							<frame x="0" y="64" w="16" h="32" />
 							<frame x="16" y="64" w="16" h="32" />
 							<frame x="32" y="64" w="16" h="32" />
@@ -77,11 +77,11 @@
 				</enemy>
 				<enemy name="evilwizard" x="180" y="100" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1">
 					<animations>
-						<idle loop="true" speed ="0.06">
+						<idle loop="true" speed="0.06">
 							<frame x="0" y="96" w="16" h="32" />
 							<frame x="16" y="96" w="16" h="32" />
 						</idle>
-						<idle loop="true" speed ="0.12">
+						<idle loop="true" speed="0.12">
 							<frame x="0" y="64" w="16" h="32" />
 							<frame x="16" y="64" w="16" h="32" />
 							<frame x="32" y="64" w="16" h="32" />
@@ -91,11 +91,11 @@
 				</enemy>
 				<enemy name="evilwizard" x="220" y="100" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1">
 					<animations>
-						<idle loop="true" speed ="0.06">
+						<idle loop="true" speed="0.06">
 							<frame x="0" y="96" w="16" h="32" />
 							<frame x="16" y="96" w="16" h="32" />
 						</idle>
-						<idle loop="true" speed ="0.12">
+						<idle loop="true" speed="0.12">
 							<frame x="0" y="64" w="16" h="32" />
 							<frame x="16" y="64" w="16" h="32" />
 							<frame x="32" y="64" w="16" h="32" />
@@ -105,51 +105,44 @@
 				</enemy>
 				<enemy name="bat" x="180" y="100" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="true" level="1">
 					<animations>
-						<fly loop="true" speed ="0.06">
+						<fly loop="true" speed="0.06">
 							<frame x="0" y="160" w="21" h="16" />
 							<frame x="21" y="160" w="21" h="16" />
 							<frame x="42" y="160" w="21" h="16" />
 							<frame x="63" y="160" w="21" h="16" />
 						</fly>
-						<idle loop="true" speed ="0.06">
+						<idle loop="true" speed="0.06">
 							<frame x="0" y="176" w="21" h="16" />
 							<frame x="21" y="176" w="21" h="16" />
-							
 						</idle>
 					</animations>
 				</enemy>
 			</enemies>
 			<fireball texture="Assets/Textures/Fireball.png" w="8" h="8">
 				<animations>
-					<idle loop="true" speed ="0.12">
-						
+					<idle loop="true" speed="0.12">
 						<frame x="0" y="32" w="16" h="16" />
 						<frame x="16" y="32" w="16" h="16" />
 						<frame x="32" y="32" w="16" h="16" />
 						<frame x="48" y="32" w="16" h="16" />
 						<frame x="64" y="32" w="16" h="16" />
-						
-						
 					</idle>
-					<explode loop="false" speed ="0.16">
-
+					<explode loop="false" speed="0.16">
 						<frame x="0" y="48" w="16" h="16" />
 						<frame x="16" y="48" w="16" h="16" />
 						<frame x="32" y="48" w="16" h="16" />
 						<frame x="48" y="48" w="16" h="16" />
 						<frame x="64" y="48" w="16" h="16" />
 						<frame x="80" y="48" w="16" h="16" />
-
-
 					</explode>
 				</animations>
 			</fireball>
 			<firecamp texture="Assets/Textures/Firecamp.png" w="16" h="16">
 				<animations>
-					<idle loop="false" speed ="0.16">
+					<idle loop="false" speed="0.16">
 						<frame x="0" y="0" w="16" h="16" />
 					</idle>
-					<on loop="true" speed ="0.06">
+					<on loop="true" speed="0.06">
 						<frame x="0" y="16" w="16" h="16" />
 						<frame x="16" y="16" w="16" h="16" />
 						<frame x="32" y="16" w="16" h="16" />
@@ -160,7 +153,7 @@
 			</firecamp>
 			<poison texture="Assets/Textures/Poison.png" w="8" h="32">
 				<animations>
-					<idle loop="true" speed ="0.16">
+					<idle loop="true" speed="0.16">
 						<frame x="0" y="0" w="8" h="32" />
 						<frame x="8" y="0" w="8" h="32" />
 						<frame x="16" y="0" w="8" h="32" />

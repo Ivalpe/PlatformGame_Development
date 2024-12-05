@@ -21,6 +21,7 @@ bool Bonfire::Awake() {
 
 bool Bonfire::Start() {
 
+	activeFirecamp = false;
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	texW = parameters.attribute("w").as_int();
@@ -40,6 +41,15 @@ bool Bonfire::Start() {
 void Bonfire::ActiveFirecamp() {
 	sf = StateFirecamp::ON;
 	currentAnimation = &on;
+	activeFirecamp = true;
+}
+
+void Bonfire::DisableFirecamp() {
+	activeFirecamp = false;
+}
+
+bool Bonfire::IsActive() {
+	return activeFirecamp;
 }
 
 bool Bonfire::Update(float dt)

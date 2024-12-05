@@ -39,7 +39,6 @@ bool Enemy::Start() {
 	//Add a physics to an item - initialize the physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY() + texW, texW / 2, bodyType::DYNAMIC);
 
-	//Add a physics to an item - initialize the physics body
 	sensor = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX(), (int)position.getY() + texW, texW * 4, bodyType::KINEMATIC);
 	sensor->ctype = ColliderType::SENSOR;
 	sensor->listener = this;
@@ -61,60 +60,47 @@ bool Enemy::Start() {
 bool Enemy::Update(float dt)
 {
 
-	if (levelEnemy == Engine::GetInstance().scene.get()->GetActualLevel()) {
-		b2Vec2 velocity = b2Vec2(0, -GRAVITY_Y);
+	b2Vec2 velocity = b2Vec2(0, -GRAVITY_Y);
 
-		//Reset
-		Vector2D pos = GetPosition();
-		Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
-		pathfinding->ResetPath(tilePos);
-		/*
-		while (!pathfinding->PathComplete()) {
-			pathfinding->PropagateAStar(MANHATTAN);
-			pathfinding->DrawPath();
-		}
-		*/
-		// Pathfinding testing inputs
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-			pathfinding->ResetPath(tilePos);
-		}
+	//Reset
+	Vector2D pos = GetPosition();
+	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
+	pathfinding->ResetPath(tilePos);
 
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_B) == KEY_DOWN) {
-			pathfinding->PropagateAStar(MANHATTAN);
-		}
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_B) == KEY_REPEAT &&
-			Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-			pathfinding->PropagateAStar(MANHATTAN);
-		}
-
-		if (pathfinding->PathComplete()) {
-			Vector2D posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 3];
-			posBread = Engine::GetInstance().map.get()->WorldToMap(posBread.getX(), posBread.getY());
-			LOG("BREADCRUMBS: %f", posBread.getX());
-			LOG("POSITION: %f", tilePos.getX());
-			if (posBread.getX() <= tilePos.getX()) {
-				velocity.x = -0.1 * dt;
-			}
-			else {
-				velocity.x = 0.1 * dt;
-			}
-		}
-
-		// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
-		pbody->body->SetLinearVelocity(velocity);
-
-		b2Transform pbodyPos = pbody->body->GetTransform();
-		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
-
-		Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
-		currentAnimation->Update();
-
-		b2Vec2 enemyPos = pbody->body->GetPosition();
-		sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
+	bool found = false;
+	while (!found) {
+		found = pathfinding->PropagateAStar(MANHATTAN);
+		pathfinding->DrawPath();
 	}
 
+	int sizeBread = pathfinding->breadcrumbs.size();
+	Vector2D posBread;
+	if (sizeBread >= 2)
+		posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 2];
+	else
+		posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 1];
+	LOG("BREADCRUMBS: %f", posBread.getX());
+	LOG("POSITION: %f", tilePos.getX());
+	if (posBread.getX() <= tilePos.getX()) {
+		velocity.x = -0.1 * dt;
+	}
+	else {
+		velocity.x = 0.1 * dt;
+
+	}
+
+	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
+	pbody->body->SetLinearVelocity(velocity);
+
+	b2Transform pbodyPos = pbody->body->GetTransform();
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+
+	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
+	currentAnimation->Update();
+
+	b2Vec2 enemyPos = pbody->body->GetPosition();
+	sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
 
 
 	return true;
@@ -170,10 +156,6 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	default:
 		break;
 	}
-
-
-
-	LOG("-----------------------------------------");
 }
 
 bool Enemy::IsDead() {

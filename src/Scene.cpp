@@ -68,8 +68,8 @@ bool Scene::Update(float dt)
 		if (Engine::GetInstance().render.get()->camera.x >= 0)
 			Engine::GetInstance().render.get()->camera.x = 0;
 
-		if (Engine::GetInstance().render.get()->camera.x <= -448)
-			Engine::GetInstance().render.get()->camera.x = -448;
+		if (Engine::GetInstance().render.get()->camera.x <= Engine::GetInstance().map.get()->GetWidth() * 8 * -1)
+			Engine::GetInstance().render.get()->camera.x = Engine::GetInstance().map.get()->GetWidth() * 8 * -1;
 
 	}
 
@@ -118,6 +118,11 @@ bool Scene::Update(float dt)
 		}
 	}
 
+	//When player dies, dont move the hitbox
+	if (player->GetState() == StatePlayer::DIE) {
+		player->pbody->body->SetLinearVelocity({ 0,0 });
+	}
+
 	return true;
 }
 
@@ -130,8 +135,8 @@ void Scene::LoadState() {
 	}
 
 	Vector2D posPlayer;
-	posPlayer.setX(loadFile.child("config").child("scene").child("entities").child("player").attribute("ix").as_int());
-	posPlayer.setY(loadFile.child("config").child("scene").child("entities").child("player").attribute("iy").as_int());
+	posPlayer.setX(loadFile.child("config").child("scene").child("entities").child("player").attribute("x").as_int());
+	posPlayer.setY(loadFile.child("config").child("scene").child("entities").child("player").attribute("y").as_int());
 
 	player->SetPosition(posPlayer);
 }
@@ -144,9 +149,12 @@ void Scene::SaveState() {
 		LOG("Error");
 	}
 
-	Vector2D playerPos = player->GetPosition();
-	saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(playerPos.getX());
-	saveFile.child("config").child("scene").child("entities").child("player").attribute("y").set_value(playerPos.getY());
+	for (auto firecamp : firecampList) {
+		if (firecamp->IsActive()) {
+			saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(firecamp->GetPosition().getX());
+			saveFile.child("config").child("scene").child("entities").child("player").attribute("y").set_value(firecamp->GetPosition().getY());
+		}
+	}
 
 	saveFile.save_file("config.xml");
 }
@@ -173,7 +181,7 @@ void Scene::CreateEvents() {
 		Engine::GetInstance().entityManager->DestroyEntity(poisonList[i]);
 		poisonList.erase(poisonList.begin());
 	}
-	
+
 	list = Engine::GetInstance().map->GetPoisonList();
 	for (auto poison : list) {
 		Poison* p = (Poison*)Engine::GetInstance().entityManager->CreateEntity(EntityType::POISON);
@@ -205,6 +213,20 @@ bool Scene::PostUpdate()
 				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
 				CreateEnemies();
 				CreateEvents();
+				break;
+			}
+		}
+		player->SetLevel(Level::DISABLED);
+	}
+	else if (level == 0 && player->GetLevel() == Level::LOAD) {
+		level++;
+		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
+		{
+			if (mapNode.attribute("number").as_int() == level) {
+				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				CreateEnemies();
+				CreateEvents();
+				LoadState();
 				break;
 			}
 		}
