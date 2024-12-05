@@ -13,9 +13,12 @@ class Audio : public Module
 public:
 
 	Audio();
-
+	bool active;  
+	std::unordered_map<std::string, Mix_Chunk*> namedFx;
 	// Destructor
 	virtual ~Audio();
+
+	void LoadFxFromXML(pugi::xml_node fxNode);
 
 	// Called before render is available
 	bool Awake();
@@ -26,14 +29,20 @@ public:
 	// Play a music file
 	bool PlayMusic(const char* path, float fadeTime = DEFAULT_MUSIC_FADE_TIME);
 
-	// Load a WAV in memory
-	int LoadFx(const char* path);
+	 Load a WAV in memory
+	//int LoadFx(const char* path);
 
-	// Play a previously loaded WAV
-	bool PlayFx(int fx, int repeat = 0);
+	 Play a previously loaded WAV
+	//bool PlayFx(int fx, int repeat = 0);
+
+
+
+	//int LoadFx(const char* path, const std::string& name);  
+	//bool PlayFx(int id,const std::string& name, int repeat = 0);
 
 private:
 
 	_Mix_Music* music;
 	std::list<Mix_Chunk*> fx;
+	//std::map<std::string, Mix_Chunk*> namedFx;
 };

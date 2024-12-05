@@ -159,5 +159,14 @@
 				</animations>
 			</firecamp>
 		</entities>
+		<Audio>
+			<Fx>
+				<sound name="fireball_land" path="Assets/Audio/Fx/fireball_land.wav" />
+				<sound name="magic_fireball" path="Assets/Audio/Fx/magic-fireball.wav" />
+			</Fx>
+			<OST>
+				
+			</OST>
+		</Audio>
 	</scene>
 </config>
