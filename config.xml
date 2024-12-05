@@ -165,7 +165,8 @@
 				<sound name="magic_fireball" path="Assets/Audio/Fx/magic-fireball.wav" />
 			</Fx>
 			<OST>
-				
+				<sound name="fireball_land" path="Assets/Audio/Music/Character_Config.mp3" />
+				<sound name="fireball_land" path="Assets/Audio/Music/Cinder.mp3" />
 			</OST>
 		</Audio>
 	</scene>

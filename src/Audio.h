@@ -1,48 +1,40 @@
 #pragma once
 
-#include "Module.h"
 #include "SDL2/SDL_mixer.h"
-#include <list>
+#include "pugixml.hpp"
+#include <string>
+#include <unordered_map>
 
-#define DEFAULT_MUSIC_FADE_TIME 2.0f
-
-struct _Mix_Music;
-
-class Audio : public Module
-{
+class Sound {
 public:
-
-	Audio();
-	bool active;  
-	std::unordered_map<std::string, Mix_Chunk*> namedFx;
-	// Destructor
-	virtual ~Audio();
-
-	void LoadFxFromXML(pugi::xml_node fxNode);
-
-	// Called before render is available
-	bool Awake();
-
-	// Called before quitting
-	bool CleanUp();
-
-	// Play a music file
-	bool PlayMusic(const char* path, float fadeTime = DEFAULT_MUSIC_FADE_TIME);
-
-	 Load a WAV in memory
-	//int LoadFx(const char* path);
-
-	 Play a previously loaded WAV
-	//bool PlayFx(int fx, int repeat = 0);
-
-
-
-	//int LoadFx(const char* path, const std::string& name);  
-	//bool PlayFx(int id,const std::string& name, int repeat = 0);
+    enum class SoundType {
+        FX,     // Efecto de sonido
+        MUSIC   // Música
+    };
 
 private:
+    std::string name;         // Nombre del sonido
+    std::string path;         // Ruta del archivo
+    SoundType type;           // Tipo de sonido (FX o MUSIC)
+    Mix_Chunk* chunk = nullptr;   // Para efectos de sonido
+    Mix_Music* music = nullptr;  // Para música
 
-	_Mix_Music* music;
-	std::list<Mix_Chunk*> fx;
-	//std::map<std::string, Mix_Chunk*> namedFx;
+public:
+    Sound() = default;
+    ~Sound();
+
+    // Cargar sonido desde un nodo XML
+    void LoadFromXML(pugi::xml_node soundNode);
+
+    // Reproducir el sonido
+    bool Play(int loops = 0) const;
+
+    // Detener la música (válido solo para OST)
+    static void Stop();
+
+    // Pausar la música (válido solo para OST)
+    static void Pause();
+
+    // Reanudar la música pausada (válido solo para OST)
+    static void Resume();
 };
