@@ -1,5 +1,5 @@
 #include "Audio.h"
-#include "Log.h"  // Suponiendo que tienes una función de log
+#include "Log.h"  
 
 Sound::~Sound() {
     if (chunk) Mix_FreeChunk(chunk);

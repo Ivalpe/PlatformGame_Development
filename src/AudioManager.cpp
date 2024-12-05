@@ -3,12 +3,12 @@
 
 class AudioManager {
 public:
-    std::vector<Audio> sounds;
+    std::vector<Sound> sounds;
 
-    // Cargar sonidos desde el XML
+    
     void LoadSoundsFromXML(pugi::xml_node soundNode) {
         for (pugi::xml_node node = soundNode.child("sound"); node; node = node.next_sibling("sound")) {
-            Audio sound;
+            Sound sound;
             sound.LoadFromXML(node);
             sounds.push_back(sound);
         }
@@ -27,16 +27,16 @@ public:
 
     // Detener música
     void StopMusic() const {
-        Audio::Stop();
+        Sound::Stop();
     }
 
     // Pausar música
     void PauseMusic() const {
-        Audio::Pause();
+        Sound::Pause();
     }
 
     // Reanudar música
     void ResumeMusic() const {
-        Audio::Resume();
+        Sound::Resume();
     }
 };
