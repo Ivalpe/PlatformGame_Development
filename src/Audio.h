@@ -11,13 +11,13 @@ public:
         FX,     
         MUSIC   
     };
-
-private:
     std::string name;        
     std::string path;         
     SoundType type;           
     Mix_Chunk* chunk = nullptr;  
     Mix_Music* music = nullptr; 
+private:
+    
 
 public:
     Sound() = default;

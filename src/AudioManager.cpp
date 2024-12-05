@@ -21,7 +21,7 @@ public:
                 return sound.Play(loops);
             }
         }
-        LOG("Sound %s not found!", soundName.c_str());
+        
         return false;
     }
 
