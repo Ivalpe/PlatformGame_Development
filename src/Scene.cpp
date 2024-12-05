@@ -9,6 +9,7 @@
 #include "Entity.h"
 #include "EntityManager.h"
 #include "Player.h"
+#include "fireball.h"
 #include "Map.h"
 #include "Item.h"
 #include "Enemy.h"

@@ -121,7 +121,7 @@
 			</enemies>
 			<fireball texture="Assets/Textures/Fireball.png" w="8" h="8">
 				<animations>
-					<idle loop="true" speed ="0.1">
+					<idle loop="true" speed ="0.12">
 						
 						<frame x="0" y="32" w="16" h="16" />
 						<frame x="16" y="32" w="16" h="16" />
@@ -131,6 +131,17 @@
 						
 						
 					</idle>
+					<explode loop="false" speed ="0.16">
+
+						<frame x="0" y="48" w="16" h="16" />
+						<frame x="16" y="48" w="16" h="16" />
+						<frame x="32" y="48" w="16" h="16" />
+						<frame x="48" y="48" w="16" h="16" />
+						<frame x="64" y="48" w="16" h="16" />
+						<frame x="80" y="48" w="16" h="16" />
+
+
+					</explode>
 				</animations>
 			</fireball>
 			<firecamp texture="Assets/Textures/Firecamp.png" w="16" h="16">
