@@ -66,7 +66,6 @@ Entity* EntityManager::CreateEntity(EntityType type)
 {
 	Entity* entity = nullptr; 
 
-	//L04: TODO 3a: Instantiate entity according to the type and add the new entity to the list of Entities
 	switch (type)
 	{
 	case EntityType::PLAYER:
@@ -81,8 +80,11 @@ Entity* EntityManager::CreateEntity(EntityType type)
 	case EntityType::FIREBALL:
 		entity = new Fireball();
 		break;
-	case EntityType::FIRECAMP:
-		entity = new Firecamp();
+	case EntityType::BONFIRE:
+		entity = new Bonfire();
+		break;
+	case EntityType::POISON:
+		entity = new Poison();
 		break;
 	default:
 		break;

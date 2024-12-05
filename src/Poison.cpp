@@ -8,6 +8,7 @@
 #include "Log.h"
 #include "Physics.h"
 #include "Map.h"
+#include <random>
 
 Poison::Poison() : Entity(EntityType::POISON) {
 }
@@ -31,8 +32,18 @@ bool Poison::Start() {
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	currentAnimation = &idle;
 
+	//Random number between 0 and 12
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> dist(0, 12);
+
+	//Random Frame
+	currentAnimation->SetFrame(dist(gen));
+
 	//Add a physics to an item - initialize the physics body
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::STATIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), 8, 16, bodyType::STATIC);
+	position.setX(METERS_TO_PIXELS((int)position.getX()));
+	position.setY(METERS_TO_PIXELS((int)position.getY()));
 
 	//Assign collider type
 	pbody->ctype = ColliderType::DIE;
@@ -51,7 +62,7 @@ bool Poison::Update(float dt)
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH);
 
-	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX() + 8, (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 
 	return true;

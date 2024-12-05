@@ -4,7 +4,7 @@
 #include "Module.h"
 #include "Player.h"
 #include "Enemy.h"
-#include "Firecamp.h"
+#include "Bonfire.h"
 #include "Poison.h"
 
 struct SDL_Texture;
@@ -54,7 +54,7 @@ private:
 	Player* player;
 	std::vector<Enemy*> enemyList;
 	std::vector<Fireball*> fireballList;
-	std::vector<Firecamp*> firecampList;
+	std::vector<Bonfire*> firecampList;
 	std::vector<Poison*> poisonList;
 	int level;
 };

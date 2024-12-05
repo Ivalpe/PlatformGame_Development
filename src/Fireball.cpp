@@ -107,6 +107,7 @@ void Fireball::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	}
 
+	if (physB->ctype != ColliderType::SENSOR)
 	col = true;
 
 	LOG("-----------------------------------------");

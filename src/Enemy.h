@@ -62,6 +62,11 @@ public:
 		return pbody->body;
 	}
 
+	b2Body* getSensorBody() {
+		return sensor->body;
+	}
+
+
 private:
 
 	SDL_Texture* texture;
@@ -78,6 +83,7 @@ private:
 	StateEnemy stEnemy;
 
 	PhysBody* pbody;
+	PhysBody* sensor;
 	Pathfinding* pathfinding;
 	bool dead;
 	

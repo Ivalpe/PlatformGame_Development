@@ -10,7 +10,7 @@ enum class EntityType
 	ENEMY,
 	FIREBALL,
 	POISON,
-	FIRECAMP,
+	BONFIRE,
 	UNKNOWN
 };
 

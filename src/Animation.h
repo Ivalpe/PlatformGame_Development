@@ -28,6 +28,10 @@ public:
 		currentFrame = 0;
 	}
 
+	void SetFrame(int frame) {
+		currentFrame = frame;
+	}
+
 	bool HasFinished() {
 		return !loop && !pingpong && loopCount > 0;
 	}

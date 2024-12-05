@@ -101,6 +101,7 @@ bool Scene::Update(float dt)
 	for (int i = 0; i < enemyList.size(); i++) {
 		if (enemyList[i]->IsDead()) {
 			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
+			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getSensorBody());
 			Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
 			enemyList.erase(enemyList.begin() + i);
 			i--;
@@ -159,7 +160,7 @@ void Scene::CreateEvents() {
 	}
 	list = Engine::GetInstance().map->GetFirecampList();
 	for (auto firecamp : list) {
-		Firecamp* fc = (Firecamp*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIRECAMP);
+		Bonfire* fc = (Bonfire*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BONFIRE);
 		fc->SetParameters(configParameters.child("entities").child("firecamp"));
 		fc->SetPosition({ firecamp.getX(), firecamp.getY() });
 		fc->Start();
@@ -176,8 +177,8 @@ void Scene::CreateEvents() {
 	for (auto poison : list) {
 		Poison* p = (Poison*)Engine::GetInstance().entityManager->CreateEntity(EntityType::POISON);
 		p->SetParameters(configParameters.child("entities").child("poison"));
-		p->SetPosition({ poison.getX(), poison.getY() });
 		p->Start();
+		p->SetPosition({ poison.getX(), poison.getY() });
 		poisonList.push_back(p);
 	}
 }

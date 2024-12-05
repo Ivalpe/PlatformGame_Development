@@ -10,12 +10,12 @@ enum class StateFirecamp {
 	IDLE, ON
 };
 
-class Firecamp : public Entity
+class Bonfire : public Entity
 {
 public:
 
-	Firecamp();
-	virtual ~Firecamp();
+	Bonfire();
+	virtual ~Bonfire();
 
 	bool Awake();
 
