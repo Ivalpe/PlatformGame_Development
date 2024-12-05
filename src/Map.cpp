@@ -111,6 +111,10 @@ bool Map::Load(std::string path, std::string fileName)
 		Engine::GetInstance().physics->DeletePhysBody(layer);
 	}
 
+	posFirecamp.clear();
+	posPoison.clear();
+	mapData.layers.clear();
+
 	bool ret = false;
 
 	// Assigns the name of the map file and the path
@@ -203,6 +207,7 @@ bool Map::Load(std::string path, std::string fileName)
 			collisions.push_back(pb);
 		}
 
+
 		for (const auto& mapLayer : mapData.layers) {
 			//Check if the property Draw exist get the value, if it's true draw the lawyer
 			for (int i = 0; i < mapData.width; i++) {
@@ -221,6 +226,10 @@ bool Map::Load(std::string path, std::string fileName)
 						else if (gid == 2) {
 							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
 							posFirecamp.push_back(mapCoord);
+						}
+						else if (gid == 3) {
+							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
+							posPoison.push_back(mapCoord);
 						}
 					}
 				}
@@ -266,6 +275,10 @@ bool Map::Load(std::string path, std::string fileName)
 
 std::list<Vector2D> Map::GetFirecampList() {
 	return posFirecamp;
+}
+
+std::list<Vector2D> Map::GetPoisonList() {
+	return posPoison;
 }
 
 // L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions

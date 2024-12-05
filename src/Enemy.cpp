@@ -21,7 +21,7 @@ Enemy::~Enemy() {
 bool Enemy::Awake() {
 	return true;
 }
-    
+
 bool Enemy::Start() {
 
 	//initilize textures
@@ -38,6 +38,11 @@ bool Enemy::Start() {
 
 	//Add a physics to an item - initialize the physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY() + texW, texW / 2, bodyType::DYNAMIC);
+
+	//Add a physics to an item - initialize the physics body
+	sensor = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX(), (int)position.getY() + texW, texW * 4, bodyType::KINEMATIC);
+	sensor->ctype = ColliderType::SENSOR;
+	sensor->listener = this;
 
 	//Assign collider type
 	pbody->ctype = ColliderType::ENEMY;
@@ -63,12 +68,12 @@ bool Enemy::Update(float dt)
 		Vector2D pos = GetPosition();
 		Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 		pathfinding->ResetPath(tilePos);
-
+		/*
 		while (!pathfinding->PathComplete()) {
 			pathfinding->PropagateAStar(MANHATTAN);
 			pathfinding->DrawPath();
 		}
-
+		*/
 		// Pathfinding testing inputs
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
 			pathfinding->ResetPath(tilePos);
@@ -98,17 +103,20 @@ bool Enemy::Update(float dt)
 
 		// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
 		pbody->body->SetLinearVelocity(velocity);
-		
+
 		b2Transform pbodyPos = pbody->body->GetTransform();
 		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
 		Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
+
+		b2Vec2 enemyPos = pbody->body->GetPosition();
+		sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
 	}
 
-	
-	
+
+
 	return true;
 }
 
@@ -150,11 +158,14 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision UNKNOWN");
 		break;
 	case ColliderType::DIE:
+		dead = true;
 		LOG("Collision DIE");
 		break;
 	case ColliderType::FIREBALL:
-		LOG("Collision FIREBALL");
-		dead = true;
+		if (physA->ctype != ColliderType::SENSOR) {
+			LOG("Collision FIREBALL");
+			dead = true;
+		}
 		break;
 	default:
 		break;
