@@ -98,4 +98,5 @@ public:
 	StatePlayer stPlayer;
 	std::list<Fireball*> fireballs;
 	Level lvl;
+	int lifes;
 };

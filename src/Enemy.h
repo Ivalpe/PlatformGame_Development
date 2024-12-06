@@ -35,6 +35,8 @@ public:
 
 	bool Update(float dt);
 
+	void MovementEnemy(float dt);
+
 	bool CleanUp();
 
 	void SetParameters(pugi::xml_node parameters) {
@@ -78,6 +80,7 @@ private:
 	PhysBody* sensor;
 	Pathfinding* pathfinding;
 	int levelEnemy;
-	bool dead;
+	bool dead, followPlayer;
+	b2Vec2 velocity;
 	
 };

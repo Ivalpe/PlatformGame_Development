@@ -24,6 +24,8 @@ bool Enemy::Awake() {
 
 bool Enemy::Start() {
 
+	followPlayer = false;
+
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	levelEnemy = parameters.attribute("level").as_int();
@@ -57,47 +59,19 @@ bool Enemy::Start() {
 	return true;
 }
 
-bool Enemy::Update(float dt)
-{
+bool Enemy::Update(float dt) {
+	velocity = b2Vec2(0, -GRAVITY_Y);
 
-	b2Vec2 velocity = b2Vec2(0, -GRAVITY_Y);
-
-	//Reset
-	Vector2D pos = GetPosition();
-	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
-	pathfinding->ResetPath(tilePos);
-
-	bool found = false;
-	while (!found) {
-		found = pathfinding->PropagateAStar(MANHATTAN);
-		if (Engine::GetInstance().physics.get()->GetDebug())
-		pathfinding->DrawPath();
+	if (followPlayer) {
+		MovementEnemy(dt);
 	}
-
-	int sizeBread = pathfinding->breadcrumbs.size();
-	Vector2D posBread;
-	if (sizeBread >= 2)
-		posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 2];
-	else
-		posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 1];
-	LOG("BREADCRUMBS: %f", posBread.getX());
-	LOG("POSITION: %f", tilePos.getX());
-	if (posBread.getX() <= tilePos.getX()) {
-		velocity.x = -0.1 * dt;
-	}
-	else {
-		velocity.x = 0.1 * dt;
-
-	}
-
-	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
 	pbody->body->SetLinearVelocity(velocity);
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
-	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
+	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 
 	b2Vec2 enemyPos = pbody->body->GetPosition();
@@ -105,6 +79,36 @@ bool Enemy::Update(float dt)
 
 
 	return true;
+}
+
+void Enemy::MovementEnemy(float dt) {
+	//Reset
+	Vector2D pos = GetPosition();
+	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
+	pathfinding->ResetPath(tilePos);
+
+
+	bool found = false;
+	while (!found) {
+		found = pathfinding->PropagateAStar(MANHATTAN);
+		if (Engine::GetInstance().physics.get()->GetDebug())
+			pathfinding->DrawPath();
+	}
+
+	int sizeBread = pathfinding->breadcrumbs.size();
+	Vector2D posBread;
+	if (sizeBread >= 2) posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 2];
+	else posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 1];
+
+	//Movement Enemy
+	if (posBread.getX() <= tilePos.getX()) {
+		velocity.x = -0.1 * dt;
+		flipType = SDL_FLIP_HORIZONTAL;
+	}
+	else {
+		velocity.x = 0.1 * dt;
+		flipType = SDL_FLIP_NONE;
+	}
 }
 
 bool Enemy::CleanUp()
@@ -152,6 +156,10 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		if (physA->ctype != ColliderType::SENSOR) {
 			LOG("Collision FIREBALL");
 			dead = true;
+		}
+	case ColliderType::PLAYER:
+		if (physA->ctype == ColliderType::SENSOR) {
+			followPlayer = true;
 		}
 		break;
 	default:
