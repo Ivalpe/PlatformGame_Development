@@ -5,7 +5,7 @@
 #include <string>
 #include <unordered_map>
 
-class Sound {
+class Audio {
 public:
     enum class SoundType {
         FX,     
@@ -20,8 +20,8 @@ private:
     
 
 public:
-    Sound() = default;
-    ~Sound();
+    Audio() = default;
+    ~Audio();
 
     
     void LoadFromXML(pugi::xml_node soundNode);
