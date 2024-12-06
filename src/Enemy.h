@@ -33,7 +33,11 @@ public:
 
 	bool Start();
 
+	void SetEnemyType(EnemyType et);
+
 	bool Update(float dt);
+
+	void MovementEnemy(float dt);
 
 	bool CleanUp();
 
@@ -45,6 +49,7 @@ public:
 	Vector2D GetPosition();
 	void ResetPath();
 	void OnCollision(PhysBody* physA, PhysBody* physB);
+	void OnCollisionEnd(PhysBody* physA, PhysBody* physB);
 
 	bool IsDead();
 
@@ -78,6 +83,7 @@ private:
 	PhysBody* sensor;
 	Pathfinding* pathfinding;
 	int levelEnemy;
-	bool dead;
+	bool dead, followPlayer;
+	b2Vec2 velocity;
 	
 };

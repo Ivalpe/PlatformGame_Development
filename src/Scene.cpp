@@ -64,13 +64,10 @@ bool Scene::Update(float dt)
 {
 	if (level != 0) {
 		Engine::GetInstance().render.get()->camera.x = ((player->GetX() * -1) + 200) * 2;
-
-		if (Engine::GetInstance().render.get()->camera.x >= 0)
-			Engine::GetInstance().render.get()->camera.x = 0;
-
-		if (Engine::GetInstance().render.get()->camera.x <= Engine::GetInstance().map.get()->GetWidth() * 8 * -1)
-			Engine::GetInstance().render.get()->camera.x = Engine::GetInstance().map.get()->GetWidth() * 8 * -1;
-
+		int cameraX = Engine::GetInstance().render.get()->camera.x;
+		int cameraMaxX = Engine::GetInstance().map.get()->GetWidth() * 8 * -1 - (240 * 8);
+		if (cameraX >= 0) Engine::GetInstance().render.get()->camera.x = 0;
+		if (cameraX <= cameraMaxX) Engine::GetInstance().render.get()->camera.x = cameraMaxX;
 	}
 
 	// Shoot
@@ -205,6 +202,7 @@ bool Scene::PostUpdate()
 		ret = false;
 	}
 
+	//New Level
 	if (level == 0 && player->GetLevel() == Level::NEW) {
 		level++;
 		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
@@ -218,6 +216,7 @@ bool Scene::PostUpdate()
 		}
 		player->SetLevel(Level::DISABLED);
 	}
+	//Load Level
 	else if (level == 0 && player->GetLevel() == Level::LOAD) {
 		level++;
 		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
@@ -242,6 +241,11 @@ void Scene::CreateEnemies() {
 	{
 		if (level == enemyNode.attribute("level").as_int()) {
 			Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
+
+			std::string enemyType = enemyNode.attribute("name").as_string();
+			if (enemyType == "evilwizard") enemy->SetEnemyType(EnemyType::EV_WIZARD);
+			else if (enemyType == "bat") enemy->SetEnemyType(EnemyType::BAT);
+
 			enemy->SetParameters(enemyNode);
 			enemy->Start();
 			enemyList.push_back(enemy);
