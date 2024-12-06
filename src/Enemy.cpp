@@ -84,6 +84,9 @@ bool Enemy::Update(float dt) {
 	b2Vec2 enemyPos = pbody->body->GetPosition();
 	sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
 
+	if (currentAnimation == &die && currentAnimation->HasFinished()) {
+		dead = true;
+	}
 
 	return true;
 }
@@ -172,9 +175,6 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		if (physA->ctype != ColliderType::SENSOR) {
 			currentAnimation = &die;
 			LOG("Collision FIREBALL");
-			if (currentAnimation->HasFinished()){
-			dead = true;
-			}
 		}
 		break;
 	case ColliderType::PLAYER:
