@@ -116,6 +116,7 @@ public:
 	bool Load(std::string path, std::string mapFileName);
 
 	std::list<Vector2D> GetFirecampList();
+	std::list<Vector2D> GetPoisonList();
 
 	// L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
 	Vector2D MapToWorld(int x, int y) const;
@@ -161,4 +162,5 @@ private:
 	MapData mapData;
 	std::list<PhysBody*> collisions;
 	std::list<Vector2D> posFirecamp;
+	std::list<Vector2D> posPoison;
 };

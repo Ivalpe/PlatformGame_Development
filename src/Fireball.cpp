@@ -29,7 +29,7 @@ bool Fireball::Start(bool inv) {
 	texH = parameters.attribute("h").as_int();
 
 	//Load animations
-	
+
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	explode.LoadAnimations(parameters.child("animations").child("explode"));
 	currentAnimation = &idle;
@@ -53,13 +53,13 @@ bool Fireball::Update(float dt)
 	// Add a physics to an item - update the position of the object from the physics.  
 
 	if (stFireball == StateFireball::DIE) {
-		
+
 		if (currentAnimation->HasFinished()) {
-			col = true; 
+			col = true;
 		}
 	}
 	else {
-		
+
 		float speed = inverted ? -3.0f : 3.0f;
 		pbody->body->SetLinearVelocity({ speed, 0 });
 	}
@@ -96,17 +96,13 @@ Vector2D Fireball::GetPosition() {
 	return pos;
 }
 void Fireball::OnCollision(PhysBody* physA, PhysBody* physB) {
-	
-	if (stFireball != StateFireball::DIE) {
-		stFireball = StateFireball::DIE; 
-		currentAnimation = &explode;    
-		pbody->body->SetLinearVelocity({ 0, 0 }); 
+
+	if (stFireball != StateFireball::DIE && physB->ctype != ColliderType::SENSOR) {
+		stFireball = StateFireball::DIE;
+		currentAnimation = &explode;
+		pbody->body->SetLinearVelocity({ 0, 0 });
 		LOG("Fireball collided, starting explosion animation.");
-	}
-
-
-
-
+	}	
 
 	LOG("-----------------------------------------");
 }

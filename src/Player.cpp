@@ -26,8 +26,8 @@ bool Player::Awake() {
 bool Player::Start() {
 	lvl = Level::DISABLED;
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
-	position.setX(parameters.attribute("x").as_int());
-	position.setY(parameters.attribute("y").as_int());
+	position.setX(parameters.attribute("ix").as_int());
+	position.setY(parameters.attribute("iy").as_int());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
 

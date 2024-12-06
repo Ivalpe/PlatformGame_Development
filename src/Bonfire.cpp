@@ -1,4 +1,4 @@
-#include "Firecamp.h"
+#include "Bonfire.h"
 #include "Engine.h"
 #include "Textures.h"
 #include "Audio.h"
@@ -9,18 +9,19 @@
 #include "Physics.h"
 #include "Map.h"
 
-Firecamp::Firecamp() : Entity(EntityType::FIRECAMP) {
+Bonfire::Bonfire() : Entity(EntityType::BONFIRE) {
 }
 
-Firecamp::~Firecamp() {
+Bonfire::~Bonfire() {
 }
 
-bool Firecamp::Awake() {
+bool Bonfire::Awake() {
 	return true;
 }
 
-bool Firecamp::Start() {
+bool Bonfire::Start() {
 
+	activeFirecamp = false;
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	texW = parameters.attribute("w").as_int();
@@ -37,12 +38,21 @@ bool Firecamp::Start() {
 	return true;
 }
 
-void Firecamp::ActiveFirecamp() {
+void Bonfire::ActiveFirecamp() {
 	sf = StateFirecamp::ON;
 	currentAnimation = &on;
+	activeFirecamp = true;
 }
 
-bool Firecamp::Update(float dt)
+void Bonfire::DisableFirecamp() {
+	activeFirecamp = false;
+}
+
+bool Bonfire::IsActive() {
+	return activeFirecamp;
+}
+
+bool Bonfire::Update(float dt)
 {
 
 	//LOG("FIRECAMP: %d %d", position.getX(), position.getY());
@@ -52,17 +62,17 @@ bool Firecamp::Update(float dt)
 	return true;
 }
 
-bool Firecamp::CleanUp()
+bool Bonfire::CleanUp()
 {
 	return true;
 }
 
-void Firecamp::SetPosition(Vector2D pos) {
+void Bonfire::SetPosition(Vector2D pos) {
 	//LOG("FIRECAMP SET POSITION: %f %f", pos.getX(), pos.getY());
 	position.setX(pos.getX() + texW / 2);
 	position.setY(pos.getY() + texH / 2);
 }
 
-Vector2D Firecamp::GetPosition() {
+Vector2D Bonfire::GetPosition() {
 	return position;
 }

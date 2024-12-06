@@ -33,8 +33,6 @@ public:
 
 	bool Start();
 
-	void CreateHitbox();
-
 	bool Update(float dt);
 
 	bool CleanUp();
@@ -51,16 +49,15 @@ public:
 	bool IsDead();
 
 public:
-	float speed = 0;
-	void MoveY();
-	void MoveX();
-	EnemyType getType() const;
-	void Damaged(int dmg);
-	int getLife() const;
 
 	b2Body* getBody() {
 		return pbody->body;
 	}
+
+	b2Body* getSensorBody() {
+		return sensor->body;
+	}
+
 
 private:
 
@@ -78,7 +75,9 @@ private:
 	StateEnemy stEnemy;
 
 	PhysBody* pbody;
+	PhysBody* sensor;
 	Pathfinding* pathfinding;
+	int levelEnemy;
 	bool dead;
 	
 };

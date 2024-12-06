@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Entity.h"
 #include "SDL2/SDL.h"
 #include "Animation.h"
@@ -6,22 +7,16 @@
 
 struct SDL_Texture;
 
-enum class StateFirecamp {
-	IDLE, ON
-};
-
-class Firecamp : public Entity
+class Poison : public Entity
 {
 public:
 
-	Firecamp();
-	virtual ~Firecamp();
+	Poison();
+	virtual ~Poison();
 
 	bool Awake();
 
 	bool Start();
-
-	void ActiveFirecamp();
 
 	bool Update(float dt);
 
@@ -31,13 +26,11 @@ public:
 		this->parameters = parameters;
 	}
 
-	StateFirecamp GetState() {
-		return sf;
-	}
-
 	void SetPosition(Vector2D pos);
 
 	Vector2D GetPosition();
+
+	void OnCollision(PhysBody* physA, PhysBody* physB);
 
 	b2Body* getBody() {
 		return pbody->body;
@@ -51,8 +44,8 @@ private:
 	int texW, texH;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
-	Animation idle, on;
+	Animation idle;
+	SDL_RendererFlip flipType;
 	PhysBody* pbody;
-	StateFirecamp sf;
 };
 #pragma once

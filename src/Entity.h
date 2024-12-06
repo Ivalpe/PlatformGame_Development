@@ -9,7 +9,8 @@ enum class EntityType
 	ITEM,
 	ENEMY,
 	FIREBALL,
-	FIRECAMP,
+	POISON,
+	BONFIRE,
 	UNKNOWN
 };
 
@@ -77,5 +78,4 @@ public:
 	// want our Entity class, maybe it's not renderable...
 	Vector2D position;       
 	bool renderable = true;
-	int levelEnemy;
 };
