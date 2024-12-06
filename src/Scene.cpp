@@ -202,6 +202,7 @@ bool Scene::PostUpdate()
 		ret = false;
 	}
 
+	//New Level
 	if (level == 0 && player->GetLevel() == Level::NEW) {
 		level++;
 		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
@@ -215,6 +216,7 @@ bool Scene::PostUpdate()
 		}
 		player->SetLevel(Level::DISABLED);
 	}
+	//Load Level
 	else if (level == 0 && player->GetLevel() == Level::LOAD) {
 		level++;
 		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))

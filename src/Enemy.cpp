@@ -171,9 +171,23 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 			LOG("Collision FIREBALL");
 			dead = true;
 		}
+		break;
 	case ColliderType::PLAYER:
 		if (physA->ctype == ColliderType::SENSOR) {
 			followPlayer = true;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
+	switch (physB->ctype)
+	{
+	case ColliderType::PLAYER:
+		if (physA->ctype == ColliderType::SENSOR) {
+			followPlayer = false;
 		}
 		break;
 	default:

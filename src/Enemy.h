@@ -49,6 +49,7 @@ public:
 	Vector2D GetPosition();
 	void ResetPath();
 	void OnCollision(PhysBody* physA, PhysBody* physB);
+	void OnCollisionEnd(PhysBody* physA, PhysBody* physB);
 
 	bool IsDead();
 
