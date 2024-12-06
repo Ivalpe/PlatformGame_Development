@@ -59,8 +59,13 @@ bool Enemy::Start() {
 	return true;
 }
 
+void Enemy::SetEnemyType(EnemyType et) {
+	type = et;
+}
+
 bool Enemy::Update(float dt) {
-	velocity = b2Vec2(0, -GRAVITY_Y);
+	if (type == EnemyType::BAT) velocity = b2Vec2(0, 0);
+	else velocity = b2Vec2(0, -GRAVITY_Y);
 
 	if (followPlayer) {
 		MovementEnemy(dt);
@@ -108,6 +113,15 @@ void Enemy::MovementEnemy(float dt) {
 	else {
 		velocity.x = 0.1 * dt;
 		flipType = SDL_FLIP_NONE;
+	}
+
+	if (type == EnemyType::BAT) {
+		if (posBread.getY() <= tilePos.getY()) {
+			velocity.y = -0.1 * dt;
+		}
+		else {
+			velocity.y = 0.1 * dt;
+		}
 	}
 }
 

@@ -33,6 +33,8 @@ public:
 
 	bool Start();
 
+	void SetEnemyType(EnemyType et);
+
 	bool Update(float dt);
 
 	void MovementEnemy(float dt);

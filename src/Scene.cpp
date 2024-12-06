@@ -239,6 +239,11 @@ void Scene::CreateEnemies() {
 	{
 		if (level == enemyNode.attribute("level").as_int()) {
 			Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
+
+			std::string enemyType = enemyNode.attribute("name").as_string();
+			if (enemyType == "evilwizard") enemy->SetEnemyType(EnemyType::EV_WIZARD);
+			else if (enemyType == "bat") enemy->SetEnemyType(EnemyType::BAT);
+
 			enemy->SetParameters(enemyNode);
 			enemy->Start();
 			enemyList.push_back(enemy);
