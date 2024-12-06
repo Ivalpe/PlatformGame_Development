@@ -4,6 +4,7 @@
 #include "SDL2/SDL.h"
 #include "Animation.h"
 #include "Pathfinding.h"
+#include "Audio.h"
 
 struct SDL_Texture;
 
@@ -46,7 +47,7 @@ public:
 	}
 
 public:
-
+	
 private:
 
 	SDL_Texture* texture;
@@ -62,5 +63,6 @@ private:
 	float explosionDuration = 1.0f;
 	bool col;
 	bool inverted;
+	Audio magic_fireball;
 };
 #pragma once

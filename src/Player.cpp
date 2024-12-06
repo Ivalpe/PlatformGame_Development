@@ -40,6 +40,8 @@ bool Player::Start() {
 	die.LoadAnimations(parameters.child("animations").child("die"));
 	currentAnimation = &idle;
 
+
+
 	//Player
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texW / 2, bodyType::DYNAMIC);
 	pbody->listener = this;

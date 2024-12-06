@@ -36,4 +36,5 @@ private:
 
 	_Mix_Music* music;
 	std::list<Mix_Chunk*> fx;
+
 };

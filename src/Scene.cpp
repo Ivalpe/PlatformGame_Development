@@ -31,6 +31,16 @@ bool Scene::Awake()
 	bool ret = true;
 
 	level = 0;
+	
+	
+	const char* soundPath = configParameters.child("sound").child("Fx").child("magic_fireball").attribute("path").as_string();
+	magicFireballSoundId = Engine::GetInstance().audio->LoadFx(soundPath);
+	if (magicFireballSoundId == 0) {
+		LOG("Failed to load sound file from path: %s", soundPath);
+	}
+	else {
+		LOG("Sound loaded successfully with ID: %d", magicFireballSoundId);
+	}
 
 	//Instantiate the player using the entity manager
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
@@ -47,6 +57,7 @@ bool Scene::Awake()
 		enemyList.push_back(enemy);
 	}
 	return ret;
+
 }
 
 // Called before the first frame
@@ -65,6 +76,8 @@ bool Scene::Start()
 		firecampList.push_back(fc);
 	}
 	return true;
+	
+
 }
 
 // Called each loop iteration
@@ -86,12 +99,17 @@ bool Scene::Update(float dt)
 			Engine::GetInstance().render.get()->camera.x = -448;
 
 	}
+	if (magicFireballSoundId > 0) {
+		Engine::GetInstance().audio->PlayFx(magicFireballSoundId);
+	}
 
 	// Shoot
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
 		Fireball* fireball = (Fireball*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALL);
 		fireball->SetParameters(configParameters.child("entities").child("fireball"));
+
 		if (player->GetDirection() == DirectionPlayer::LEFT) fireball->Start(true);
+		
 		else fireball->Start(false);
 
 		Vector2D playerPos = player->GetPosition();
@@ -100,6 +118,13 @@ bool Scene::Update(float dt)
 		else fireball->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
 
 		fireballList.push_back(fireball);
+
+		if (magicFireballSoundId > 0) {
+			Engine::GetInstance().audio->PlayFx(magicFireballSoundId);
+		}
+		else {
+			LOG("Fireball sound ID is invalid!");
+		}
 	}
 
 	// Destroy fireballs collided
