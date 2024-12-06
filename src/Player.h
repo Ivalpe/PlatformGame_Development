@@ -45,6 +45,8 @@ public:
 		this->parameters = parameters;
 	}
 
+	void Respawn();
+
 	void SetPosition(Vector2D posPlayer);
 	
 	Vector2D GetPosition() {

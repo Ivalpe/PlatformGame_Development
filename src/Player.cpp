@@ -56,6 +56,11 @@ void Player::SetPosition(Vector2D posPlayer) {
 	pbody->body->SetTransform(bodyPos, 0);
 }
 
+void Player::Respawn() {
+	isDying = false;
+	stPlayer = StatePlayer::IDLE;
+}
+
 bool Player::Update(float dt)
 {
 	if (!isDying) {

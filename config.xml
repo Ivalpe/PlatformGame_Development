@@ -145,6 +145,10 @@
 							<frame x="0" y="176" w="21" h="16" />
 							<frame x="21" y="176" w="21" h="16" />
 						</idle>
+						<die loop="false" speed="0.06">
+							<frame x="84" y="160" w="21" h="16" />
+							<frame x="105" y="160" w="21" h="16" />
+						</die>
 					</animations>
 				</enemy>
 				<enemy name="bat" x="312" y="21" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="false" level="1">
@@ -156,12 +160,12 @@
 							<frame x="63" y="160" w="21" h="16" />
 						</fly>
 						<idle loop="true" speed="0.06">
-							<frame x="84" y="160" w="21" h="16" />
-							<frame x="105" y="160" w="21" h="16" />
+							<frame x="0" y="176" w="21" h="16" />
+							<frame x="21" y="176" w="21" h="16" />
 						</idle>
 						<die loop="false" speed="0.06">
-							<frame x="64" y="64" w="16" h="32" />
-							<frame x="80" y="64" w="16" h="32" />
+							<frame x="84" y="160" w="21" h="16" />
+							<frame x="105" y="160" w="21" h="16" />
 						</die>
 					</animations>
 				</enemy>

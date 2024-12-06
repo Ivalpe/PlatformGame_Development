@@ -30,6 +30,7 @@ bool Scene::Awake()
 	LOG("Loading Scene");
 	bool ret = true;
 
+	colRespawn = 120;
 	level = 0;
 
 	//Instantiate the player using the entity manager
@@ -62,6 +63,7 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+
 	if (level != 0) {
 		Engine::GetInstance().render.get()->camera.x = ((player->GetX() * -1) + 200) * 2;
 		int cameraX = Engine::GetInstance().render.get()->camera.x;
@@ -106,18 +108,31 @@ bool Scene::Update(float dt)
 		}
 	}
 
+
 	// Active firecamp if player touch it
 	for (auto firecamp : firecampList) {
 		if (firecamp->GetState() == StateFirecamp::IDLE &&
 			player->GetPosition().getX() >= firecamp->GetPosition().getX() - 16 && player->GetPosition().getX() <= firecamp->GetPosition().getX() + 8 &&
 			player->GetPosition().getY() >= firecamp->GetPosition().getY() - 16 && player->GetPosition().getY() <= firecamp->GetPosition().getY() + 8) {
+			pugi::xml_document saveFile;
+			pugi::xml_parse_result result = saveFile.load_file("config.xml");
 			firecamp->ActiveFirecamp();
+			saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(firecamp->GetPosition().getX());
+			saveFile.child("config").child("scene").child("entities").child("player").attribute("y").set_value(firecamp->GetPosition().getY());
+			saveFile.save_file("config.xml");
 		}
 	}
 
 	//When player dies, dont move the hitbox
 	if (player->GetState() == StatePlayer::DIE) {
 		player->pbody->body->SetLinearVelocity({ 0,0 });
+		colRespawn--;
+	}
+
+	if (colRespawn <= 0) {
+		player->Respawn();
+		LoadState();
+		colRespawn = 120;
 	}
 
 	return true;
@@ -133,7 +148,7 @@ void Scene::LoadState() {
 
 	Vector2D posPlayer;
 	posPlayer.setX(loadFile.child("config").child("scene").child("entities").child("player").attribute("x").as_int());
-	posPlayer.setY(loadFile.child("config").child("scene").child("entities").child("player").attribute("y").as_int());
+	posPlayer.setY(loadFile.child("config").child("scene").child("entities").child("player").attribute("y").as_int() - 16);
 
 	player->SetPosition(posPlayer);
 }
@@ -145,7 +160,7 @@ void Scene::SaveState() {
 	if (result == NULL) {
 		LOG("Error");
 	}
-
+	/*
 	for (auto firecamp : firecampList) {
 		if (firecamp->IsActive()) {
 			saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(firecamp->GetPosition().getX());
@@ -154,6 +169,7 @@ void Scene::SaveState() {
 	}
 
 	saveFile.save_file("config.xml");
+	*/
 }
 
 void Scene::CreateEvents() {

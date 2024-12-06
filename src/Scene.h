@@ -56,5 +56,5 @@ private:
 	std::vector<Fireball*> fireballList;
 	std::vector<Bonfire*> firecampList;
 	std::vector<Poison*> poisonList;
-	int level;
+	int level, colRespawn;
 };
