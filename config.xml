@@ -15,10 +15,6 @@
 		<fullscreen_window value="false" />
 	</window>
 	<scene>
-		<OST>
-			<sound name="fireball_land" path="Assets/Audio/Music/Character_Config.mp3" />
-			<sound name="fireball_land" path="Assets/Audio/Music/Cinder.mp3" />
-		</OST>
 		<levels>
 			<map path="Assets/Maps/" name="Level0.tmx" number="0"/>
 			<map path="Assets/Maps/" name="Level1.tmx" number="1"/>
@@ -125,12 +121,6 @@
 				</enemy>
 			</enemies>
 			<fireball texture="Assets/Textures/Fireball.png" w="8" h="8">
-				<sound>
-					<Fx>
-						<fireball_land path="Assets/Audio/Fx/fireball_land.wav" />
-						<magic_fireball path="Assets/Sounds/magic_fireball.wav" />
-					</Fx>
-				</sound>
 				<animations>
 					<idle loop="true" speed ="0.12">
 						

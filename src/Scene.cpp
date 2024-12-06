@@ -32,15 +32,6 @@ bool Scene::Awake()
 
 	level = 0;
 	
-	
-	const char* soundPath = configParameters.child("sound").child("Fx").child("magic_fireball").attribute("path").as_string();
-	magicFireballSoundId = Engine::GetInstance().audio->LoadFx(soundPath);
-	if (magicFireballSoundId == 0) {
-		LOG("Failed to load sound file from path: %s", soundPath);
-	}
-	else {
-		LOG("Sound loaded successfully with ID: %d", magicFireballSoundId);
-	}
 
 	//Instantiate the player using the entity manager
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
@@ -119,12 +110,7 @@ bool Scene::Update(float dt)
 
 		fireballList.push_back(fireball);
 
-		if (magicFireballSoundId > 0) {
-			Engine::GetInstance().audio->PlayFx(magicFireballSoundId);
-		}
-		else {
-			LOG("Fireball sound ID is invalid!");
-		}
+		
 	}
 
 	// Destroy fireballs collided

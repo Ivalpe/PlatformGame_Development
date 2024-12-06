@@ -63,6 +63,6 @@ private:
 	float explosionDuration = 1.0f;
 	bool col;
 	bool inverted;
-	Audio magic_fireball;
+
 };
 #pragma once

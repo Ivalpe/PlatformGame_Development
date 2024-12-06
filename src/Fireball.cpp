@@ -16,8 +16,6 @@ Fireball::~Fireball() {
 }
 
 bool Fireball::Awake() {
-	const char* soundPath = "path_to_magic_fireball_sound.wav";
-	int soundId = magic_fireball.LoadFx(soundPath);
 	return true;
 }
 
@@ -35,13 +33,7 @@ bool Fireball::Start(bool inv) {
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	explode.LoadAnimations(parameters.child("animations").child("explode"));
 	currentAnimation = &idle;
-
-	pugi::xml_node soundNode = parameters.child("sound").child("Fx").child("magic_fireball");
-	const char* soundPath = soundNode.attribute("path").as_string();
-
-	
-	int soundId = magic_fireball.LoadFx(soundPath);  
-	magic_fireball.PlayFx(soundId);  
+  
 
 	//Add a physics to an item - initialize the physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
