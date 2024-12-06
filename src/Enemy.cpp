@@ -29,8 +29,8 @@ bool Enemy::Start() {
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	levelEnemy = parameters.attribute("level").as_int();
-	position.setX(parameters.attribute("x").as_int());
-	position.setY(parameters.attribute("y").as_int());
+	position.setX(parameters.attribute("x").as_int() * 8);
+	position.setY(parameters.attribute("y").as_int() * 8);
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
 

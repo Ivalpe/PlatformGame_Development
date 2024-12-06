@@ -65,7 +65,7 @@ bool Scene::Update(float dt)
 	if (level != 0) {
 		Engine::GetInstance().render.get()->camera.x = ((player->GetX() * -1) + 200) * 2;
 		int cameraX = Engine::GetInstance().render.get()->camera.x;
-		int cameraMaxX = Engine::GetInstance().map.get()->GetWidth() * 8 * -1;
+		int cameraMaxX = Engine::GetInstance().map.get()->GetWidth() * 8 * -1 - (240 * 8);
 		if (cameraX >= 0) Engine::GetInstance().render.get()->camera.x = 0;
 		if (cameraX <= cameraMaxX) Engine::GetInstance().render.get()->camera.x = cameraMaxX;
 	}
