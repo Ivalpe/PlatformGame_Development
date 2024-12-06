@@ -70,6 +70,7 @@ bool Enemy::Update(float dt)
 	bool found = false;
 	while (!found) {
 		found = pathfinding->PropagateAStar(MANHATTAN);
+		if (Engine::GetInstance().physics.get()->GetDebug())
 		pathfinding->DrawPath();
 	}
 
