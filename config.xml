@@ -103,7 +103,7 @@
 						</idle>
 					</animations>
 				</enemy>
-				<enemy name="bat" x="400" y="150" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="false" level="1">
+				<enemy name="bat" x="800" y="150" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="false" level="1">
 					<animations>
 						<fly loop="true" speed="0.06">
 							<frame x="0" y="160" w="21" h="16" />

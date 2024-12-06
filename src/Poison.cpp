@@ -41,7 +41,7 @@ bool Poison::Start() {
 	currentAnimation->SetFrame(dist(gen));
 
 	//Add a physics to an item - initialize the physics body
-	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), 8, 16, bodyType::STATIC);
+	pbody = Engine::GetInstance().physics.get()->CreateRectangle((int)position.getX(), (int)position.getY(), 16, 32, bodyType::STATIC);
 	position.setX(METERS_TO_PIXELS((int)position.getX()));
 	position.setY(METERS_TO_PIXELS((int)position.getY()));
 
