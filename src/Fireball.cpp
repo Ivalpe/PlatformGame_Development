@@ -16,6 +16,7 @@ Fireball::~Fireball() {
 }
 
 bool Fireball::Awake() {
+	df = DirectionFireball::RIGHT;
 	return true;
 }
 
@@ -35,8 +36,10 @@ bool Fireball::Start(bool inv) {
 	currentAnimation = &idle;
 
 	//Add a physics to an item - initialize the physics body
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
-
+	float offsetX = inverted ? -texW : texW;
+	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texW / 2 + offsetX,(int)position.getY() + texH / 2,texH / 2,bodyType::DYNAMIC
+	);
+	
 	//Assign collider type
 	pbody->ctype = ColliderType::FIREBALL;
 	pbody->listener = this;
@@ -68,11 +71,22 @@ bool Fireball::Update(float dt)
 		currentAnimation = &idle;
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - texW / 2);
+
+	// Ajustar posición basada en la dirección
+	if (inverted) {
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
+	}
+	else {
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - texW / 2);
+	}
+
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH);
+
+	
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, inverted ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
+
 
 
 	return true;
@@ -84,8 +98,10 @@ bool Fireball::CleanUp()
 }
 
 void Fireball::SetPosition(Vector2D pos) {
-	pos.setX(pos.getX());
+	float offsetX = inverted ? -texW / 2 : texW / 2;
+	pos.setX(pos.getX() + offsetX);
 	pos.setY(pos.getY() + texH / 2);
+
 	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
 	pbody->body->SetTransform(bodyPos, 0);
 }

@@ -34,6 +34,8 @@ bool Enemy::Start() {
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
+	walk.LoadAnimations(parameters.child("animations").child("walk"));
+	die.LoadAnimations(parameters.child("animations").child("die"));
 	currentAnimation = &idle;
 
 	//Add a physics to an item - initialize the physics body
@@ -149,8 +151,11 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::FIREBALL:
 		if (physA->ctype != ColliderType::SENSOR) {
+			currentAnimation = &die;
 			LOG("Collision FIREBALL");
+			if (currentAnimation->HasFinished()){
 			dead = true;
+			}
 		}
 		break;
 	default:
