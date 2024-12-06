@@ -79,7 +79,7 @@ bool Scene::Update(float dt)
 
 		Vector2D playerPos = player->GetPosition();
 		if (player->GetDirection() == DirectionPlayer::LEFT)
-			fireball->SetPosition({ playerPos.getX() - 8, playerPos.getY() + 14 });
+			fireball->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
 		else fireball->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
 
 		fireballList.push_back(fireball);

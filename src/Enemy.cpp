@@ -97,7 +97,6 @@ void Enemy::MovementEnemy(float dt) {
 	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 	pathfinding->ResetPath(tilePos);
 
-
 	bool found = false;
 	while (!found) {
 		found = pathfinding->PropagateAStar(MANHATTAN);
