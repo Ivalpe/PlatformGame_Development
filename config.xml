@@ -16,11 +16,11 @@
 	</window>
 	<scene>
 		<levels>
-			<map path="Assets/Maps/" name="Level0.tmx" number="0" />
-			<map path="Assets/Maps/" name="Level1.tmx" number="1" />
+			<map path="Assets/Maps/" name="Level0.tmx" number="0" ix="320" iy="100" />
+			<map path="Assets/Maps/" name="Level1.tmx" number="1" ix="60" iy="192" />
 		</levels>
 		<entities>
-			<player ix="320" iy="100" x="1504" y="272" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
+			<player ix="320" iy="100" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
 					<idle loop="true" speed="0.06">
 						<frame x="0" y="32" w="16" h="32" />
@@ -61,7 +61,7 @@
 				</animations>
 			</player>
 			<enemies>
-				<enemy name="evilwizard" x="85" y="28" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1">
+				<enemy id="1" name="evilwizard" x="85" y="28" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="false">
 					<animations>
 						<idle loop="true" speed="0.06">
 							<frame x="0" y="96" w="16" h="32" />
@@ -79,7 +79,7 @@
 						</die>
 					</animations>
 				</enemy>
-				<enemy name="evilwizard" x="66" y="13" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1">
+				<enemy id="2" name="evilwizard" x="66" y="13" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="false">
 					<animations>
 						<idle loop="true" speed="0.06">
 							<frame x="0" y="96" w="16" h="32" />
@@ -97,7 +97,7 @@
 						</die>
 					</animations>
 				</enemy>
-				<enemy name="evilwizard" x="257" y="38" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1">
+				<enemy id="3" name="evilwizard" x="257" y="38" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="false">
 					<animations>
 						<idle loop="true" speed="0.06">
 							<frame x="0" y="96" w="16" h="32" />
@@ -115,7 +115,7 @@
 						</die>
 					</animations>
 				</enemy>
-				<enemy name="evilwizard" x="306" y="37" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1">
+				<enemy id="4" name="evilwizard" x="306" y="37" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="false">
 					<animations>
 						<idle loop="true" speed="0.06">
 							<frame x="0" y="96" w="16" h="32" />
@@ -133,7 +133,7 @@
 						</die>
 					</animations>
 				</enemy>
-				<enemy name="bat" x="111" y="15" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="false" level="1">
+				<enemy id="5" name="bat" x="111" y="15" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="false" level="1" dead="false">
 					<animations>
 						<fly loop="true" speed="0.06">
 							<frame x="0" y="160" w="21" h="16" />
@@ -151,7 +151,7 @@
 						</die>
 					</animations>
 				</enemy>
-				<enemy name="bat" x="312" y="21" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="false" level="1">
+				<enemy id="6" name="bat" x="312" y="21" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="false" level="1" dead="false">
 					<animations>
 						<fly loop="true" speed="0.06">
 							<frame x="0" y="160" w="21" h="16" />

@@ -50,7 +50,7 @@ bool Scene::Start()
 {
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
-	CreateEvents();
+	CreateEnemies();
 	return true;
 }
 
@@ -60,9 +60,44 @@ bool Scene::PreUpdate()
 	return true;
 }
 
+void Scene::DebugMode() {
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN ||
+		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
+		int previousLevel = level;
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) level = 0;
+		else level = 1;
+		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map")){
+			if (mapNode.attribute("number").as_int() == level) {
+				if (level != previousLevel) Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				LoadState(true);
+				CreateEnemies();
+				CreateEvents();
+				break;
+			}
+		}
+		player->SetLevel(Level::DISABLED);
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
+		player->Respawn();
+		CreateEnemies();
+		CreateEvents();
+		LoadState(true);
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F10) == KEY_DOWN) player->ChangeDebug();
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F11) == KEY_DOWN) {
+		Engine::GetInstance().LimitFPS();
+	}
+}
+
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+
+	DebugMode();
 
 	if (level != 0) {
 		Engine::GetInstance().render.get()->camera.x = ((player->GetX() * -1) + 200) * 2;
@@ -131,26 +166,98 @@ bool Scene::Update(float dt)
 
 	if (colRespawn <= 0) {
 		player->Respawn();
-		LoadState();
+		LoadState(false);
 		colRespawn = 120;
 	}
 
 	return true;
 }
 
-void Scene::LoadState() {
+void Scene::LoadState(bool initial) {
 	pugi::xml_document loadFile;
 	pugi::xml_parse_result result = loadFile.load_file("config.xml");
+
+	Engine::GetInstance().render.get()->camera.x = 0;
 
 	if (result == NULL) {
 		LOG("Error");
 	}
 
+	pugi::xml_node currentLevel = GetCurrentLevel();
 	Vector2D posPlayer;
-	posPlayer.setX(loadFile.child("config").child("scene").child("entities").child("player").attribute("x").as_int());
-	posPlayer.setY(loadFile.child("config").child("scene").child("entities").child("player").attribute("y").as_int() - 16);
+	if (initial) {
+		posPlayer.setX(currentLevel.attribute("ix").as_int());
+		posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
+	}
+	else {
+		posPlayer.setX(loadFile.child("config").child("scene").child("entities").child("player").attribute("x").as_int());
+		posPlayer.setY(loadFile.child("config").child("scene").child("entities").child("player").attribute("y").as_int() - 16);
+	}
 
 	player->SetPosition(posPlayer);
+}
+
+pugi::xml_node Scene::GetCurrentLevel() {
+	for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map")) {
+		if (mapNode.attribute("number").as_int() == level) {
+			return mapNode;
+		}
+	}
+}
+
+// Called each loop iteration
+bool Scene::PostUpdate()
+{
+	bool ret = true;
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+		ret = false;
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F6) == KEY_DOWN) {
+		SaveState();
+		ret = false;
+	}
+
+	//New Level
+	if (level == 0 && player->GetLevel() == Level::NEW) {
+		level++;
+		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
+		{
+			if (mapNode.attribute("number").as_int() == level) {
+				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				CreateEnemies();
+				CreateEvents();
+
+				pugi::xml_node currentLevel = GetCurrentLevel();
+				Vector2D posPlayer;
+				posPlayer.setX(currentLevel.attribute("ix").as_int());
+				posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
+
+				player->SetPosition(posPlayer);
+
+				break;
+			}
+		}
+		player->SetLevel(Level::DISABLED);
+	}
+
+	//Load Level
+	else if (level == 0 && player->GetLevel() == Level::LOAD) {
+		level++;
+		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
+		{
+			if (mapNode.attribute("number").as_int() == level) {
+				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				LoadState(false);
+				CreateEnemies();
+				CreateEvents();
+				break;
+			}
+		}
+		player->SetLevel(Level::DISABLED);
+	}
+
+	return ret;
 }
 
 void Scene::SaveState() {
@@ -205,57 +312,19 @@ void Scene::CreateEvents() {
 	}
 }
 
-// Called each loop iteration
-bool Scene::PostUpdate()
-{
-	bool ret = true;
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-		ret = false;
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F6) == KEY_DOWN) {
-		SaveState();
-		ret = false;
-	}
-
-	//New Level
-	if (level == 0 && player->GetLevel() == Level::NEW) {
-		level++;
-		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
-		{
-			if (mapNode.attribute("number").as_int() == level) {
-				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-				CreateEnemies();
-				CreateEvents();
-				break;
-			}
-		}
-		player->SetLevel(Level::DISABLED);
-	}
-	//Load Level
-	else if (level == 0 && player->GetLevel() == Level::LOAD) {
-		level++;
-		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
-		{
-			if (mapNode.attribute("number").as_int() == level) {
-				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-				CreateEnemies();
-				CreateEvents();
-				LoadState();
-				break;
-			}
-		}
-		player->SetLevel(Level::DISABLED);
-	}
-
-	return ret;
-}
 
 void Scene::CreateEnemies() {
-	enemyList.clear();
+	for (int i = 0; i < enemyList.size(); i++) {
+		Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
+		Engine::GetInstance().physics->DeleteBody(enemyList[i]->getSensorBody());
+		Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
+		enemyList.erase(enemyList.begin() + i);
+		i--;
+	}
 	for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
 	{
-		if (level == enemyNode.attribute("level").as_int()) {
+		if (level == enemyNode.attribute("level").as_int() && !enemyNode.attribute("dead").as_bool()) {
 			Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
 
 			std::string enemyType = enemyNode.attribute("name").as_string();
@@ -284,8 +353,7 @@ bool Scene::CleanUp()
 }
 
 // Return the player position
-Vector2D Scene::GetPlayerPosition()
-{
+Vector2D Scene::GetPlayerPosition() {
 	return player->GetPosition();
 }
 

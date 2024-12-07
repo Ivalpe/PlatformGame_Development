@@ -24,6 +24,7 @@ bool Player::Awake() {
 }
 
 bool Player::Start() {
+	debugMode = false;
 	lifes = 5;
 	lvl = Level::DISABLED;
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
@@ -58,36 +59,53 @@ void Player::SetPosition(Vector2D posPlayer) {
 
 void Player::Respawn() {
 	isDying = false;
+	die.SetFrame(0);
+	isJumping = false;
 	stPlayer = StatePlayer::IDLE;
+}
+
+void Player::ChangeDebug() {
+	debugMode = debugMode ? false : true;
 }
 
 bool Player::Update(float dt)
 {
+	b2Vec2 velocity;
 	if (!isDying) {
-		b2Vec2 velocity = b2Vec2(0, -GRAVITY_Y);
+		
+		if (debugMode) {
+			velocity = b2Vec2(0, 0);
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+				velocity.y = -speed;
+				stPlayer = StatePlayer::RUN;
+			}
+
+			// Move right
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+				velocity.y = speed;
+				stPlayer = StatePlayer::RUN;
+			}
+		}else velocity = b2Vec2(0, -GRAVITY_Y);
+
 		stPlayer = StatePlayer::IDLE;
 
 		// Move left
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
-			velocity.x = -speed * dt;
+			velocity.x = -speed;
 			dp = DirectionPlayer::LEFT;
 			stPlayer = StatePlayer::RUN;
 		}
 
 		// Move right
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
-			velocity.x = speed * dt;
+			velocity.x = speed;
 			dp = DirectionPlayer::RIGHT;
 			stPlayer = StatePlayer::RUN;
 		}
 
-		// Run
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-			speed = 0.16;
-		}
-		else {
-			speed = 0.06;
-		}
+		// Walk / Run speed
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) speed = 3.0f;
+		else speed = 2.0f;
 
 		//Jump
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && isJumping == false) {
@@ -187,9 +205,11 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision UNKNOWN");
 		break;
 	case ColliderType::DIE:
-		LOG("Collision DIE");
-		stPlayer = StatePlayer::DIE;
-		isDying = true;
+		if (!debugMode) {
+			LOG("Collision DIE");
+			stPlayer = StatePlayer::DIE;
+			isDying = true;
+		}
 		break;
 	case ColliderType::NEW:
 		LOG("Collision NEW");
@@ -198,6 +218,12 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::LOAD:
 		LOG("Collision LOAD");
 		lvl = Level::LOAD;
+		break;
+	case ColliderType::ENEMY:
+		if (!debugMode) {
+			stPlayer = StatePlayer::DIE;
+			isDying = true;
+		}
 		break;
 	default:
 		break;

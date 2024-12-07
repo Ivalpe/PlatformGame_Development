@@ -27,10 +27,14 @@ public:
 	// Called before all Updates
 	bool PreUpdate();
 
+	void DebugMode();
+
 	// Called each loop iteration
 	bool Update(float dt);
 
-	void LoadState();
+	void LoadState(bool initial);
+	pugi::xml_node GetCurrentLevel();
+	void KillEnemy(int enemyId);
 	void SaveState();
 
 	void CreateEvents();

@@ -35,6 +35,8 @@ public:
 	// Called before the first frame
 	bool Start();
 
+	void LimitFPS();
+
 	// Called each loop iteration
 	bool Update();
 

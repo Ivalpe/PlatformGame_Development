@@ -25,8 +25,10 @@ bool Enemy::Awake() {
 bool Enemy::Start() {
 
 	followPlayer = false;
+	speed = 1.9f;
 
 	//initilize textures
+	id = parameters.attribute("id").as_int();
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	levelEnemy = parameters.attribute("level").as_int();
 	position.setX(parameters.attribute("x").as_int() * 8);
@@ -111,20 +113,20 @@ void Enemy::MovementEnemy(float dt) {
 
 	//Movement Enemy
 	if (posBread.getX() <= tilePos.getX()) {
-		velocity.x = -0.1 * dt;
+		velocity.x = -speed;
 		flipType = SDL_FLIP_HORIZONTAL;
 	}
 	else {
-		velocity.x = 0.1 * dt;
+		velocity.x = speed;
 		flipType = SDL_FLIP_NONE;
 	}
 
 	if (type == EnemyType::BAT) {
 		if (posBread.getY() <= tilePos.getY()) {
-			velocity.y = -0.1 * dt;
+			velocity.y = -speed;
 		}
 		else {
-			velocity.y = 0.1 * dt;
+			velocity.y = speed;
 		}
 	}
 }

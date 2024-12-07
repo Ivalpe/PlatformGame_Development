@@ -45,6 +45,10 @@ public:
 		this->parameters = parameters;
 	}
 
+	int GetId() {
+		return id;
+	}
+
 	void SetPosition(Vector2D pos);
 	Vector2D GetPosition();
 	void ResetPath();
@@ -85,5 +89,6 @@ private:
 	int levelEnemy;
 	bool dead, followPlayer;
 	b2Vec2 velocity;
-	
+	float speed;
+	int id;
 };

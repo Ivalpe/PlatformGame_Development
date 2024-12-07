@@ -111,6 +111,7 @@ bool Map::Load(std::string path, std::string fileName)
 		Engine::GetInstance().physics->DeletePhysBody(layer);
 	}
 
+	collisions.clear();
 	posFirecamp.clear();
 	posPoison.clear();
 	mapData.layers.clear();

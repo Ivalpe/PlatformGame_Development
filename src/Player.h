@@ -41,6 +41,8 @@ public:
 
 	void OnCollisionEnd(PhysBody* physA, PhysBody* physB);
 
+	void ChangeDebug();
+
 	void SetParameters(pugi::xml_node parameters) {
 		this->parameters = parameters;
 	}
@@ -79,7 +81,7 @@ public:
 public:
 
 	//Declare player parameters
-	float speed = 0.06f;
+	float speed = 3.0f;
 	SDL_Texture* texture = NULL;
 	int texW, texH;
 
@@ -101,4 +103,5 @@ public:
 	std::list<Fireball*> fireballs;
 	Level lvl;
 	int lifes;
+	bool debugMode;
 };
