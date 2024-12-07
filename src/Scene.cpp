@@ -47,8 +47,6 @@ bool Scene::Awake()
 	//Create a new item using the entity manager and set the position to (200, 672) to test
 	Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 	item->position = Vector2D(200, 672);
-
-	CreateEvents();
 	return ret;
 }
 
@@ -354,6 +352,7 @@ void Scene::RestartEnemies() {
 		enemyNode.attribute("dead") = "false";
 	}
 	saveFile.save_file("config.xml");
+
 }
 
 //Clear all Enemy List or remove the dead enemies
