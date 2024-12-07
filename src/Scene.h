@@ -8,6 +8,10 @@
 
 struct SDL_Texture;
 
+enum class LOAD {
+	INITIAL, RESPAWN, DEBUG
+};
+
 class Scene : public Module
 {
 public:
@@ -35,8 +39,8 @@ public:
 
 	void RestartEnemies();
 
-	void LoadState(bool initial);
-	pugi::xml_node GetCurrentLevel();
+	void LoadState(LOAD load);
+	pugi::xml_node SearchLevel(int lvl);
 	void SaveState();
 
 	void CreateEvents();
@@ -48,7 +52,7 @@ public:
 	bool CleanUp();
 
 	void ClearEnemyList(bool onlyDead);
-	void ClearPoison();
+	void RespawnPoison();
 
 	int GetActualLevel() {
 		return level;
