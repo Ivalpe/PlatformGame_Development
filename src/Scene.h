@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 
 #include "Module.h"
 #include "Player.h"
@@ -32,6 +31,10 @@ public:
 	// Called each loop iteration
 	bool Update(float dt);
 
+	void SaveKillEnemy(int id);
+
+	void RestartEnemies();
+
 	void LoadState(bool initial);
 	pugi::xml_node GetCurrentLevel();
 	void SaveState();
@@ -41,14 +44,19 @@ public:
 	// Called before all Updates
 	bool PostUpdate();
 
-	void CreateEnemies();
-
 	// Called before quitting
 	bool CleanUp();
 
-	Vector2D GetPlayerPosition();
+	void ClearEnemyList(bool onlyDead);
+	void ClearPoison();
 
-	int GetActualLevel();
+	int GetActualLevel() {
+		return level;
+	}
+
+	Vector2D GetPlayerPosition() {
+		return player->GetPosition();
+	}
 
 private:
 	SDL_Texture* img;
@@ -57,7 +65,7 @@ private:
 	Player* player;
 	std::vector<Enemy*> enemyList;
 	std::vector<Fireball*> fireballList;
-	std::vector<Bonfire*> firecampList;
+	std::vector<Bonfire*> bonfireList;
 	std::vector<Poison*> poisonList;
 	int level, colRespawn;
 	bool help;

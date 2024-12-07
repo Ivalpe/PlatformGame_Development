@@ -112,7 +112,7 @@ bool Map::Load(std::string path, std::string fileName)
 	}
 
 	collisions.clear();
-	posFirecamp.clear();
+	posBonfire.clear();
 	posPoison.clear();
 	mapData.layers.clear();
 
@@ -226,7 +226,7 @@ bool Map::Load(std::string path, std::string fileName)
 						}
 						else if (gid == 2) {
 							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
-							posFirecamp.push_back(mapCoord);
+							posBonfire.push_back(mapCoord);
 						}
 						else if (gid == 3) {
 							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
@@ -274,8 +274,8 @@ bool Map::Load(std::string path, std::string fileName)
 	return ret;
 }
 
-std::list<Vector2D> Map::GetFirecampList() {
-	return posFirecamp;
+std::list<Vector2D> Map::GetBonfireList() {
+	return posBonfire;
 }
 
 std::list<Vector2D> Map::GetPoisonList() {

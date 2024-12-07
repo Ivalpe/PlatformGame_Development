@@ -115,7 +115,7 @@ public:
 	// Load new map
 	bool Load(std::string path, std::string mapFileName);
 
-	std::list<Vector2D> GetFirecampList();
+	std::list<Vector2D> GetBonfireList();
 	std::list<Vector2D> GetPoisonList();
 
 	// L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
@@ -147,8 +147,8 @@ public:
 		return mapData.tileHeight;
 	}
 
-	void ClearListFirecamp() {
-		posFirecamp.clear();
+	void ClearListBonfire() {
+		posBonfire.clear();
 	}
 
 	
@@ -161,6 +161,7 @@ private:
 	// L06: DONE 1: Declare a variable data of the struct MapData
 	MapData mapData;
 	std::list<PhysBody*> collisions;
-	std::list<Vector2D> posFirecamp;
+	std::list<Vector2D> posBonfire;
 	std::list<Vector2D> posPoison;
+	std::list<Vector2D> posEnemies;
 };

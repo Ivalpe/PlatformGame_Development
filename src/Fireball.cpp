@@ -57,7 +57,7 @@ bool Fireball::Update(float dt)
 	if (stFireball == StateFireball::DIE && currentAnimation->HasFinished()) col = true;
 	else if (stFireball == StateFireball::DIE) pbody->body->SetLinearVelocity({ 0, 0 });
 	else {
-		float speed = inverted ? -3.0f : 3.0f;
+		float speed = inverted ? -5.0f : 5.0f;
 		pbody->body->SetLinearVelocity({ speed, 0 });
 	}
 

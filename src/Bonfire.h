@@ -6,7 +6,7 @@
 
 struct SDL_Texture;
 
-enum class StateFirecamp {
+enum class StateBonfire {
 	IDLE, ON
 };
 
@@ -21,9 +21,9 @@ public:
 
 	bool Start();
 
-	void ActiveFirecamp();
+	void ActiveBonfire();
 
-	void DisableFirecamp();
+	void DisableBonfire();
 
 	bool IsActive();
 
@@ -35,7 +35,7 @@ public:
 		this->parameters = parameters;
 	}
 
-	StateFirecamp GetState() {
+	StateBonfire GetState() {
 		return sf;
 	}
 
@@ -57,7 +57,7 @@ private:
 	Animation* currentAnimation = nullptr;
 	Animation idle, on;
 	PhysBody* pbody;
-	StateFirecamp sf;
-	bool activeFirecamp;
+	StateBonfire sf;
+	bool activeBonfire;
 };
 #pragma once
