@@ -30,6 +30,7 @@ bool Scene::Awake()
 	LOG("Loading Scene");
 	bool ret = true;
 
+	help = false;
 	colRespawn = 120;
 	level = 0;
 
@@ -91,6 +92,16 @@ void Scene::DebugMode() {
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F11) == KEY_DOWN) {
 		Engine::GetInstance().LimitFPS();
 	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F11) == KEY_DOWN) {
+		Engine::GetInstance().LimitFPS();
+	}
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_H) == KEY_DOWN) {
+		if (help) help = false; else help = true;
+	}
+
+
 }
 
 // Called each loop iteration
@@ -99,6 +110,7 @@ bool Scene::Update(float dt)
 
 	DebugMode();
 
+
 	if (level != 0) {
 		Engine::GetInstance().render.get()->camera.x = ((player->GetX() * -1) + 200) * 2;
 		int cameraX = Engine::GetInstance().render.get()->camera.x;
@@ -106,6 +118,9 @@ bool Scene::Update(float dt)
 		if (cameraX >= 0) Engine::GetInstance().render.get()->camera.x = 0;
 		if (cameraX <= cameraMaxX) Engine::GetInstance().render.get()->camera.x = cameraMaxX;
 	}
+
+	if (help)
+	Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png"), SDL_FLIP_NONE, -Engine::GetInstance().render.get()->camera.x / 2, 0);
 
 	// Shoot
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {

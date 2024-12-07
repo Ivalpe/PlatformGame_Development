@@ -34,7 +34,6 @@ public:
 
 	void LoadState(bool initial);
 	pugi::xml_node GetCurrentLevel();
-	void KillEnemy(int enemyId);
 	void SaveState();
 
 	void CreateEvents();
@@ -61,4 +60,5 @@ private:
 	std::vector<Bonfire*> firecampList;
 	std::vector<Poison*> poisonList;
 	int level, colRespawn;
+	bool help;
 };
