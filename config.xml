@@ -167,6 +167,8 @@
 			<fireball2SFX path="Assets/Audio/Fx/fireball_land.ogg" />
 			
 		</fx>
-		<music />
+		<music>
+			<Music1SFX path="Assets/Audio/Music/Character_Config.mp3" />
+		</music>
 	</audio>
 </config>

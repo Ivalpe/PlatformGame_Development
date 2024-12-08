@@ -55,6 +55,15 @@ bool Scene::Awake()
 bool Scene::Start()
 {
 	
+	const char* musicPath = configParameters.child("audio").child("music").child("Music1SFX").attribute("path").as_string();
+	if (musicPath != nullptr && musicPath[0] != '\0') {
+		Engine::GetInstance().audio->PlayMusic(musicPath, 0.0f);
+		LOG("Playing background music: %s", musicPath);
+	}
+	else {
+		LOG("Music path is invalid or empty!");
+	}
+
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
 	std::list<Vector2D> list = Engine::GetInstance().map->GetFirecampList();

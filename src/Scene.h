@@ -45,7 +45,7 @@ public:
 private:
 	SDL_Texture* img;
 
-
+	unsigned int musicTrackId = 0;
 	int magicFireballSoundId = 0;
 
 	//L03: TODO 3b: Declare a Player attribute
