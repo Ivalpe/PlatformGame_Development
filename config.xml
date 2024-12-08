@@ -61,7 +61,7 @@
 				</animations>
 			</player>
 			<enemies>
-				<enemy id="1" name="evilwizard" x="85" y="28" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="true" deadSave="false">
+				<enemy id="1" name="evilwizard" x="85" y="28" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="false" deadSave="false">
 					<animations>
 						<idle loop="true" speed="0.06">
 							<frame x="0" y="96" w="16" h="32" />
@@ -227,4 +227,13 @@
 			</poison>
 		</entities>
 	</scene>
+	<audio>
+		<fx>
+			<fireball1SFX path="Assets/Audio/Fx/magic-fireball.ogg" />
+			<fireball2SFX path="Assets/Audio/Fx/fireball_land.ogg" />
+		</fx>
+		<music>
+			<Music1SFX path="Assets/Audio/Music/Character_Config.mp3" />
+		</music>
+	</audio>
 </config>
