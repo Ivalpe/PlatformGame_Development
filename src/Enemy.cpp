@@ -42,6 +42,13 @@ bool Enemy::Start() {
 	die.LoadAnimations(parameters.child("animations").child("die"));
 	currentAnimation = &idle;
 
+	//Load Fx
+	pugi::xml_document audioFile;
+	pugi::xml_parse_result result = audioFile.load_file("config.xml");
+
+	enemydSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("enemydSFX").attribute("path").as_string());
+	
+
 	//Add a physics to an item - initialize the physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY() + texW, texW / 2, bodyType::DYNAMIC);
 
@@ -87,6 +94,7 @@ bool Enemy::Update(float dt) {
 	sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
 
 	if (currentAnimation == &die && currentAnimation->HasFinished()) {
+		Engine::GetInstance().audio.get()->PlayFx(enemydSFX);
 		dead = true;
 	}
 

@@ -20,7 +20,7 @@
 			<map path="Assets/Maps/" name="Level1.tmx" number="1" ix="60" iy="192" />
 		</levels>
 		<entities>
-			<player dx="311" dy="127" dlevel="1" ix="320" iy="100" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
+			<player dx="43" dy="175" dlevel="1" ix="320" iy="100" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
 					<idle loop="true" speed="0.06">
 						<frame x="0" y="32" w="16" h="32" />
@@ -61,7 +61,7 @@
 				</animations>
 			</player>
 			<enemies>
-				<enemy id="1" name="evilwizard" x="85" y="28" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="false" deadSave="false">
+				<enemy id="1" name="evilwizard" x="85" y="28" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="true" deadSave="false">
 					<animations>
 						<idle loop="true" speed="0.06">
 							<frame x="0" y="96" w="16" h="32" />
@@ -231,6 +231,14 @@
 		<fx>
 			<fireball1SFX path="Assets/Audio/Fx/magic-fireball.ogg" />
 			<fireball2SFX path="Assets/Audio/Fx/fireball_land.ogg" />
+			<enemydSFX path="Assets/Audio/Fx/enemy_die.ogg" />
+			<saveSFX path="Assets/Audio/Fx/save.ogg" />
+			<loadSFX path="Assets/Audio/Fx/load_save.ogg" />
+			<pdeathSFX path="Assets/Audio/Fx/player_death.ogg" />
+			<acidkillSFX path="Assets/Audio/Fx/acid.ogg" />
+			<bonfireSFX path="Assets/Audio/Fx/bonfire.ogg" />
+			<landSFX path="Assets/Audio/Fx/land.ogg" />
+			<jumpSFX path="Assets/Audio/Fx/jump.ogg" />
 		</fx>
 		<music>
 			<Music1SFX path="Assets/Audio/Music/Character_Config.mp3" />

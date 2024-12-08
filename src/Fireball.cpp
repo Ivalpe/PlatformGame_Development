@@ -31,10 +31,12 @@ bool Fireball::Start(bool inv) {
 
 	//Load animations
 
+
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	explode.LoadAnimations(parameters.child("animations").child("explode"));
 	currentAnimation = &idle;
 
+	//load Fx
 	pugi::xml_document audioFile;
 	pugi::xml_parse_result result = audioFile.load_file("config.xml");
 

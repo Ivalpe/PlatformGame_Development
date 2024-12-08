@@ -42,6 +42,17 @@ bool Player::Start() {
 	die.LoadAnimations(parameters.child("animations").child("die"));
 	currentAnimation = &idle;
 
+	//Load Fx
+	
+	pugi::xml_document audioFile;
+	pugi::xml_parse_result result = audioFile.load_file("config.xml");
+
+	pdeathSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("pdeathSFX").attribute("path").as_string());
+	acidkillSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("acidkillSFX").attribute("path").as_string());
+	jumpSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("jumpSFX").attribute("path").as_string());
+	landSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("landSFX").attribute("path").as_string());
+
+
 	//Player
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texW / 2, bodyType::DYNAMIC);
 	pbody->listener = this;
@@ -109,9 +120,14 @@ bool Player::Update(float dt)
 
 		//Jump
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && isJumping == false) {
-			// Apply an initial upward force
+			
+			hasLanded = false;
+
+			
 			pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 			isJumping = true;
+
+			Engine::GetInstance().audio.get()->PlayFx(jumpSFX);
 		}
 
 		// If the player is jumping, we don't want to apply gravity, we use the current velocity prduced by the jump
@@ -121,6 +137,7 @@ bool Player::Update(float dt)
 		if (isDying)
 			velocity = pbody->body->GetLinearVelocity();
 
+		
 		// Apply the velocity to the player
 		pbody->body->SetLinearVelocity(velocity);
 
@@ -152,12 +169,12 @@ bool Player::Update(float dt)
 			currentAnimation = &fall;
 		else if (stPlayer == StatePlayer::DIE)
 			currentAnimation = &die;
-
-
 	}
 	else {
 		currentAnimation = &die;
+		
 	}
+
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
@@ -177,6 +194,11 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	{
 	case ColliderType::GROUND:
 		LOG("Collision PLATFORM");
+		if (isJumping && !hasLanded) {
+			
+			Engine::GetInstance().audio.get()->PlayFx(landSFX);
+			hasLanded = true;  
+		}
 		isJumping = false;
 		break;
 	case ColliderType::ITEM:
@@ -196,6 +218,11 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	{
 	case ColliderType::GROUND:
 		LOG("Collision PLATFORM");
+		if (isJumping && !hasLanded) {
+			
+			Engine::GetInstance().audio.get()->PlayFx(landSFX);
+			hasLanded = true;  
+		}
 		isJumping = false;
 		break;
 	case ColliderType::ITEM:
@@ -222,6 +249,13 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::ENEMY:
 		if (!debugMode) {
 			stPlayer = StatePlayer::DIE;
+
+			// Reproducir el sonido solo si ha pasado suficiente tiempo
+			if (deathSoundTimer <= 0.0f) {
+				Engine::GetInstance().audio.get()->PlayFx(pdeathSFX);
+				deathSoundTimer = deathSoundCooldown;  // Reiniciar el temporizador
+			}
+
 			isDying = true;
 		}
 		break;
@@ -238,6 +272,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	{
 	case ColliderType::GROUND:
 		LOG("End Collision PLATFORM DOWN");
+		
 		break;
 	case ColliderType::ITEM:
 		LOG("End Collision ITEM");

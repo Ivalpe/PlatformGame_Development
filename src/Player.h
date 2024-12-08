@@ -93,6 +93,12 @@ public:
 	float jumpForce = 0.37f; // The force to apply when jumping
 	bool isJumping = false; // Flag to check if the player is currently jumping
 	bool isDying = false;
+	bool hasLanded = false;
+
+	float deathSoundTimer = 0.0f;
+	const float deathSoundCooldown = 1.0f;
+	float landSoundTimer = 0.0f;
+	const float landSoundCooldown = 1.0f;
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
@@ -104,4 +110,9 @@ public:
 	Level lvl;
 	int lifes;
 	bool debugMode;
+
+	int pdeathSFX;
+	int acidkillSFX;
+	int jumpSFX;
+	int landSFX;
 };
