@@ -47,21 +47,15 @@ bool Scene::Awake()
 	//Create a new item using the entity manager and set the position to (200, 672) to test
 	Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 	item->position = Vector2D(200, 672);
+
 	return ret;
 }
 
 // Called before the first frame
 bool Scene::Start()
 {
+	Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music1SFX").attribute("path").as_string(), 0.0f);
 
-	const char* musicPath = configParameters.child("config").child("audio").child("music").child("Music1SFX").attribute("path").as_string();
-	if (musicPath != nullptr && musicPath[0] != '\0') {
-		Engine::GetInstance().audio->PlayMusic("Assets/Audio/Music/Character_Config.mp3", 0.0f);
-		LOG("Playing background music: %s", "Assets/Audio/Music/Character_Config.mp3");
-	}
-	else {
-		LOG("Music path is invalid or empty!");
-	}
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
 	RestartEnemies();
@@ -101,7 +95,7 @@ bool Scene::Update(float dt)
 
 	// Shoot
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
-		
+
 		Fireball* fireball = (Fireball*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALL);
 		fireball->SetParameters(configParameters.child("entities").child("fireball"));
 		if (player->GetDirection() == DirectionPlayer::LEFT) fireball->Start(true);

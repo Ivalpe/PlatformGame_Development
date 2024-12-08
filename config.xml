@@ -226,14 +226,14 @@
 				</animations>
 			</poison>
 		</entities>
+		<audio>
+			<fx>
+				<fireball1SFX path="Assets/Audio/Fx/magic-fireball.ogg" />
+				<fireball2SFX path="Assets/Audio/Fx/fireball_land.ogg" />
+			</fx>
+			<music>
+				<Music1SFX path="Assets/Audio/Music/Character_Config.wav" />
+			</music>
+		</audio>
 	</scene>
-	<audio>
-		<fx>
-			<fireball1SFX path="Assets/Audio/Fx/magic-fireball.ogg" />
-			<fireball2SFX path="Assets/Audio/Fx/fireball_land.ogg" />
-		</fx>
-		<music>
-			<Music1SFX path="Assets/Audio/Music/Character_Config.mp3" />
-		</music>
-	</audio>
 </config>
