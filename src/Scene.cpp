@@ -53,6 +53,15 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
+
+	pugi::xml_document audioFile;
+	pugi::xml_parse_result result = audioFile.load_file("config.xml");
+
+	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
+	loadSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
+	saveSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("saveSFX").attribute("path").as_string());
+
+	Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music1SFX").attribute("path").as_string(), 0.0f);
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
 	RestartEnemies();
@@ -92,6 +101,7 @@ bool Scene::Update(float dt)
 
 	// Shoot
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
+		
 		Fireball* fireball = (Fireball*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALL);
 		fireball->SetParameters(configParameters.child("entities").child("fireball"));
 		if (player->GetDirection() == DirectionPlayer::LEFT) fireball->Start(true);
@@ -124,6 +134,12 @@ bool Scene::Update(float dt)
 		if (bonfire->GetState() == StateBonfire::IDLE &&
 			player->GetPosition().getX() >= bonfire->GetPosition().getX() - 16 && player->GetPosition().getX() <= bonfire->GetPosition().getX() + 8 &&
 			player->GetPosition().getY() >= bonfire->GetPosition().getY() - 16 && player->GetPosition().getY() <= bonfire->GetPosition().getY() + 8) {
+
+			if (!bonfire->IsActive()) {
+				bonfire->ActiveBonfire();
+				Engine::GetInstance().audio.get()->PlayFx(bonfireSFX);
+			}
+
 			pugi::xml_document saveFile;
 			pugi::xml_parse_result result = saveFile.load_file("config.xml");
 			bonfire->ActiveBonfire();
@@ -284,6 +300,8 @@ void Scene::LoadState(LOAD load) {
 	}
 
 	player->SetPosition(posPlayer);
+
+	Engine::GetInstance().audio.get()->PlayFx(loadSFX);
 }
 
 void Scene::SaveState() {
@@ -294,6 +312,8 @@ void Scene::SaveState() {
 	saveFile.child("config").child("scene").child("entities").child("player").attribute("dy").set_value(player->GetY());
 	saveFile.child("config").child("scene").child("entities").child("player").attribute("dlevel").set_value(level);
 	saveFile.save_file("config.xml");
+
+	Engine::GetInstance().audio.get()->PlayFx(saveSFX);
 }
 
 pugi::xml_node Scene::SearchLevel(int lvl) {

@@ -59,5 +59,8 @@ private:
 	PhysBody* pbody;
 	StateBonfire sf;
 	bool activeBonfire;
+
+	
+	
 };
 #pragma once

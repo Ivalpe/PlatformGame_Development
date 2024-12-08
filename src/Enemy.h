@@ -91,4 +91,6 @@ private:
 	b2Vec2 velocity;
 	float speed;
 	int id;
+
+	int enemydSFX;
 };
