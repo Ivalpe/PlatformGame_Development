@@ -48,7 +48,7 @@ bool Player::Start() {
 	pugi::xml_parse_result result = audioFile.load_file("config.xml");
 
 	pdeathSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("pdeathSFX").attribute("path").as_string());
-	acidkillSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("acidkillSFX").attribute("path").as_string());
+	
 	jumpSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("jumpSFX").attribute("path").as_string());
 	landSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("landSFX").attribute("path").as_string());
 
@@ -71,8 +71,10 @@ void Player::SetPosition(Vector2D posPlayer) {
 void Player::Respawn() {
 	isDying = false;
 	die.SetFrame(0);
+	deathSoundTimer = 0.0f;
 	isJumping = false;
 	stPlayer = StatePlayer::IDLE;
+	
 }
 
 void Player::ChangeDebug() {
@@ -250,10 +252,10 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		if (!debugMode) {
 			stPlayer = StatePlayer::DIE;
 
-			// Reproducir el sonido solo si ha pasado suficiente tiempo
+			
 			if (deathSoundTimer <= 0.0f) {
 				Engine::GetInstance().audio.get()->PlayFx(pdeathSFX);
-				deathSoundTimer = deathSoundCooldown;  // Reiniciar el temporizador
+				deathSoundTimer = deathSoundCooldown;  
 			}
 
 			isDying = true;
