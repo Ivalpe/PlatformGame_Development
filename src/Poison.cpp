@@ -6,6 +6,7 @@
 #include "Render.h"
 #include "Scene.h"
 #include "Log.h"
+#include "Player.h"
 #include "Physics.h"
 #include "Map.h"
 #include <random>
@@ -32,6 +33,12 @@ bool Poison::Start() {
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	currentAnimation = &idle;
 
+	//Load Fx
+	pugi::xml_document audioFile;
+	pugi::xml_parse_result result = audioFile.load_file("config.xml");
+
+	acidkillSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("acidkillSFX").attribute("path").as_string());
+
 	//Random number between 0 and 12
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -57,6 +64,8 @@ bool Poison::Start() {
 
 bool Poison::Update(float dt)
 {
+	
+
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW);
@@ -98,7 +107,17 @@ void Poison::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
 		break;
+	case ColliderType::PLAYER:
+
+		if (acidDeathSoundTimer <= 0.0f) {
+			Engine::GetInstance().audio.get()->PlayFx(acidkillSFX);
+			acidDeathSoundTimer = acidDeathSoundCooldown; // Reiniciar el temporizador para evitar que se repita
+		}
+		LOG("Collision DIE");
+		break;
 	case ColliderType::DIE:
+		
+			
 		LOG("Collision DIE");
 		break;
 	default:

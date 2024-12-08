@@ -47,5 +47,10 @@ private:
 	Animation idle;
 	SDL_RendererFlip flipType;
 	PhysBody* pbody;
+
+	float acidDeathSoundTimer = 0.0f;     
+	const float acidDeathSoundCooldown = 1.0f;
+
+	int acidkillSFX;
 };
 #pragma once

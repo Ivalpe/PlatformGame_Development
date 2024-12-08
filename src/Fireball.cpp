@@ -31,14 +31,19 @@ bool Fireball::Start(bool inv) {
 
 	//Load animations
 
+
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	explode.LoadAnimations(parameters.child("animations").child("explode"));
 	currentAnimation = &idle;
 
+	//load Fx
+	pugi::xml_document audioFile;
+	pugi::xml_parse_result result = audioFile.load_file("config.xml");
+
+	fireball1SFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("fireball1SFX").attribute("path").as_string());
+	fireball2SFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("fireball2SFX").attribute("path").as_string());
 	//Add a physics to an item - initialize the physics body
-	float offsetX = inverted ? -texW : texW;
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texW / 2 + offsetX, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC
-	);
+	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 
 	//Assign collider type
 	pbody->ctype = ColliderType::FIREBALL;
@@ -76,6 +81,9 @@ bool Fireball::Update(float dt)
 	Engine::GetInstance().render.get()->DrawTexture(texture, inverted ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
+		Engine::GetInstance().audio.get()->PlayFx(fireball1SFX);
+	}
 	return true;
 }
 
@@ -103,6 +111,7 @@ void Fireball::OnCollision(PhysBody* physA, PhysBody* physB) {
 	if (stFireball != StateFireball::DIE && physB->ctype != ColliderType::SENSOR) {
 		stFireball = StateFireball::DIE;
 		currentAnimation = &explode;
+		Engine::GetInstance().audio.get()->PlayFx(fireball2SFX);
 		pbody->body->SetLinearVelocity({ 0, 0 });
 		LOG("Fireball collided, starting explosion animation.");
 	}

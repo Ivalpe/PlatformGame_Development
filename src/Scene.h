@@ -78,4 +78,8 @@ private:
 	int level, colRespawn;
 	bool help;
 	ENEMY enState;
+
+	int bonfireSFX;
+	int saveSFX;
+	int loadSFX;
 };

@@ -33,6 +33,9 @@ bool Bonfire::Start() {
 	sf = StateBonfire::IDLE;
 	currentAnimation = &idle;
 
+	//Load Fx
+	
+
 	return true;
 }
 
