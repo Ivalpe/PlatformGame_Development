@@ -2,6 +2,8 @@
 
 A 2D platformer game created using **Whimsy Hallow** assets.
 
+[Link to Github](https://github.com/Ivalpe/PlatformGame_Development/tree/main)
+
 ## About
 
 **PlatformGame** is a classic platformer featuring dynamic gameplay, various enemy types, and interactive environments. The game incorporates beautifully designed pixel art and animations to deliver an engaging experience.
