@@ -61,14 +61,7 @@ bool Scene::Start()
 	loadSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
 	saveSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("saveSFX").attribute("path").as_string());
 
-	const char* musicPath = configParameters.child("music").child("Music1SFX").attribute("path").as_string();
-	if (musicPath != nullptr && musicPath[0] != '\0') {
-		Engine::GetInstance().audio->PlayMusic("Assets/Audio/Music/Character_Config.wav", 0.0f);
-		LOG("Playing background music: %s", "Assets/Audio/Music/Character_Config.wav");
-	}
-	else {
-		LOG("Music path is invalid or empty!");
-	}
+	Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music1SFX").attribute("path").as_string(), 0.0f);
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
 	RestartEnemies();
