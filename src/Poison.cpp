@@ -37,7 +37,7 @@ bool Poison::Start() {
 	pugi::xml_document audioFile;
 	pugi::xml_parse_result result = audioFile.load_file("config.xml");
 
-	acidkillSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("acidkillSFX").attribute("path").as_string());
+	acidkillSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("acidkillSFX").attribute("path").as_string());
 
 	//Random number between 0 and 12
 	std::random_device rd;

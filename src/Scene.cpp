@@ -57,9 +57,9 @@ bool Scene::Start()
 	pugi::xml_document audioFile;
 	pugi::xml_parse_result result = audioFile.load_file("config.xml");
 
-	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
-	loadSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
-	saveSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("saveSFX").attribute("path").as_string());
+	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
+	loadSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
+	saveSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("saveSFX").attribute("path").as_string());
 
 	Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music1SFX").attribute("path").as_string(), 0.0f);
 	//Call the function to load the map. 

@@ -46,7 +46,7 @@ bool Enemy::Start() {
 	pugi::xml_document audioFile;
 	pugi::xml_parse_result result = audioFile.load_file("config.xml");
 
-	enemydSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("enemydSFX").attribute("path").as_string());
+	enemydSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("enemydSFX").attribute("path").as_string());
 	
 
 	//Add a physics to an item - initialize the physics body

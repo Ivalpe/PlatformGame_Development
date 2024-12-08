@@ -47,10 +47,10 @@ bool Player::Start() {
 	pugi::xml_document audioFile;
 	pugi::xml_parse_result result = audioFile.load_file("config.xml");
 
-	pdeathSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("pdeathSFX").attribute("path").as_string());
-	acidkillSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("acidkillSFX").attribute("path").as_string());
-	jumpSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("jumpSFX").attribute("path").as_string());
-	landSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("audio").child("fx").child("landSFX").attribute("path").as_string());
+	pdeathSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("pdeathSFX").attribute("path").as_string());
+	acidkillSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("acidkillSFX").attribute("path").as_string());
+	jumpSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("jumpSFX").attribute("path").as_string());
+	landSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("landSFX").attribute("path").as_string());
 
 
 	//Player
