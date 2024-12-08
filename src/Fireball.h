@@ -5,6 +5,7 @@
 #include "Animation.h"
 #include "Pathfinding.h"
 #include "Audio.h"
+#include "Timer.h"
 
 struct SDL_Texture;
 
@@ -59,10 +60,16 @@ private:
 	SDL_RendererFlip flipType;
 	StateFireball stFireball;
 	PhysBody* pbody;
-	float explosionTimer = 0.0f;  
-	float explosionDuration = 1.0f;
+
+	Timer explosionTimer;
+	float explosionTime;
+	Timer fireTimer;
+	float fireTime;
+
 	bool col;
 	bool inverted;
 
+	int fireball1SFX;
+	int fireball2SFX;
 };
 #pragma once

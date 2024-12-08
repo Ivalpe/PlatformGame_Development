@@ -160,9 +160,13 @@
 				</animations>
 			</firecamp>
 		</entities>
-		
-			
-			
-		
 	</scene>
+	<audio>
+		<fx>
+			<fireball1SFX path="Assets/Audio/Fx/magic-fireball.ogg" />
+			<fireball2SFX path="Assets/Audio/Fx/fireball_land.ogg" />
+			
+		</fx>
+		<music />
+	</audio>
 </config>
