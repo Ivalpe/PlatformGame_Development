@@ -55,10 +55,10 @@ bool Scene::Awake()
 bool Scene::Start()
 {
 	
-	const char* musicPath = configParameters.child("audio").child("music").child("Music1SFX").attribute("path").as_string();
+	const char* musicPath = configParameters.child("config").child("audio").child("music").child("Music1SFX").attribute("path").as_string();
 	if (musicPath != nullptr && musicPath[0] != '\0') {
-		Engine::GetInstance().audio->PlayMusic(musicPath, 0.0f);
-		LOG("Playing background music: %s", musicPath);
+		Engine::GetInstance().audio->PlayMusic("Assets/Audio/Music/Character_Config.mp3", 0.0f);
+		LOG("Playing background music: %s", "Assets/Audio/Music/Character_Config.mp3");
 	}
 	else {
 		LOG("Music path is invalid or empty!");
