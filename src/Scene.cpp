@@ -56,6 +56,7 @@ bool Scene::Start()
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
 	RestartEnemies();
+	enState = ENEMY::CREATEALL;
 	CreateEvents();
 	return true;
 }
@@ -114,7 +115,8 @@ bool Scene::Update(float dt)
 	}
 
 	// Destroy died enemies
-	ClearEnemyList(true);
+	enState = ENEMY::CLEARDEADS;
+	ClearEnemyList();
 
 
 	// Active bonfire if player touch it
@@ -161,6 +163,7 @@ bool Scene::PostUpdate()
 		{
 			if (mapNode.attribute("number").as_int() == level) {
 				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				enState = ENEMY::CREATEALL;
 				CreateEvents();
 
 				pugi::xml_node currentLevel = SearchLevel(level);
@@ -184,6 +187,7 @@ bool Scene::PostUpdate()
 			if (mapNode.attribute("number").as_int() == level) {
 				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
 				LoadState(LOAD::RESPAWN);
+				enState = ENEMY::CREATEXML;
 				CreateEvents();
 				break;
 			}
@@ -325,7 +329,7 @@ void Scene::CreateEvents() {
 	RespawnPoison();
 
 	//Enemies
-	ClearEnemyList(false);
+	ClearEnemyList();
 }
 
 //Modify the XML and puts dead="true" to a enemy dead
@@ -356,9 +360,35 @@ void Scene::RestartEnemies() {
 }
 
 //Clear all Enemy List or remove the dead enemies
-void Scene::ClearEnemyList(bool onlyDead) {
-	//Remove dead enemies
-	if (onlyDead) {
+void Scene::ClearEnemyList() {
+
+	switch (enState)
+	{
+	case ENEMY::CREATEALL:
+		for (int i = 0; i < enemyList.size(); i++) {
+			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
+			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getSensorBody());
+			Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
+			enemyList.erase(enemyList.begin() + i);
+			i--;
+		}
+
+		for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
+		{
+			if (level == enemyNode.attribute("level").as_int()) {
+				Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
+
+				std::string enemyType = enemyNode.attribute("name").as_string();
+				if (enemyType == "evilwizard") enemy->SetEnemyType(EnemyType::EV_WIZARD);
+				else if (enemyType == "bat") enemy->SetEnemyType(EnemyType::BAT);
+
+				enemy->SetParameters(enemyNode);
+				enemy->Start();
+				enemyList.push_back(enemy);
+			}
+		}
+		break;
+	case ENEMY::CLEARDEADS:
 		for (int i = 0; i < enemyList.size(); i++) {
 			if (enemyList[i]->IsDead()) {
 				SaveKillEnemy(enemyList[i]->GetId());
@@ -369,9 +399,8 @@ void Scene::ClearEnemyList(bool onlyDead) {
 				i--;
 			}
 		}
-	}
-	//Remove and create all the enemies
-	else {
+		break;
+	case ENEMY::CREATEXML:
 		for (int i = 0; i < enemyList.size(); i++) {
 			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
 			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getSensorBody());
@@ -394,6 +423,9 @@ void Scene::ClearEnemyList(bool onlyDead) {
 				enemyList.push_back(enemy);
 			}
 		}
+		break;
+	default:
+		break;
 	}
 }
 

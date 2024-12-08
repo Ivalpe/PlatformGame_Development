@@ -20,7 +20,7 @@
 			<map path="Assets/Maps/" name="Level1.tmx" number="1" ix="60" iy="192" />
 		</levels>
 		<entities>
-			<player dx="163" dy="175" dlevel="1" ix="320" iy="100" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
+			<player dx="311" dy="127" dlevel="1" ix="320" iy="100" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
 					<idle loop="true" speed="0.06">
 						<frame x="0" y="32" w="16" h="32" />
@@ -61,7 +61,7 @@
 				</animations>
 			</player>
 			<enemies>
-				<enemy id="1" name="evilwizard" x="85" y="28" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="false" deadSave="false">
+				<enemy id="1" name="evilwizard" x="85" y="28" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="true" deadSave="false">
 					<animations>
 						<idle loop="true" speed="0.06">
 							<frame x="0" y="96" w="16" h="32" />

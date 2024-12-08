@@ -12,6 +12,10 @@ enum class LOAD {
 	INITIAL, RESPAWN, DEBUG
 };
 
+enum class ENEMY {
+	CREATEALL, CLEARDEADS, CREATEXML 
+};
+
 class Scene : public Module
 {
 public:
@@ -51,7 +55,7 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-	void ClearEnemyList(bool onlyDead);
+	void ClearEnemyList();
 	void RespawnPoison();
 
 	int GetActualLevel() {
@@ -73,4 +77,5 @@ private:
 	std::vector<Poison*> poisonList;
 	int level, colRespawn;
 	bool help;
+	ENEMY enState;
 };
