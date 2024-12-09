@@ -56,7 +56,7 @@ bool Poison::Start() {
 	pbody->ctype = ColliderType::DIE;
 	pbody->listener = this;
 
-	// Set the gravity of the body
+	//Set the gravity of the body
 	pbody->body->SetGravityScale(0);
 
 	return true;
@@ -111,7 +111,7 @@ void Poison::OnCollision(PhysBody* physA, PhysBody* physB) {
 
 		if (acidDeathSoundTimer <= 0.0f) {
 			Engine::GetInstance().audio.get()->PlayFx(acidkillSFX);
-			acidDeathSoundTimer = acidDeathSoundCooldown; // Reiniciar el temporizador para evitar que se repita
+			acidDeathSoundTimer = acidDeathSoundCooldown; // Reset the timer to prevent it from repeating
 		}
 		LOG("Collision DIE");
 		break;

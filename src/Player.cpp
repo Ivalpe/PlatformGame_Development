@@ -250,10 +250,10 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		if (!debugMode) {
 			stPlayer = StatePlayer::DIE;
 
-			// Reproducir el sonido solo si ha pasado suficiente tiempo
+			// Play the sound only if enough time has passed
 			if (deathSoundTimer <= 0.0f) {
 				Engine::GetInstance().audio.get()->PlayFx(pdeathSFX);
-				deathSoundTimer = deathSoundCooldown;  // Reiniciar el temporizador
+				deathSoundTimer = deathSoundCooldown;  // Reset the timer
 			}
 
 			isDying = true;

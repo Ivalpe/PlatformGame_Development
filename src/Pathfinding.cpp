@@ -357,8 +357,6 @@ int Pathfinding::MovementCost(int x, int y)
 
 void Pathfinding::ComputePath(int x, int y)
 {
-    // L12: TODO 2: Follow the breadcrumps to goal back to the origin
-    // at each step, add the point into "pathTiles" (it will then draw automatically)
 
     //Clear the pathTiles list
     pathTiles.clear();
