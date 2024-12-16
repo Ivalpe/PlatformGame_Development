@@ -55,8 +55,10 @@ bool Map::Update(float dt)
 								SDL_Rect tileRect = tileSet->GetRect(gid);
 								//Get the screen coordinates from the tile coordinates
 								Vector2D mapCoord = MapToWorld(i, j);
-								//Draw the texture
-								Engine::GetInstance().render->DrawTexture(tileSet->texture, SDL_FLIP_NONE, mapCoord.getX(), mapCoord.getY(), &tileRect);
+								//Draw the texture if is visible
+								if (mapCoord.getX() <= -Engine::GetInstance().render.get()->camera.x / 2 + 650 &&
+									mapCoord.getX() >= -Engine::GetInstance().render.get()->camera.x / 2 - 50)
+									Engine::GetInstance().render->DrawTexture(tileSet->texture, SDL_FLIP_NONE, mapCoord.getX(), mapCoord.getY(), &tileRect);
 							}
 						}
 					}
