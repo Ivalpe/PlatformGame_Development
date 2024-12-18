@@ -47,7 +47,7 @@ bool Enemy::Start() {
 	pugi::xml_parse_result result = audioFile.load_file("config.xml");
 
 	enemydSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("enemydSFX").attribute("path").as_string());
-	
+
 
 	//Add a physics to an item - initialize the physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY() + texW, texW / 2, bodyType::DYNAMIC);
@@ -120,21 +120,24 @@ void Enemy::MovementEnemy(float dt) {
 	else posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 1];
 
 	//Movement Enemy
-	if (posBread.getX() <= tilePos.getX()) {
-		velocity.x = -speed;
-		flipType = SDL_FLIP_HORIZONTAL;
-	}
-	else {
-		velocity.x = speed;
-		flipType = SDL_FLIP_NONE;
-	}
-
-	if (type == EnemyType::BAT) {
-		if (posBread.getY() <= tilePos.getY()) {
-			velocity.y = -speed;
+	if (currentAnimation != &die) {
+		if (posBread.getX() <= tilePos.getX()) {
+			velocity.x = -speed;
+			flipType = SDL_FLIP_HORIZONTAL;
 		}
 		else {
-			velocity.y = speed;
+			velocity.x = speed;
+			flipType = SDL_FLIP_NONE;
+		}
+
+
+		if (type == EnemyType::BAT) {
+			if (posBread.getY() <= tilePos.getY()) {
+				velocity.y = -speed;
+			}
+			else {
+				velocity.y = speed;
+			}
 		}
 	}
 }
