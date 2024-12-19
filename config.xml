@@ -18,6 +18,7 @@
 		<levels>
 			<map path="Assets/Maps/" name="Level0.tmx" number="0" ix="320" iy="100" />
 			<map path="Assets/Maps/" name="Level1.tmx" number="1" ix="60" iy="192" />
+			<map path="Assets/Maps/" name="Level2.tmx" number="2" ix="60" iy="192" />
 		</levels>
 		<entities>
 			<player dx="43" dy="175" dlevel="1" ix="320" iy="100" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
