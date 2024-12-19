@@ -20,7 +20,7 @@
 			<map path="Assets/Maps/" name="Level1.tmx" number="1" ix="60" iy="192" />
 		</levels>
 		<entities>
-			<player dx="43" dy="175" dlevel="1" ix="320" iy="100" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
+			<player dx="281" dy="95" dlevel="0" ix="320" iy="100" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
 					<idle loop="true" speed="0.06">
 						<frame x="0" y="32" w="16" h="32" />
@@ -50,6 +50,14 @@
 						<frame x="64" y="96" w="16" h="32" />
 						<frame x="80" y="96" w="16" h="32" />
 					</fall>
+					<dmg loop="false" speed="0.12">
+						<frame x="0" y="128" w="16" h="32" />
+						<frame x="16" y="128" w="16" h="32" />
+						<frame x="32" y="128" w="16" h="32" />
+						<frame x="48" y="128" w="16" h="32" />
+						<frame x="64" y="128" w="16" h="32" />
+						<frame x="80" y="128" w="16" h="32" />
+					</dmg>
 					<die loop="false" speed="0.12">
 						<frame x="0" y="160" w="16" h="32" />
 						<frame x="16" y="160" w="16" h="32" />
