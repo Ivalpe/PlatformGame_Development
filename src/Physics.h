@@ -35,6 +35,8 @@ enum class ColliderType {
 	DIE,
 	NEW,
 	LOAD,
+	LEV2,
+	LEVEL_CLEAR,
 	UNKNOWN
 };
 

@@ -248,6 +248,14 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision LOAD");
 		lvl = Level::LOAD;
 		break;
+	case ColliderType::LEV2:
+		LOG("Collision LOAD");
+		lvl = Level::LEV2;
+		break;
+	case ColliderType::LEVEL_CLEAR:
+		LOG("Collision LOAD");
+		lvl = Level::LEVEL_CLEAR;
+		break;
 	case ColliderType::ENEMY:
 		if (!debugMode) {
 			stPlayer = StatePlayer::DIE;
