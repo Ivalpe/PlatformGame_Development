@@ -195,6 +195,28 @@ bool Scene::PostUpdate()
 		player->SetLevel(Level::DISABLED);
 	}
 
+	if (level == 1 && player->GetLevel() == Level::LEV2) {
+		level++;
+		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
+		{
+			if (mapNode.attribute("number").as_int() == level) {
+				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				enState = ENEMY::CREATEALL;
+				CreateEvents();
+
+				pugi::xml_node currentLevel = SearchLevel(level);
+				Vector2D posPlayer;
+				posPlayer.setX(currentLevel.attribute("ix").as_int());
+				posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
+
+				player->SetPosition(posPlayer);
+
+				break;
+			}
+		}
+		player->SetLevel(Level::DISABLED);
+	}
+
 	//Load Level
 	else if (level == 0 && player->GetLevel() == Level::LOAD) {
 		level++;
