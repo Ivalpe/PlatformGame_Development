@@ -13,6 +13,8 @@
 #include "Map.h"
 #include "Item.h"
 #include "Enemy.h"
+#include "GuiControl.h"
+#include "GuiManager.h"
 
 
 // -----------------------------
@@ -47,12 +49,21 @@ bool Scene::Awake()
 	//Create a new item using the entity manager and set the position to (200, 672) to test
 	Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
 	item->position = Vector2D(200, 672);
+
+	coordYMenuTp = 350;
+
+	enableTp = false;
+	for (auto button : buttonList) {
+		button->Disable();
+	}
 	return ret;
 }
 
 // Called before the first frame
 bool Scene::Start()
 {
+	// Texture to highligh mouse position 
+	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
 
 	pugi::xml_document audioFile;
 	pugi::xml_parse_result result = audioFile.load_file("config.xml");
@@ -67,6 +78,7 @@ bool Scene::Start()
 	RestartEnemies();
 	enState = ENEMY::CREATEALL;
 	CreateEvents();
+
 	return true;
 }
 
@@ -101,7 +113,7 @@ bool Scene::Update(float dt)
 
 	// Shoot
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
-		
+
 		Fireball* fireball = (Fireball*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALL);
 		fireball->SetParameters(configParameters.child("entities").child("fireball"));
 		if (player->GetDirection() == DirectionPlayer::LEFT) fireball->Start(true);
@@ -128,26 +140,46 @@ bool Scene::Update(float dt)
 	enState = ENEMY::CLEARDEADS;
 	ClearEnemyList();
 
+	bool tp = false;
+	pugi::xml_document saveFile;
+	pugi::xml_parse_result result = saveFile.load_file("config.xml");
 
 	// Active bonfire if player touch it
 	for (auto bonfire : bonfireList) {
-		if (bonfire->GetState() == StateBonfire::IDLE &&
-			player->GetPosition().getX() >= bonfire->GetPosition().getX() - 16 && player->GetPosition().getX() <= bonfire->GetPosition().getX() + 8 &&
+		if (player->GetPosition().getX() >= bonfire->GetPosition().getX() - 16 && player->GetPosition().getX() <= bonfire->GetPosition().getX() + 8 &&
 			player->GetPosition().getY() >= bonfire->GetPosition().getY() - 16 && player->GetPosition().getY() <= bonfire->GetPosition().getY() + 8) {
 
-			if (!bonfire->IsActive()) {
+			int posXBonfire = bonfire->GetPosition().getX();
+			pugi::xml_node bonfires = saveFile.child("config").child("scene").child("bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
+			tp = true;
+			if (bonfires.attribute("activated").as_bool() == false) {
+				buttonList.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, buttonList.size() + 1, "Hoguera", { 520, coordYMenuTp += 40, 120,20 }, this));
 				bonfire->ActiveBonfire();
 				Engine::GetInstance().audio.get()->PlayFx(bonfireSFX);
-			}
 
-			pugi::xml_document saveFile;
-			pugi::xml_parse_result result = saveFile.load_file("config.xml");
-			bonfire->ActiveBonfire();
-			saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());
-			saveFile.child("config").child("scene").child("entities").child("player").attribute("y").set_value(bonfire->GetPosition().getY());
-			saveFile.save_file("config.xml");
+				saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());
+				saveFile.child("config").child("scene").child("entities").child("player").attribute("y").set_value(bonfire->GetPosition().getY());
+				bonfires.attribute("activated").set_value("true");
+				saveFile.save_file("config.xml");
+			}
 		}
 	}
+
+	if (tp) {
+		enableTp = true;
+		for (auto button : buttonList) {
+			button->Enable();
+		}
+	}
+	else if (enableTp) {
+		enableTp = false;
+		for (auto button : buttonList) {
+			button->Disable();
+		}
+	}
+
+
+
 
 	//When player dies, dont move the hitbox
 	if (player->GetState() == StatePlayer::DIE) {
@@ -261,7 +293,37 @@ void Scene::DebugMode() {
 		CreateEvents();
 	}
 
+	//MOUSE TILE
+	if (Engine::GetInstance().physics.get()->GetDebug()) {
+		//Get mouse position and obtain the map coordinate
+		int scale = Engine::GetInstance().window.get()->GetScale();
+		Vector2D mousePos = Engine::GetInstance().input.get()->GetMousePosition();
+		Vector2D mouseTile = Engine::GetInstance().map.get()->WorldToMap(mousePos.getX() - Engine::GetInstance().render.get()->camera.x / scale,
+			mousePos.getY() - Engine::GetInstance().render.get()->camera.y / scale);
 
+		//Render a texture where the mouse is over to highlight the tile, use the texture 'mouseTileTex'
+		Vector2D highlightTile = Engine::GetInstance().map.get()->MapToWorld(mouseTile.getX(), mouseTile.getY());
+		SDL_Rect rect = { 0,0,8,8 };
+		Engine::GetInstance().render.get()->DrawTexture(mouseTileTex, SDL_FLIP_NONE,
+			highlightTile.getX(),
+			highlightTile.getY(),
+			&rect);
+
+		// saves the tile pos for debugging purposes
+		if (mouseTile.getX() >= 0 && mouseTile.getY() >= 0 || once) {
+			tilePosDebug = "[" + std::to_string((int)mouseTile.getX()) + "," + std::to_string((int)mouseTile.getY()) + "] ";
+			once = true;
+		}
+	}
+
+}
+
+bool Scene::OnGuiMouseClickEvent(GuiControl* control)
+{
+	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
+	LOG("Press Gui Control: %d", control->id);
+
+	return true;
 }
 
 // -----------------------------
@@ -336,6 +398,10 @@ void Scene::CreateEvents() {
 		Engine::GetInstance().entityManager->DestroyEntity(bonfireList[i]);
 		bonfireList.erase(bonfireList.begin());
 	}
+	pugi::xml_document saveFile;
+	pugi::xml_parse_result result = saveFile.load_file("config.xml");
+	saveFile.child("config").child("scene").child("bonfires").remove_children();
+	saveFile.save_file("config.xml");
 	list = Engine::GetInstance().map->GetBonfireList();
 	for (auto bonfire : list) {
 		Bonfire* fc = (Bonfire*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BONFIRE);
@@ -343,7 +409,18 @@ void Scene::CreateEvents() {
 		fc->SetPosition({ bonfire.getX(), bonfire.getY() });
 		fc->Start();
 		bonfireList.push_back(fc);
+
+		pugi::xml_node new_bonfire = saveFile.child("config").child("scene").child("bonfires").append_child("bonfire");
+		new_bonfire.append_attribute("level").set_value(level);
+		new_bonfire.append_attribute("activated").set_value("false");
+		new_bonfire.append_attribute("x").set_value(bonfire.getX());
+		saveFile.save_file("config.xml");
 	}
+
+	//This works but delete later AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	/*for (int i = 0; i < buttonList.size();) {
+		buttonList.erase(buttonList.begin());
+	}*/
 
 	//Poison
 	RespawnPoison();

@@ -39,6 +39,7 @@ Engine::Engine() {
 	scene = std::make_shared<Scene>();
 	map = std::make_shared<Map>();
 	entityManager = std::make_shared<EntityManager>();
+	guiManager = std::make_shared<GuiManager>();
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
@@ -51,6 +52,7 @@ Engine::Engine() {
 	AddModule(std::static_pointer_cast<Module>(map));
 	AddModule(std::static_pointer_cast<Module>(scene));
 	AddModule(std::static_pointer_cast<Module>(entityManager));
+	AddModule(std::static_pointer_cast<Module>(guiManager));
 
 	// Render last 
 	AddModule(std::static_pointer_cast<Module>(render));
