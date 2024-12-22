@@ -117,6 +117,7 @@ public:
 
 	std::list<Vector2D> GetBonfireList();
 	std::list<Vector2D> GetPoisonList();
+	std::list<Vector2D> GetEnemyList();
 
 	// L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
 	Vector2D MapToWorld(int x, int y) const;
@@ -163,5 +164,4 @@ private:
 	std::list<PhysBody*> collisions;
 	std::list<Vector2D> posBonfire;
 	std::list<Vector2D> posPoison;
-	std::list<Vector2D> posEnemies;
 };

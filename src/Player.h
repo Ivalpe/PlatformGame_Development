@@ -93,6 +93,7 @@ public:
 	float jumpForce = 0.37f; // The force to apply when jumping
 	bool isJumping = false; // Flag to check if the player is currently jumping
 	bool isDying = false;
+	bool isDmg = false;
 	bool hasLanded = false;
 
 	float deathSoundTimer = 0.0f;
@@ -102,7 +103,7 @@ public:
 
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
-	Animation idle, run, jump, fall, die;
+	Animation idle, run, jump, fall, die, dmg;
 	DirectionPlayer dp;
 	SDL_RendererFlip flipType;
 	StatePlayer stPlayer;

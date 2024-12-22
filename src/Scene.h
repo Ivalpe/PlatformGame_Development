@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include "Bonfire.h"
 #include "Poison.h"
+#include "GuiControlButton.h"
 
 struct SDL_Texture;
 
@@ -13,7 +14,7 @@ enum class LOAD {
 };
 
 enum class ENEMY {
-	CREATEALL, CLEARDEADS, CREATEXML 
+	CREATEALL, CLEARDEADS, CREATEXML
 };
 
 class Scene : public Module
@@ -66,7 +67,14 @@ public:
 		return player->GetPosition();
 	}
 
+
+	// Handles multiple Gui Event methods
+	bool OnGuiMouseClickEvent(GuiControl* control);
+
 private:
+	SDL_Texture* mouseTileTex = nullptr;
+	std::string tilePosDebug = "[0,0]";
+	bool once = false;
 	SDL_Texture* img;
 
 	//L03: TODO 3b: Declare a Player attribute
@@ -75,11 +83,10 @@ private:
 	std::vector<Fireball*> fireballList;
 	std::vector<Bonfire*> bonfireList;
 	std::vector<Poison*> poisonList;
-	int level, colRespawn;
-	bool help;
+	std::vector<GuiControlButton*> buttonList;
+	int level, colRespawn, coordYMenuTp;
+	bool help, enableTp; //enableTp is for optimization and not making a for every frame
 	ENEMY enState;
 
-	int bonfireSFX;
-	int saveSFX;
-	int loadSFX;
+	int bonfireSFX, saveSFX, loadSFX;
 };

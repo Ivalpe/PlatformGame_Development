@@ -40,15 +40,16 @@ bool Player::Start() {
 	jump.LoadAnimations(parameters.child("animations").child("jump"));
 	fall.LoadAnimations(parameters.child("animations").child("fall"));
 	die.LoadAnimations(parameters.child("animations").child("die"));
+	dmg.LoadAnimations(parameters.child("animations").child("dmg"));
 	currentAnimation = &idle;
 
 	//Load Fx
-	
+
 	pugi::xml_document audioFile;
 	pugi::xml_parse_result result = audioFile.load_file("config.xml");
 
 	pdeathSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("pdeathSFX").attribute("path").as_string());
-	
+
 	jumpSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("jumpSFX").attribute("path").as_string());
 	landSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("landSFX").attribute("path").as_string());
 
@@ -74,7 +75,8 @@ void Player::Respawn() {
 	deathSoundTimer = 0.0f;
 	isJumping = false;
 	stPlayer = StatePlayer::IDLE;
-	
+	pbody->body->SetType(b2_dynamicBody);
+	pbody->body->SetAwake(true);
 }
 
 void Player::ChangeDebug() {
@@ -84,8 +86,20 @@ void Player::ChangeDebug() {
 bool Player::Update(float dt)
 {
 	b2Vec2 velocity;
-	if (!isDying) {
-		
+
+	if (isDmg) {
+		pbody->body->SetType(b2_staticBody);
+		if (dmg.HasFinished()) {
+			stPlayer = StatePlayer::IDLE;
+			isDmg = false;
+			currentAnimation = &idle;
+			dmg.Reset();
+			pbody->body->SetType(b2_dynamicBody);
+			pbody->body->SetAwake(true);
+		}
+	}
+	else if (!isDying) {
+
 		if (debugMode) {
 			velocity = b2Vec2(0, 0);
 			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
@@ -98,7 +112,8 @@ bool Player::Update(float dt)
 				velocity.y = speed;
 				stPlayer = StatePlayer::RUN;
 			}
-		}else velocity = b2Vec2(0, -GRAVITY_Y);
+		}
+		else velocity = b2Vec2(0, -GRAVITY_Y);
 
 		stPlayer = StatePlayer::IDLE;
 
@@ -122,10 +137,10 @@ bool Player::Update(float dt)
 
 		//Jump
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && isJumping == false) {
-			
+
 			hasLanded = false;
 
-			
+
 			pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
 			isJumping = true;
 
@@ -139,7 +154,7 @@ bool Player::Update(float dt)
 		if (isDying)
 			velocity = pbody->body->GetLinearVelocity();
 
-		
+
 		// Apply the velocity to the player
 		pbody->body->SetLinearVelocity(velocity);
 
@@ -173,8 +188,9 @@ bool Player::Update(float dt)
 			currentAnimation = &die;
 	}
 	else {
+		pbody->body->SetType(b2_staticBody);
 		currentAnimation = &die;
-		
+
 	}
 
 
@@ -197,9 +213,9 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::GROUND:
 		LOG("Collision PLATFORM");
 		if (isJumping && !hasLanded) {
-			
+
 			Engine::GetInstance().audio.get()->PlayFx(landSFX);
-			hasLanded = true;  
+			hasLanded = true;
 		}
 		isJumping = false;
 		break;
@@ -221,9 +237,9 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::GROUND:
 		LOG("Collision PLATFORM");
 		if (isJumping && !hasLanded) {
-			
+
 			Engine::GetInstance().audio.get()->PlayFx(landSFX);
-			hasLanded = true;  
+			hasLanded = true;
 		}
 		isJumping = false;
 		break;
@@ -238,6 +254,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			LOG("Collision DIE");
 			stPlayer = StatePlayer::DIE;
 			isDying = true;
+			lifes = 5;
 		}
 		break;
 	case ColliderType::NEW:
@@ -257,16 +274,22 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		lvl = Level::WIN;
 		break;
 	case ColliderType::ENEMY:
-		if (!debugMode) {
-			stPlayer = StatePlayer::DIE;
+		if (!debugMode && currentAnimation != &dmg) {
 
-			
-			if (deathSoundTimer <= 0.0f) {
-				Engine::GetInstance().audio.get()->PlayFx(pdeathSFX);
-				deathSoundTimer = deathSoundCooldown;  
+			if (lifes == 0) {
+				stPlayer = StatePlayer::DIE;
+
+				if (deathSoundTimer <= 0.0f) {
+					Engine::GetInstance().audio.get()->PlayFx(pdeathSFX);
+					deathSoundTimer = deathSoundCooldown;
+				}
+				isDying = true;
 			}
-
-			isDying = true;
+			else {
+				currentAnimation = &dmg;
+				isDmg = true;
+				lifes--;
+			}
 		}
 		break;
 	default:
@@ -282,7 +305,7 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	{
 	case ColliderType::GROUND:
 		LOG("End Collision PLATFORM DOWN");
-		
+
 		break;
 	case ColliderType::ITEM:
 		LOG("End Collision ITEM");
