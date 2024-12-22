@@ -227,6 +227,28 @@ bool Scene::PostUpdate()
 		player->SetLevel(Level::DISABLED);
 	}
 
+	if (level == 1 && player->GetLevel() == Level::LEV2) {
+		level++;
+		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
+		{
+			if (mapNode.attribute("number").as_int() == level) {
+				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				enState = ENEMY::CREATEALL;
+				CreateEvents();
+
+				pugi::xml_node currentLevel = SearchLevel(level);
+				Vector2D posPlayer;
+				posPlayer.setX(currentLevel.attribute("ix").as_int());
+				posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
+
+				player->SetPosition(posPlayer);
+
+				break;
+			}
+		}
+		player->SetLevel(Level::DISABLED);
+	}
+
 	//Load Level
 	else if (level == 0 && player->GetLevel() == Level::LOAD) {
 		level++;
@@ -254,17 +276,29 @@ void Scene::DebugMode() {
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN ||
 		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
+
 		int previousLevel = level;
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) level = 0;
-		else level = 1;
+
+		// Cambiar nivel según la tecla presionada
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) {
+			level = (level == 0) ? 2 : level - 1;  // Retroceder al nivel anterior (circular de 0 a 2)
+		}
+		else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
+			level = (level == 2) ? 0 : level + 1;  // Avanzar al siguiente nivel (circular de 2 a 0)
+		}
+
+		// Cargar el mapa correspondiente al nuevo nivel
 		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map")) {
 			if (mapNode.attribute("number").as_int() == level) {
-				if (level != previousLevel) Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				if (level != previousLevel) {
+					Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				}
 				LoadState(LOAD::INITIAL);
 				CreateEvents();
 				break;
 			}
 		}
+
 		player->SetLevel(Level::DISABLED);
 	}
 

@@ -265,6 +265,14 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision LOAD");
 		lvl = Level::LOAD;
 		break;
+	case ColliderType::LEV2:
+		LOG("Collision LOAD");
+		lvl = Level::LEV2;
+		break;
+	case ColliderType::WIN:
+		LOG("Collision LOAD");
+		lvl = Level::WIN;
+		break;
 	case ColliderType::ENEMY:
 		if (!debugMode && currentAnimation != &dmg) {
 

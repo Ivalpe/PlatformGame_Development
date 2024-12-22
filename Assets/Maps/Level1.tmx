@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="400" height="46" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="166">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="400" height="46" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="167">
  <tileset firstgid="1" name="MapMetadata" tilewidth="8" tileheight="8" tilecount="4" columns="4">
   <grid orientation="orthogonal" width="16" height="16"/>
   <image source="MapMetadata.png" width="32" height="8"/>
@@ -92071,7 +92071,7 @@
    <tile/>
   </data>
  </layer>
- <objectgroup id="4" name="Objects" visible="0">
+ <objectgroup id="4" name="Objects">
   <object id="98" x="0" y="0" width="16" height="368"/>
   <object id="99" x="16" y="352" width="1584" height="16"/>
   <object id="101" x="16" y="0" width="1568" height="16"/>
@@ -92113,6 +92113,11 @@
   <object id="163" x="1896" y="320" width="368" height="32"/>
   <object id="164" x="2960" y="216" width="224" height="136"/>
   <object id="165" x="2776" y="208" width="112" height="8"/>
+  <object id="166" x="3136" y="184" width="16" height="32">
+   <properties>
+    <property name="TYPE" value="LEV2"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer id="5" name="Navigation" width="400" height="46" visible="0">
   <properties>
