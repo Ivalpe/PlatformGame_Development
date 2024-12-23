@@ -7,10 +7,10 @@
 #include "Scene.h"
 #include "Log.h"
 #include "Physics.h"
-
+#include "Map.h"
 Item::Item() : Entity(EntityType::ITEM)
 {
-	name = "item";
+	
 }
 
 Item::~Item() {}
@@ -22,7 +22,19 @@ bool Item::Awake() {
 bool Item::Start() {
 
 	//initilize textures
-	texture = Engine::GetInstance().textures.get()->Load("Assets/Textures/goldCoin.png");
+	id = parameters.attribute("id").as_int();
+	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
+	levelItem = parameters.attribute("level").as_int();
+	position.setX(parameters.attribute("x").as_int() * 8);
+	position.setY(parameters.attribute("y").as_int() * 8);
+	texW = parameters.attribute("w").as_int();
+	texH = parameters.attribute("h").as_int();
+
+	//load animations
+	idle.LoadAnimations(parameters.child("animations").child("idle"));
+	die.LoadAnimations(parameters.child("animations").child("die"));
+	currentAnimation = &idle;
+
 	
 	// L08 TODO 4: Add a physics to an item - initialize the physics body
 	Engine::GetInstance().textures.get()->GetSize(texture, texW, texH);
@@ -50,4 +62,17 @@ bool Item::Update(float dt)
 bool Item::CleanUp()
 {
 	return true;
+}
+
+void Item::SetPosition(Vector2D pos) {
+	
+	pos.setX(pos.getX() + texW / 2);
+	pos.setY(pos.getY() + texH / 2);
+
+	b2Vec2 bodyPos = b2Vec2(PIXEL_TO_METERS(pos.getX()), PIXEL_TO_METERS(pos.getY()));
+	pbody->body->SetTransform(bodyPos, 0);
+}
+
+bool Item::HasCollision() {
+	return col;
 }

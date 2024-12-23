@@ -21,8 +21,7 @@
 			<map path="Assets/Maps/" name="Level2.tmx" number="2" ix="1910" iy="150" />
 		</levels>
 		<entities>
-			<player dx="43" dy="175" dlevel="1" ix="320" iy="100" x="3048" y="200" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
-
+			<player dx="43" dy="175" dlevel="1" ix="320" iy="100" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
 					<idle loop="true" speed="0.06">
 						<frame x="0" y="32" w="16" h="32" />
@@ -71,7 +70,7 @@
 				</animations>
 			</player>
 			<enemies>
-				<enemy id="1" name="evilwizard" x="85" y="28" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="true" deadSave="false">
+				<enemy id="1" name="evilwizard" x="85" y="28" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="false" deadSave="false">
 					<animations>
 						<idle loop="true" speed="0.06">
 							<frame x="0" y="96" w="16" h="32" />
@@ -107,7 +106,7 @@
 						</die>
 					</animations>
 				</enemy>
-				<enemy id="3" name="evilwizard" x="257" y="38" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="true" deadSave="false">
+				<enemy id="3" name="evilwizard" x="257" y="38" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="false" deadSave="false">
 					<animations>
 						<idle loop="true" speed="0.06">
 							<frame x="0" y="96" w="16" h="32" />
@@ -125,7 +124,7 @@
 						</die>
 					</animations>
 				</enemy>
-				<enemy id="4" name="evilwizard" x="306" y="37" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="true" deadSave="false">
+				<enemy id="4" name="evilwizard" x="306" y="37" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="false" deadSave="false">
 					<animations>
 						<idle loop="true" speed="0.06">
 							<frame x="0" y="96" w="16" h="32" />
@@ -161,7 +160,7 @@
 						</die>
 					</animations>
 				</enemy>
-				<enemy id="6" name="bat" x="312" y="21" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="false" level="1" dead="true" deadSave="false">
+				<enemy id="6" name="bat" x="312" y="21" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="false" level="1" dead="false" deadSave="false">
 					<animations>
 						<fly loop="true" speed="0.06">
 							<frame x="0" y="160" w="21" h="16" />
@@ -235,6 +234,28 @@
 					</idle>
 				</animations>
 			</poison>
+			<items>
+				<Item id="1" name="coin" x="1604" y="272" w="16" h="16" texture="Assets/Textures/Items+HUD.png" gravity="false" level="0" dead="false" deadSave="false">
+					<animations>
+						<idle loop="true" speed="0.12">
+							<frame x="0" y="80" w="16" h="16" />
+							<frame x="16" y="80" w="16" h="16" />
+							<frame x="32" y="80" w="16" h="16" />
+							<frame x="48" y="80" w="16" h="16" />
+							<frame x="64" y="80" w="16" h="16" />
+							<frame x="80" y="80" w="16" h="16" />
+							<frame x="96" y="80" w="16" h="16" />
+							<frame x="104" y="80" w="16" h="16" />
+						</idle>
+					</animations>
+				</Item>
+				<Item id="2" name="fireup" x="66" y="13" w="16" h="32" texture="Assets/Textures/Items+HUD.png" gravity="true" level="1" dead="false" deadSave="false">
+					<animations />
+				</Item>
+				<Item id="3" name="health" x="66" y="13" w="16" h="32" texture="Assets/Textures/Items+HUD.png" gravity="true" level="1" dead="false" deadSave="false">
+					<animations />
+				</Item>
+			</items>
 		</entities>
 		<audio>
 			<fx>
@@ -253,10 +274,6 @@
 				<Music1SFX path="Assets/Audio/Music/Character_Config.wav" />
 			</music>
 		</audio>
-		<bonfires>
-			<bonfire level="1" activated="true" x="144" />
-			<bonfire level="1" activated="false" x="1504" />
-			<bonfire level="1" activated="false" x="3048" />
-		</bonfires>
+		<bonfires />
 	</scene>
 </config>
