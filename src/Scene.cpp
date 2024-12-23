@@ -38,6 +38,7 @@ bool Scene::Awake()
 	LOG("Loading Scene");
 	bool ret = true;
 
+	firstTimeBonfires = false;
 	help = false;
 	colRespawn = 120;
 	level = 0;
@@ -280,15 +281,13 @@ void Scene::DebugMode() {
 
 		int previousLevel = level;
 
-		// Cambiar nivel según la tecla presionada
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) {
-			level = (level == 0) ? 2 : level - 1;  // Retroceder al nivel anterior (circular de 0 a 2)
+			level = (level == 0) ? 2 : level - 1;
 		}
 		else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
-			level = (level == 2) ? 0 : level + 1;  // Avanzar al siguiente nivel (circular de 2 a 0)
+			level = (level == 2) ? 0 : level + 1;
 		}
 
-		// Cargar el mapa correspondiente al nuevo nivel
 		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map")) {
 			if (mapNode.attribute("number").as_int() == level) {
 				if (level != previousLevel) {
@@ -358,9 +357,26 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
 	LOG("Press Gui Control: %d", control->id);
 	int pos = 1;
+
 	for (pugi::xml_node bonfireNode = configParameters.child("bonfires").child("bonfire"); bonfireNode; bonfireNode = bonfireNode.next_sibling("bonfire")) {
 		if (pos == control->id) {
-			player->SetPosition({bonfireNode.attribute("x").as_float(), bonfireNode.attribute("y").as_float() });
+
+			if (bonfireNode.attribute("level").as_int() != level) {
+				level = bonfireNode.attribute("level").as_int();
+				for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map")) {
+					if (mapNode.attribute("number").as_int() == level) {
+						Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+						LoadState(LOAD::RESPAWN);
+						enState = ENEMY::CREATEXML;
+						CreateEvents();
+						break;
+					}
+				}
+				player->SetLevel(Level::DISABLED);
+
+			}
+
+			player->SetPosition({ bonfireNode.attribute("x").as_float(), bonfireNode.attribute("y").as_float() });
 			break;
 		}
 		pos++;
@@ -436,17 +452,30 @@ pugi::xml_node Scene::SearchLevel(int lvl) {
 
 void Scene::CreateEvents() {
 	std::list<Vector2D> list;
+	pugi::xml_document saveFile;
+	pugi::xml_parse_result result = saveFile.load_file("config.xml");
 
 	//Firecamps
 	for (int i = 0; i < bonfireList.size();) {
 		Engine::GetInstance().entityManager->DestroyEntity(bonfireList[i]);
 		bonfireList.erase(bonfireList.begin());
 	}
-	pugi::xml_document saveFile;
-	pugi::xml_parse_result result = saveFile.load_file("config.xml");
-	saveFile.child("config").child("scene").child("bonfires").remove_children();
-	saveFile.save_file("config.xml");
+
+
+	if (!firstTimeBonfires) {
+		saveFile.child("config").child("scene").child("bonfires").remove_children();
+		saveFile.save_file("config.xml");
+		firstTimeBonfires = true;
+	}
+
 	list = Engine::GetInstance().map->GetBonfireList();
+
+	bool contains = false;
+	for (int i = 0; i < bonfireCharged.size() && !contains; i++) {
+		if (bonfireCharged[i] == level) contains = true;
+	}
+
+
 	for (auto bonfire : list) {
 		Bonfire* fc = (Bonfire*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BONFIRE);
 		fc->SetParameters(configParameters.child("entities").child("firecamp"));
@@ -454,18 +483,18 @@ void Scene::CreateEvents() {
 		fc->Start();
 		bonfireList.push_back(fc);
 
-		pugi::xml_node new_bonfire = saveFile.child("config").child("scene").child("bonfires").append_child("bonfire");
-		new_bonfire.append_attribute("level").set_value(level);
-		new_bonfire.append_attribute("activated").set_value("false");
-		new_bonfire.append_attribute("x").set_value(bonfire.getX());
-		new_bonfire.append_attribute("y").set_value(bonfire.getY());
-		saveFile.save_file("config.xml");
-	}
+		if (!contains) {
+			pugi::xml_node new_bonfire = saveFile.child("config").child("scene").child("bonfires").append_child("bonfire");
+			new_bonfire.append_attribute("level").set_value(level);
+			new_bonfire.append_attribute("activated").set_value("false");
+			new_bonfire.append_attribute("x").set_value(bonfire.getX());
+			new_bonfire.append_attribute("y").set_value(bonfire.getY());
+			saveFile.save_file("config.xml");
+		}
 
-	//This works but delete later AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-	/*for (int i = 0; i < buttonList.size();) {
-		buttonList.erase(buttonList.begin());
-	}*/
+	}
+	bonfireCharged.push_back(level);
+
 
 	//Poison
 	RespawnPoison();
