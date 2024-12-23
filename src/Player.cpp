@@ -265,9 +265,9 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision LOAD");
 		lvl = Level::LOAD;
 		break;
-	case ColliderType::LEV2:
+	case ColliderType::NEXTLVL:
 		LOG("Collision LOAD");
-		lvl = Level::LEV2;
+		lvl = Level::NEXTLVL;
 		break;
 	case ColliderType::WIN:
 		LOG("Collision LOAD");

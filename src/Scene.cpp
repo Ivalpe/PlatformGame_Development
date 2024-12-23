@@ -227,7 +227,8 @@ bool Scene::PostUpdate()
 		player->SetLevel(Level::DISABLED);
 	}
 
-	if (level == 1 && player->GetLevel() == Level::LEV2) {
+	//Next Level
+	if (player->GetLevel() == Level::NEXTLVL) {
 		level++;
 		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
 		{
@@ -356,6 +357,15 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
 	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
 	LOG("Press Gui Control: %d", control->id);
+	int pos = 1;
+	for (pugi::xml_node bonfireNode = configParameters.child("bonfires").child("bonfire"); bonfireNode; bonfireNode = bonfireNode.next_sibling("bonfire")) {
+		if (pos == control->id) {
+			player->SetPosition({bonfireNode.attribute("x").as_float(), bonfireNode.attribute("y").as_float() });
+			break;
+		}
+		pos++;
+	}
+
 
 	return true;
 }
@@ -448,6 +458,7 @@ void Scene::CreateEvents() {
 		new_bonfire.append_attribute("level").set_value(level);
 		new_bonfire.append_attribute("activated").set_value("false");
 		new_bonfire.append_attribute("x").set_value(bonfire.getX());
+		new_bonfire.append_attribute("y").set_value(bonfire.getY());
 		saveFile.save_file("config.xml");
 	}
 

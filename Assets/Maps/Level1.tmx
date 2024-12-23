@@ -92115,7 +92115,7 @@
   <object id="165" x="2776" y="208" width="112" height="8"/>
   <object id="166" x="3136" y="184" width="16" height="32">
    <properties>
-    <property name="TYPE" value="LEV2"/>
+    <property name="TYPE" value="NEXTLVL"/>
    </properties>
   </object>
  </objectgroup>

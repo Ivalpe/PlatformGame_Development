@@ -203,7 +203,7 @@ bool Map::Load(std::string path, std::string fileName)
 			else if (p == "LOAD")
 				pb->ctype = ColliderType::LOAD;
 			else if (p == "LEV2")
-				pb->ctype = ColliderType::LEV2;
+				pb->ctype = ColliderType::NEXTLVL;
 			else if (p == "LEV2")
 				pb->ctype = ColliderType::WIN;
 			else
