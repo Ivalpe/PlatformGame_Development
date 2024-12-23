@@ -5,6 +5,15 @@
 
 struct SDL_Texture;
 
+enum class StateEnemy {
+	IDLE, DIE
+};
+
+enum class EnemyType {
+	COIN, FIREUP, HEALTH, 
+};
+
+
 class Item : public Entity
 {
 public:
