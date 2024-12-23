@@ -202,9 +202,9 @@ bool Map::Load(std::string path, std::string fileName)
 				pb->ctype = ColliderType::NEW;
 			else if (p == "LOAD")
 				pb->ctype = ColliderType::LOAD;
-			else if (p == "LEV2")
+			else if (p == "NEXTLVL")
 				pb->ctype = ColliderType::NEXTLVL;
-			else if (p == "LEV2")
+			else if (p == "WIN")
 				pb->ctype = ColliderType::WIN;
 			else
 				pb->ctype = ColliderType::GROUND;

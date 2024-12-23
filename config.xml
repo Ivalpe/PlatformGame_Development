@@ -21,7 +21,7 @@
 			<map path="Assets/Maps/" name="Level2.tmx" number="2" ix="1910" iy="150" />
 		</levels>
 		<entities>
-			<player dx="43" dy="175" dlevel="1" ix="320" iy="100" x="3048" y="200" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
+			<player dx="43" dy="175" dlevel="1" ix="320" iy="100" x="1848" y="136" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
 					<idle loop="true" speed="0.06">
 						<frame x="0" y="32" w="16" h="32" />
@@ -160,7 +160,7 @@
 						</die>
 					</animations>
 				</enemy>
-				<enemy id="6" name="bat" x="312" y="21" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="false" level="1" dead="false" deadSave="false">
+				<enemy id="6" name="bat" x="312" y="21" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="false" level="1" dead="true" deadSave="false">
 					<animations>
 						<fly loop="true" speed="0.06">
 							<frame x="0" y="160" w="21" h="16" />
@@ -253,9 +253,11 @@
 			</music>
 		</audio>
 		<bonfires>
-			<bonfire level="1" activated="true" x="144" y="184" />
-			<bonfire level="1" activated="true" x="1504" y="272" />
-			<bonfire level="1" activated="true" x="3048" y="200" />
+			<bonfire level="2" activated="false" x="504" y="312" />
+			<bonfire level="2" activated="false" x="928" y="136" />
+			<bonfire level="2" activated="true" x="1848" y="136" />
+			<bonfire level="2" activated="false" x="2104" y="280" />
+			<bonfire level="2" activated="false" x="2720" y="96" />
 		</bonfires>
 	</scene>
 </config>
