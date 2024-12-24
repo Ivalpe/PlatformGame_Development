@@ -152,7 +152,7 @@ bool Scene::Update(float dt)
 			pugi::xml_node bonfires = saveFile.child("config").child("scene").child("bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
 			tp = true;
 			if (bonfires.attribute("activated").as_bool() == false) {
-				buttonList.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, buttonList.size() + 1, "Hoguera", { 520, coordYMenuTp += 40, 120,20 }, this));
+				buttonList.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, buttonList.size() + 1, "Hoguera", { 520, coordYMenuTp += 40, 200,40 }, this));
 				bonfire->ActiveBonfire();
 				Engine::GetInstance().audio.get()->PlayFx(bonfireSFX);
 
