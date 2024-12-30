@@ -37,6 +37,8 @@ public:
 
 	void DebugMode();
 
+	void ActiveBonfires();
+
 	// Called each loop iteration
 	bool Update(float dt);
 
@@ -86,8 +88,8 @@ private:
 	std::vector<GuiControlButton*> buttonList;
 	std::vector<int> bonfireCharged;
 	int level, colRespawn, coordYMenuTp;
-	bool help, enableTp, firstTimeBonfires; //enableTp is for optimization and not making a for every frame
+	bool help, enableTp, firstTimeBonfires; //enableTp is for optimization and not making for every frame
 	ENEMY enState;
 
-	int bonfireSFX, saveSFX, loadSFX;
+	int bonfireSFX, saveSFX, loadSFX, idBonfire, idNameBonfire;
 };

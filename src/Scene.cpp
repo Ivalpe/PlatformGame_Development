@@ -42,6 +42,8 @@ bool Scene::Awake()
 	help = false;
 	colRespawn = 120;
 	level = 0;
+	idBonfire = 1;
+	idNameBonfire = 1;
 
 	//Instantiate the player using the entity manager
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
@@ -66,14 +68,12 @@ bool Scene::Start()
 	// Texture to highligh mouse position 
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
 
-	pugi::xml_document audioFile;
-	pugi::xml_parse_result result = audioFile.load_file("config.xml");
-
-	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
-	loadSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
-	saveSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("saveSFX").attribute("path").as_string());
+	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
+	loadSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
+	saveSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("saveSFX").attribute("path").as_string());
 
 	Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music1SFX").attribute("path").as_string(), 0.0f);
+
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
 	RestartEnemies();
@@ -154,15 +154,21 @@ bool Scene::Update(float dt)
 			pugi::xml_node bonfires = saveFile.child("config").child("scene").child("bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
 			tp = true;
 			if (bonfires.attribute("activated").as_bool() == false) {
-				buttonList.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, buttonList.size() + 1, "Hoguera", { 520, coordYMenuTp += 40, 120,20 }, this));
+				
 				bonfire->ActiveBonfire();
 				Engine::GetInstance().audio.get()->PlayFx(bonfireSFX);
 
-				saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());
-				saveFile.child("config").child("scene").child("entities").child("player").attribute("y").set_value(bonfire->GetPosition().getY());
+				
 				bonfires.attribute("activated").set_value("true");
-				saveFile.save_file("config.xml");
+				bonfires.append_attribute("id").set_value(idNameBonfire++);
+				
+
+				buttonList.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, buttonList.size() + 1, bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 120,20 }, this));
 			}
+
+			saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());
+			saveFile.child("config").child("scene").child("entities").child("player").attribute("y").set_value(bonfire->GetPosition().getY());
+			saveFile.save_file("config.xml");
 		}
 	}
 
@@ -178,9 +184,6 @@ bool Scene::Update(float dt)
 			button->Disable();
 		}
 	}
-
-
-
 
 	//When player dies, dont move the hitbox
 	if (player->GetState() == StatePlayer::DIE) {
@@ -244,7 +247,6 @@ bool Scene::PostUpdate()
 				posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
 
 				player->SetPosition(posPlayer);
-
 				break;
 			}
 		}
@@ -288,6 +290,7 @@ void Scene::DebugMode() {
 			level = (level == 2) ? 0 : level + 1;
 		}
 
+
 		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map")) {
 			if (mapNode.attribute("number").as_int() == level) {
 				if (level != previousLevel) {
@@ -306,7 +309,6 @@ void Scene::DebugMode() {
 		LoadState(LOAD::INITIAL);
 		player->Respawn();
 		CreateEvents();
-
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F10) == KEY_DOWN) player->ChangeDebug();
@@ -352,14 +354,28 @@ void Scene::DebugMode() {
 
 }
 
+void Scene::ActiveBonfires() {
+	for (auto bon : bonfireList) {
+		int posXBonfire = bon->GetPosition().getX();
+		pugi::xml_node bonfires = configParameters.child("bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
+
+		if (bonfires.attribute("activated").as_bool() == true) {
+			bon->ActiveBonfire();
+		}
+
+	}
+}
+
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
 	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
 	LOG("Press Gui Control: %d", control->id);
-	int pos = 1;
+	pugi::xml_document bonfireParameters;
+	pugi::xml_parse_result result = bonfireParameters.load_file("config.xml");
+	pugi::xml_node nodes = bonfireParameters.child("config").child("scene");
 
-	for (pugi::xml_node bonfireNode = configParameters.child("bonfires").child("bonfire"); bonfireNode; bonfireNode = bonfireNode.next_sibling("bonfire")) {
-		if (pos == control->id) {
+	for (pugi::xml_node bonfireNode = nodes.child("bonfires").child("bonfire"); bonfireNode; bonfireNode = bonfireNode.next_sibling("bonfire")) {
+		if (bonfireNode.attribute("id").as_int() == control->id) {
 
 			if (bonfireNode.attribute("level").as_int() != level) {
 				level = bonfireNode.attribute("level").as_int();
@@ -369,6 +385,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 						LoadState(LOAD::RESPAWN);
 						enState = ENEMY::CREATEXML;
 						CreateEvents();
+						ActiveBonfires();
 						break;
 					}
 				}
@@ -377,9 +394,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			}
 
 			player->SetPosition({ bonfireNode.attribute("x").as_float(), bonfireNode.attribute("y").as_float() });
-			break;
 		}
-		pos++;
 	}
 
 
@@ -391,33 +406,30 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 // -----------------------------
 
 void Scene::LoadState(LOAD load) {
-	pugi::xml_document loadFile;
-	pugi::xml_parse_result result = loadFile.load_file("config.xml");
-
 	Engine::GetInstance().render.get()->camera.x = 0;
 
-	if (result == NULL) {
-		LOG("Error");
-	}
+	pugi::xml_document playerParameters;
+	pugi::xml_parse_result result = playerParameters.load_file("config.xml");
+	pugi::xml_node playerNode = playerParameters.child("config").child("scene").child("entities").child("player");
 
 	pugi::xml_node currentLevel = SearchLevel(level);
 	Vector2D posPlayer;
 	if (load == LOAD::INITIAL) {
-		posPlayer.setX(currentLevel.attribute("ix").as_int());
-		posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
+		posPlayer.setX(playerNode.attribute("ix").as_int());
+		posPlayer.setY(playerNode.attribute("iy").as_int() - 16);
 	}
 	else if (load == LOAD::RESPAWN) {
-		posPlayer.setX(loadFile.child("config").child("scene").child("entities").child("player").attribute("x").as_int());
-		posPlayer.setY(loadFile.child("config").child("scene").child("entities").child("player").attribute("y").as_int() - 16);
+		posPlayer.setX(playerNode.attribute("x").as_int());
+		posPlayer.setY(playerNode.attribute("y").as_int() - 16);
 	}
 	else {
-		int lvlSave = loadFile.child("config").child("scene").child("entities").child("player").attribute("dlevel").as_int();
+		int lvlSave = playerNode.attribute("dlevel").as_int();
 		if (lvlSave != level) {
 			Engine::GetInstance().map->Load("Assets/Maps/", SearchLevel(lvlSave).attribute("name").as_string());
 			level = lvlSave;
 		}
-		posPlayer.setX(loadFile.child("config").child("scene").child("entities").child("player").attribute("dx").as_int());
-		posPlayer.setY(loadFile.child("config").child("scene").child("entities").child("player").attribute("dy").as_int() - 16);
+		posPlayer.setX(playerNode.attribute("dx").as_int());
+		posPlayer.setY(playerNode.attribute("dy").as_int() - 16);
 
 	}
 
@@ -475,7 +487,7 @@ void Scene::CreateEvents() {
 		if (bonfireCharged[i] == level) contains = true;
 	}
 
-
+	
 	for (auto bonfire : list) {
 		Bonfire* fc = (Bonfire*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BONFIRE);
 		fc->SetParameters(configParameters.child("entities").child("firecamp"));
@@ -489,6 +501,11 @@ void Scene::CreateEvents() {
 			new_bonfire.append_attribute("activated").set_value("false");
 			new_bonfire.append_attribute("x").set_value(bonfire.getX());
 			new_bonfire.append_attribute("y").set_value(bonfire.getY());
+
+			name = "Hoguera ";
+			name = name + std::to_string(idBonfire++);
+
+			new_bonfire.append_attribute("name").set_value(name.c_str());
 			saveFile.save_file("config.xml");
 		}
 

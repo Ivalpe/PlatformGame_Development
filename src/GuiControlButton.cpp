@@ -8,6 +8,7 @@ GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text) : 
 	this->bounds = bounds;
 	this->text = text;
 
+	active = false;
 	drawBasic = false;
 }
 
