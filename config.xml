@@ -235,7 +235,7 @@
 				</animations>
 			</poison>
 			<items>
-				<Item id="1" name="coin" x="1604" y="272" w="16" h="16" texture="Assets/Textures/Items+HUD.png" gravity="false" level="0" dead="false" deadSave="false">
+				<Item id="1" name="coin" x="1604" y="272" w="16" h="16" texture="Assets/Textures/Items+HUD.png" gravity="false" level="1" dead="false" deadSave="false">
 					<animations>
 						<idle loop="true" speed="0.12">
 							<frame x="0" y="80" w="16" h="16" />

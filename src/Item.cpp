@@ -46,6 +46,10 @@ bool Item::Start() {
 	return true;
 }
 
+void Item::SetItemType(ItemType it) {
+	type = it;
+}
+
 bool Item::Update(float dt)
 {
 	// L08 TODO 4: Add a physics to an item - update the position of the object from the physics.  
@@ -54,7 +58,12 @@ bool Item::Update(float dt)
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
-	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY());
+	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+
+	currentAnimation->Update();
+
+	b2Vec2 itemPos = pbody->body->GetPosition();
+	sensor->body->SetTransform({ itemPos.x, itemPos.y }, 0);
 
 	return true;
 }
@@ -75,4 +84,8 @@ void Item::SetPosition(Vector2D pos) {
 
 bool Item::HasCollision() {
 	return col;
+}
+
+bool Item::IsCollected() {
+	return collected;
 }
