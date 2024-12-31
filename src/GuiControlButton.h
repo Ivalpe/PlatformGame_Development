@@ -16,18 +16,11 @@ public:
 
 	void Disable();
 	void Enable();
-	bool IsActive() {
-		return active;
-	}
-	void ActiveButton() {
-		active = true;
-	}
 
 private:
 
 	bool canClick = true;
 	bool drawBasic = false;
-	bool active = false;
 };
 
 #pragma once
