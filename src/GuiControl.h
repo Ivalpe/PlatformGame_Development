@@ -20,6 +20,11 @@ enum class GuiControlType
 	SPINNER
 };
 
+enum class GuiClass {
+	PAUSE,
+	TPBONFIRE
+};
+
 enum class GuiControlState
 {
 	DISABLED,
@@ -45,6 +50,14 @@ public:
 	{
 		color.r = 255; color.g = 255; color.b = 255;
 		texture = NULL;
+	}
+
+	void SetType(GuiClass gc) {
+		typeClass = gc;
+	}
+
+	GuiClass GetType() {
+		return typeClass;
 	}
 
 	// Called each loop iteration
@@ -86,4 +99,6 @@ public:
 	SDL_Rect section;       // Texture atlas base section
 
 	Module* observer;        // Observer 
+
+	GuiClass typeClass;		//Control what type of button is
 };

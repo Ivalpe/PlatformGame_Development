@@ -85,10 +85,11 @@ private:
 	std::vector<Fireball*> fireballList;
 	std::vector<Bonfire*> bonfireList;
 	std::vector<Poison*> poisonList;
-	std::vector<GuiControlButton*> buttonList;
+	std::vector<GuiControlButton*> tpMenu;
+	std::vector<GuiControlButton*> pauseMenu;
 	std::vector<int> bonfireCharged;
 	int level, colRespawn, coordYMenuTp;
-	bool help, enableTp, firstTimeBonfires; //enableTp is for optimization and not making for every frame
+	bool help, enableTp, firstTimeBonfires, enablePause, exitGame; //enableTp is for optimization and not making for every frame
 	ENEMY enState;
 
 	int bonfireSFX, saveSFX, loadSFX, idBonfire, idNameBonfire;
