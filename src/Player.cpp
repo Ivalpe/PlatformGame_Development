@@ -289,10 +289,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			else {
 				currentAnimation = &dmg;
 				isDmg = true;
-				//if (damageSoundTimer <= 0.0f) {
-					Engine::GetInstance().audio.get()->PlayFx(damageSFX);
-					//damageSoundTimer = damageSoundCooldown;
-				//}
+				Engine::GetInstance().audio.get()->PlayFx(damageSFX);
 				lifes--;
 			}
 		}
