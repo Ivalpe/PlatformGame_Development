@@ -22,7 +22,8 @@ enum class GuiControlType
 
 enum class GuiClass {
 	PAUSE,
-	TPBONFIRE
+	TPBONFIRE,
+	MAIN_MENU
 };
 
 enum class GuiControlState
