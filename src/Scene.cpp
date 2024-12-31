@@ -38,6 +38,8 @@ bool Scene::Awake()
 	LOG("Loading Scene");
 	bool ret = true;
 
+	exitGame = false;
+	enablePause = false;
 	firstTimeBonfires = false;
 	help = false;
 	colRespawn = 120;
@@ -56,7 +58,7 @@ bool Scene::Awake()
 	coordYMenuTp = 350;
 
 	enableTp = false;
-	for (auto button : buttonList) {
+	for (auto button : tpMenu) {
 		button->Disable();
 	}
 	return ret;
@@ -79,6 +81,11 @@ bool Scene::Start()
 	RestartEnemies();
 	enState = ENEMY::CREATEALL;
 	CreateEvents();
+
+	pauseMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, pauseMenu.size() + 1, "Resume", { 520, 10, 120,20 }, this, GuiClass::PAUSE));
+	pauseMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, pauseMenu.size() + 1, "Settings", { 520, 50, 120,20 }, this, GuiClass::PAUSE));
+	pauseMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, pauseMenu.size() + 1, "Back To Title", { 520, 90, 120,20 }, this, GuiClass::PAUSE));
+	pauseMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, pauseMenu.size() + 1, "Exit", { 520, 130, 120,20 }, this, GuiClass::PAUSE));
 
 	return true;
 }
@@ -154,16 +161,16 @@ bool Scene::Update(float dt)
 			pugi::xml_node bonfires = saveFile.child("config").child("scene").child("bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
 			tp = true;
 			if (bonfires.attribute("activated").as_bool() == false) {
-				
+
 				bonfire->ActiveBonfire();
 				Engine::GetInstance().audio.get()->PlayFx(bonfireSFX);
 
-				
+
 				bonfires.attribute("activated").set_value("true");
 				bonfires.append_attribute("id").set_value(idNameBonfire++);
-				
 
-				buttonList.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, buttonList.size() + 1, bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 120,20 }, this));
+
+				tpMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, tpMenu.size() + 1, bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 120,20 }, this, GuiClass::TPBONFIRE));
 			}
 
 			saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());
@@ -174,13 +181,29 @@ bool Scene::Update(float dt)
 
 	if (tp) {
 		enableTp = true;
-		for (auto button : buttonList) {
+		for (auto button : tpMenu) {
 			button->Enable();
 		}
 	}
 	else if (enableTp) {
 		enableTp = false;
-		for (auto button : buttonList) {
+		for (auto button : tpMenu) {
+			button->Disable();
+		}
+	}
+
+	//Enable Settings UI
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
+		enablePause = !enablePause;
+	}
+
+	if (enablePause) {
+		for (auto button : pauseMenu) {
+			button->Enable();
+		}
+	}
+	else {
+		for (auto button : pauseMenu) {
 			button->Disable();
 		}
 	}
@@ -205,7 +228,8 @@ bool Scene::PostUpdate()
 {
 	bool ret = true;
 
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	//If to exit the game
+	if (exitGame)
 		ret = false;
 
 	//New Level
@@ -368,33 +392,42 @@ void Scene::ActiveBonfires() {
 
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 {
-	// L15: DONE 5: Implement the OnGuiMouseClickEvent method
 	LOG("Press Gui Control: %d", control->id);
 	pugi::xml_document bonfireParameters;
 	pugi::xml_parse_result result = bonfireParameters.load_file("config.xml");
 	pugi::xml_node nodes = bonfireParameters.child("config").child("scene");
 
-	for (pugi::xml_node bonfireNode = nodes.child("bonfires").child("bonfire"); bonfireNode; bonfireNode = bonfireNode.next_sibling("bonfire")) {
-		if (bonfireNode.attribute("id").as_int() == control->id) {
-
-			if (bonfireNode.attribute("level").as_int() != level) {
-				level = bonfireNode.attribute("level").as_int();
-				for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map")) {
-					if (mapNode.attribute("number").as_int() == level) {
-						Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-						LoadState(LOAD::RESPAWN);
-						enState = ENEMY::CREATEXML;
-						CreateEvents();
-						ActiveBonfires();
-						break;
-					}
-				}
-				player->SetLevel(Level::DISABLED);
-
-			}
-
-			player->SetPosition({ bonfireNode.attribute("x").as_float(), bonfireNode.attribute("y").as_float() });
+	switch (control->GetType())
+	{
+	case GuiClass::PAUSE:
+		if (control->id == 4) {
+			exitGame = true;
 		}
+		break;
+	case GuiClass::TPBONFIRE:
+		for (pugi::xml_node bonfireNode = nodes.child("bonfires").child("bonfire"); bonfireNode; bonfireNode = bonfireNode.next_sibling("bonfire")) {
+			if (bonfireNode.attribute("id").as_int() == control->id) {
+
+				if (bonfireNode.attribute("level").as_int() != level) {
+					level = bonfireNode.attribute("level").as_int();
+					for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map")) {
+						if (mapNode.attribute("number").as_int() == level) {
+							Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+							LoadState(LOAD::RESPAWN);
+							enState = ENEMY::CREATEXML;
+							CreateEvents();
+							ActiveBonfires();
+							break;
+						}
+					}
+					player->SetLevel(Level::DISABLED);
+
+				}
+				player->SetPosition({ bonfireNode.attribute("x").as_float(), bonfireNode.attribute("y").as_float() });
+			}
+		}
+		break;
+
 	}
 
 
@@ -487,7 +520,7 @@ void Scene::CreateEvents() {
 		if (bonfireCharged[i] == level) contains = true;
 	}
 
-	
+
 	for (auto bonfire : list) {
 		Bonfire* fc = (Bonfire*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BONFIRE);
 		fc->SetParameters(configParameters.child("entities").child("firecamp"));
