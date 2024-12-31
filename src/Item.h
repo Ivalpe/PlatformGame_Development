@@ -48,8 +48,8 @@ public:
 		return id;
 	}
 
-	void SetPosition(Vector2D pos);
-	Vector2D GetPosition();
+	
+	
 	void OnCollision(PhysBody* physA, PhysBody* physB);
 	void OnCollisionEnd(PhysBody* physA, PhysBody* physB);
 
