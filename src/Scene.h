@@ -6,6 +6,7 @@
 #include "Bonfire.h"
 #include "Poison.h"
 #include "GuiControlButton.h"
+#include "UI.h"
 
 struct SDL_Texture;
 
@@ -78,6 +79,7 @@ private:
 	std::string tilePosDebug = "[0,0]";
 	bool once = false;
 	SDL_Texture* img;
+	UI ui;
 
 	//L03: TODO 3b: Declare a Player attribute
 	Player* player;
@@ -85,12 +87,9 @@ private:
 	std::vector<Fireball*> fireballList;
 	std::vector<Bonfire*> bonfireList;
 	std::vector<Poison*> poisonList;
-	std::vector<GuiControlButton*> tpMenu;
-	std::vector<GuiControlButton*> pauseMenu;
-	std::vector<GuiControlButton*> mainMenu;
 	std::vector<int> bonfireCharged;
 	int level, colRespawn, coordYMenuTp;
-	bool help, enableTp, firstTimeBonfires, enablePause, exitGame; //enableTp is for optimization and not making for every frame
+	bool help, firstTimeBonfires, exitGame; //enableTp is for optimization and not making for every frame
 	ENEMY enState;
 
 	int bonfireSFX, saveSFX, loadSFX, idBonfire, idNameBonfire;

@@ -39,7 +39,6 @@ bool Scene::Awake()
 	bool ret = true;
 
 	exitGame = false;
-	enablePause = false;
 	firstTimeBonfires = false;
 	help = false;
 	colRespawn = 120;
@@ -56,11 +55,6 @@ bool Scene::Awake()
 	item->position = Vector2D(200, 672);
 
 	coordYMenuTp = 350;
-
-	enableTp = false;
-	for (auto button : tpMenu) {
-		button->Disable();
-	}
 	return ret;
 }
 
@@ -82,13 +76,16 @@ bool Scene::Start()
 	enState = ENEMY::CREATEALL;
 	CreateEvents();
 
-	mainMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, mainMenu.size() + 1, "New Game", { 520, 200, 120,20 }, this, GuiClass::MAIN_MENU));
-	mainMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, mainMenu.size() + 1, "Load Game", { 520, 240, 120,20 }, this, GuiClass::MAIN_MENU));
+	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "New Game", { 520, 200, 120,20 }, this, GuiClass::MAIN_MENU));
+	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Load Game", { 520, 240, 120,20 }, this, GuiClass::MAIN_MENU));
+	ui.Active(GuiClass::MAIN_MENU);
 
-	pauseMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, pauseMenu.size() + 1, "Resume", { 520, 10, 120,20 }, this, GuiClass::PAUSE));
-	pauseMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, pauseMenu.size() + 1, "Settings", { 520, 50, 120,20 }, this, GuiClass::PAUSE));
-	pauseMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, pauseMenu.size() + 1, "Back To Title", { 520, 90, 120,20 }, this, GuiClass::PAUSE));
-	pauseMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, pauseMenu.size() + 1, "Exit", { 520, 130, 120,20 }, this, GuiClass::PAUSE));
+	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Resume", { 520, 10, 120,20 }, this, GuiClass::PAUSE));
+	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Settings", { 520, 50, 120,20 }, this, GuiClass::PAUSE));
+	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Back To Title", { 520, 90, 120,20 }, this, GuiClass::PAUSE));
+	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Exit", { 520, 130, 120,20 }, this, GuiClass::PAUSE));
+	ui.Disable(GuiClass::PAUSE);
+	ui.Disable(GuiClass::TPBONFIRE);
 
 	return true;
 }
@@ -172,8 +169,7 @@ bool Scene::Update(float dt)
 				bonfires.attribute("activated").set_value("true");
 				bonfires.append_attribute("id").set_value(idNameBonfire++);
 
-
-				tpMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, tpMenu.size() + 1, bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 120,20 }, this, GuiClass::TPBONFIRE));
+				ui.Add(GuiClass::TPBONFIRE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 120,20 }, this, GuiClass::TPBONFIRE));
 			}
 
 			saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());
@@ -182,43 +178,16 @@ bool Scene::Update(float dt)
 		}
 	}
 
-
-	//Enabel Main Menu UI
-	if (level == 0) {
-		for (auto button : mainMenu) {
-			button->Enable();
-		}
-	}
-
-	//Enable Tp UI
-	if (tp) {
-		enableTp = true;
-		for (auto button : tpMenu) {
-			button->Enable();
-		}
-	}
-	else if (enableTp) {
-		enableTp = false;
-		for (auto button : tpMenu) {
-			button->Disable();
-		}
-	}
-
 	//Enable Settings UI
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
-		enablePause = !enablePause;
+		if (ui.IsActive(GuiClass::PAUSE))
+			ui.Disable(GuiClass::PAUSE);
+		else
+			ui.Active(GuiClass::PAUSE);
 	}
 
-	if (enablePause) {
-		for (auto button : pauseMenu) {
-			button->Enable();
-		}
-	}
-	else {
-		for (auto button : pauseMenu) {
-			button->Disable();
-		}
-	}
+	if (tp) ui.Active(GuiClass::TPBONFIRE);
+	else ui.Disable(GuiClass::TPBONFIRE);
 
 	//When player dies, dont move the hitbox
 	if (player->GetState() == StatePlayer::DIE) {
@@ -435,7 +404,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		}
 		break;
 	case GuiClass::PAUSE:
-		if (control->id == 1) enablePause = false;
+		if (control->id == 1) ui.Disable(GuiClass::PAUSE);
 		if (control->id == 4) exitGame = true;
 		break;
 	case GuiClass::TPBONFIRE:
