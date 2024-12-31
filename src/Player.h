@@ -98,6 +98,8 @@ public:
 
 	float deathSoundTimer = 0.0f;
 	const float deathSoundCooldown = 1.0f;
+	float damageSoundTimer = 0.0f;
+	const float damageSoundCooldown = 1.0f;
 	float landSoundTimer = 0.0f;
 	const float landSoundCooldown = 1.0f;
 
@@ -116,4 +118,5 @@ public:
 	int acidkillSFX;
 	int jumpSFX;
 	int landSFX;
+	int damageSFX;
 };
