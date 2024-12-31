@@ -87,6 +87,7 @@ private:
 	std::vector<Poison*> poisonList;
 	std::vector<GuiControlButton*> tpMenu;
 	std::vector<GuiControlButton*> pauseMenu;
+	std::vector<GuiControlButton*> mainMenu;
 	std::vector<int> bonfireCharged;
 	int level, colRespawn, coordYMenuTp;
 	bool help, enableTp, firstTimeBonfires, enablePause, exitGame; //enableTp is for optimization and not making for every frame

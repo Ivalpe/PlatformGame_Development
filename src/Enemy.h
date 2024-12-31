@@ -93,4 +93,6 @@ private:
 	int id;
 
 	int enemydSFX;
+	int tempChangeAnimation;
+	bool directionLeft;
 };

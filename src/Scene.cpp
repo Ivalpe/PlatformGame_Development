@@ -82,6 +82,9 @@ bool Scene::Start()
 	enState = ENEMY::CREATEALL;
 	CreateEvents();
 
+	mainMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, mainMenu.size() + 1, "New Game", { 520, 200, 120,20 }, this, GuiClass::MAIN_MENU));
+	mainMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, mainMenu.size() + 1, "Load Game", { 520, 240, 120,20 }, this, GuiClass::MAIN_MENU));
+
 	pauseMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, pauseMenu.size() + 1, "Resume", { 520, 10, 120,20 }, this, GuiClass::PAUSE));
 	pauseMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, pauseMenu.size() + 1, "Settings", { 520, 50, 120,20 }, this, GuiClass::PAUSE));
 	pauseMenu.push_back((GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, pauseMenu.size() + 1, "Back To Title", { 520, 90, 120,20 }, this, GuiClass::PAUSE));
@@ -179,6 +182,15 @@ bool Scene::Update(float dt)
 		}
 	}
 
+
+	//Enabel Main Menu UI
+	if (level == 0) {
+		for (auto button : mainMenu) {
+			button->Enable();
+		}
+	}
+
+	//Enable Tp UI
 	if (tp) {
 		enableTp = true;
 		for (auto button : tpMenu) {
@@ -399,10 +411,32 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 
 	switch (control->GetType())
 	{
-	case GuiClass::PAUSE:
-		if (control->id == 4) {
-			exitGame = true;
+	case GuiClass::MAIN_MENU:
+		if (control->id == 1) {
+			level++;
+			for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
+			{
+				if (mapNode.attribute("number").as_int() == level) {
+					Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+					enState = ENEMY::CREATEALL;
+					CreateEvents();
+
+					pugi::xml_node currentLevel = SearchLevel(level);
+					Vector2D posPlayer;
+					posPlayer.setX(currentLevel.attribute("ix").as_int());
+					posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
+
+					player->SetPosition(posPlayer);
+
+					break;
+				}
+			}
+			player->SetLevel(Level::DISABLED);
 		}
+		break;
+	case GuiClass::PAUSE:
+		if (control->id == 1) enablePause = false;
+		if (control->id == 4) exitGame = true;
 		break;
 	case GuiClass::TPBONFIRE:
 		for (pugi::xml_node bonfireNode = nodes.child("bonfires").child("bonfire"); bonfireNode; bonfireNode = bonfireNode.next_sibling("bonfire")) {
