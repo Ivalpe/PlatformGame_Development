@@ -71,6 +71,14 @@ public:
 		return dp;
 	}
 
+	void ActivePlayer() {
+		disablePlayer = false;
+	}
+
+	void DisablePlayer() {
+		disablePlayer = true;
+	}
+
 	Level GetLevel() {
 		return lvl;
 	}
@@ -95,6 +103,7 @@ public:
 	bool isDying = false;
 	bool isDmg = false;
 	bool hasLanded = false;
+	bool disablePlayer = false;
 
 	float deathSoundTimer = 0.0f;
 	const float deathSoundCooldown = 1.0f;

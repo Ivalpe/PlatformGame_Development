@@ -49,6 +49,7 @@ bool Scene::Awake()
 	//Instantiate the player using the entity manager
 	player = (Player*)Engine::GetInstance().entityManager->CreateEntity(EntityType::PLAYER);
 	player->SetParameters(configParameters.child("entities").child("player"));
+	player->DisablePlayer();
 
 	//Create a new item using the entity manager and set the position to (200, 672) to test
 	Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
@@ -108,73 +109,89 @@ bool Scene::Update(float dt)
 	DebugMode();
 
 	//Camera
-	if (level != 0) {
+	if (level == 0) {
+		int cameraX = Engine::GetInstance().render.get()->camera.x -= 2;
+		int cameraMaxX = Engine::GetInstance().map.get()->GetWidth() * 8 * -1 - (240 * 8);
+		if (cameraX >= 0) Engine::GetInstance().render.get()->camera.x = 0;
+		if (cameraX <= cameraMaxX) Engine::GetInstance().render.get()->camera.x = cameraMaxX;
+	}
+	else {
 		Engine::GetInstance().render.get()->camera.x = ((player->GetX() * -1) + 200) * 2;
 		int cameraX = Engine::GetInstance().render.get()->camera.x;
 		int cameraMaxX = Engine::GetInstance().map.get()->GetWidth() * 8 * -1 - (240 * 8);
 		if (cameraX >= 0) Engine::GetInstance().render.get()->camera.x = 0;
 		if (cameraX <= cameraMaxX) Engine::GetInstance().render.get()->camera.x = cameraMaxX;
-	}
 
-	//Open Help
-	if (help) Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png"), SDL_FLIP_NONE, -Engine::GetInstance().render.get()->camera.x / 2, 0);
+		//Open Help
+		if (help) Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png"), SDL_FLIP_NONE, -Engine::GetInstance().render.get()->camera.x / 2, 0);
 
-	// Shoot
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
+		// Shoot
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
 
-		Fireball* fireball = (Fireball*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALL);
-		fireball->SetParameters(configParameters.child("entities").child("fireball"));
-		if (player->GetDirection() == DirectionPlayer::LEFT) fireball->Start(true);
-		else fireball->Start(false);
+			Fireball* fireball = (Fireball*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALL);
+			fireball->SetParameters(configParameters.child("entities").child("fireball"));
+			if (player->GetDirection() == DirectionPlayer::LEFT) fireball->Start(true);
+			else fireball->Start(false);
 
-		Vector2D playerPos = player->GetPosition();
-		if (player->GetDirection() == DirectionPlayer::LEFT) fireball->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
-		else fireball->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
+			Vector2D playerPos = player->GetPosition();
+			if (player->GetDirection() == DirectionPlayer::LEFT) fireball->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
+			else fireball->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
 
-		fireballList.push_back(fireball);
-	}
-
-	// Destroy fireballs collided
-	for (int i = 0; i < fireballList.size(); i++) {
-		if (fireballList[i]->HasCollision()) {
-			Engine::GetInstance().physics->DeleteBody(fireballList[i]->getBody());
-			Engine::GetInstance().entityManager->DestroyEntity(fireballList[i]);
-			fireballList.erase(fireballList.begin() + i);
-			i--;
+			fireballList.push_back(fireball);
 		}
-	}
 
-	// Destroy died enemies
-	enState = ENEMY::CLEARDEADS;
-	ClearEnemyList();
-
-	bool tp = false;
-	pugi::xml_document saveFile;
-	pugi::xml_parse_result result = saveFile.load_file("config.xml");
-
-	// Active bonfire if player touch it
-	for (auto bonfire : bonfireList) {
-		if (player->GetPosition().getX() >= bonfire->GetPosition().getX() - 16 && player->GetPosition().getX() <= bonfire->GetPosition().getX() + 8 &&
-			player->GetPosition().getY() >= bonfire->GetPosition().getY() - 16 && player->GetPosition().getY() <= bonfire->GetPosition().getY() + 8) {
-
-			int posXBonfire = bonfire->GetPosition().getX();
-			pugi::xml_node bonfires = saveFile.child("config").child("scene").child("bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
-			tp = true;
-			if (bonfires.attribute("activated").as_bool() == false) {
-
-				bonfire->ActiveBonfire();
-				Engine::GetInstance().audio.get()->PlayFx(bonfireSFX);
-
-
-				bonfires.attribute("activated").set_value("true");
-				bonfires.append_attribute("id").set_value(idNameBonfire++);
-
-				ui.Add(GuiClass::TPBONFIRE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 120,20 }, this, GuiClass::TPBONFIRE));
+		// Destroy fireballs collided
+		for (int i = 0; i < fireballList.size(); i++) {
+			if (fireballList[i]->HasCollision()) {
+				Engine::GetInstance().physics->DeleteBody(fireballList[i]->getBody());
+				Engine::GetInstance().entityManager->DestroyEntity(fireballList[i]);
+				fireballList.erase(fireballList.begin() + i);
+				i--;
 			}
+		}
 
-			saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());
-			saveFile.child("config").child("scene").child("entities").child("player").attribute("y").set_value(bonfire->GetPosition().getY());
-			saveFile.save_file("config.xml");
+
+		// Destroy died enemies
+		enState = ENEMY::CLEARDEADS;
+		ClearEnemyList();
+
+		bool tp = false;
+		pugi::xml_document saveFile;
+		pugi::xml_parse_result result = saveFile.load_file("config.xml");
+
+		// Active bonfire if player touch it
+		for (auto bonfire : bonfireList) {
+			if (player->GetPosition().getX() >= bonfire->GetPosition().getX() - 16 && player->GetPosition().getX() <= bonfire->GetPosition().getX() + 8 &&
+				player->GetPosition().getY() >= bonfire->GetPosition().getY() - 16 && player->GetPosition().getY() <= bonfire->GetPosition().getY() + 8) {
+
+				int posXBonfire = bonfire->GetPosition().getX();
+				pugi::xml_node bonfires = saveFile.child("config").child("scene").child("bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
+				tp = true;
+				if (bonfires.attribute("activated").as_bool() == false) {
+
+					bonfire->ActiveBonfire();
+					Engine::GetInstance().audio.get()->PlayFx(bonfireSFX);
+
+
+					bonfires.attribute("activated").set_value("true");
+					bonfires.append_attribute("id").set_value(idNameBonfire++);
+
+					ui.Add(GuiClass::TPBONFIRE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 120,20 }, this, GuiClass::TPBONFIRE));
+				}
+
+				saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());
+				saveFile.child("config").child("scene").child("entities").child("player").attribute("y").set_value(bonfire->GetPosition().getY());
+				saveFile.save_file("config.xml");
+			}
+		}
+
+		if (tp) ui.Active(GuiClass::TPBONFIRE);
+		else ui.Disable(GuiClass::TPBONFIRE);
+
+		//When player dies, dont move the hitbox
+		if (player->GetState() == StatePlayer::DIE) {
+			player->pbody->body->SetLinearVelocity({ 0,0 });
+			colRespawn--;
 		}
 	}
 
@@ -184,15 +201,6 @@ bool Scene::Update(float dt)
 			ui.Disable(GuiClass::PAUSE);
 		else
 			ui.Active(GuiClass::PAUSE);
-	}
-
-	if (tp) ui.Active(GuiClass::TPBONFIRE);
-	else ui.Disable(GuiClass::TPBONFIRE);
-
-	//When player dies, dont move the hitbox
-	if (player->GetState() == StatePlayer::DIE) {
-		player->pbody->body->SetLinearVelocity({ 0,0 });
-		colRespawn--;
 	}
 
 	if (colRespawn <= 0) {
@@ -229,6 +237,7 @@ bool Scene::PostUpdate()
 				posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
 
 				player->SetPosition(posPlayer);
+				ui.Disable(GuiClass::MAIN_MENU);
 
 				break;
 			}
@@ -252,6 +261,7 @@ bool Scene::PostUpdate()
 				posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
 
 				player->SetPosition(posPlayer);
+				ui.Disable(GuiClass::MAIN_MENU);
 				break;
 			}
 		}
