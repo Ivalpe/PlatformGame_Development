@@ -235,7 +235,7 @@
 				</animations>
 			</poison>
 			<items>
-				<Item id="1" name="coin" x="1604" y="272" w="16" h="16" texture="Assets/Textures/Items+HUD.png" gravity="false" level="1" dead="false" deadSave="false">
+				<item id="1" name="coin" x="10" y="10" w="16" h="16" texture="Assets/Textures/Items+HUD.png" gravity="false" level="1" collected="false" collectedSave="false">
 					<animations>
 						<idle loop="true" speed="0.12">
 							<frame x="0" y="80" w="16" h="16" />
@@ -248,8 +248,8 @@
 							<frame x="104" y="80" w="16" h="16" />
 						</idle>
 					</animations>
-				</Item>
-				<Item id="2" name="fireup" x="66" y="13" w="16" h="32" texture="Assets/Textures/Items+HUD.png" gravity="true" level="1" dead="false" deadSave="false">
+				</item>
+				<item id="2" name="fireup" x="20" y="10" w="16" h="32" texture="Assets/Textures/Items+HUD.png" gravity="true" level="1" collected="false" collectedSave="false">
 					<animations>
 						<idle loop="true" speed="0.12">
 							<frame x="0" y="96" w="16" h="16" />
@@ -258,8 +258,8 @@
 							<frame x="48" y="96" w="16" h="16" />
 						</idle>
 					</animations>
-				</Item>
-				<Item id="3" name="health" x="66" y="13" w="16" h="32" texture="Assets/Textures/Items+HUD.png" gravity="true" level="1" dead="false" deadSave="false">
+				</item>
+				<item id="3" name="health" x="30" y="10" w="16" h="32" texture="Assets/Textures/Items+HUD.png" gravity="true" level="1" collected="false" collectedSave="false">
 					<animations>
 						<idle loop="true" speed="0.12">
 							<frame x="0" y="64" w="16" h="16" />
@@ -273,7 +273,7 @@
 							<frame x="96" y="64" w="16" h="16" />
 						</die>
 					</animations>
-				</Item>
+				</item>
 			</items>
 		</entities>
 		<audio>
@@ -294,7 +294,7 @@
 			</music>
 		</audio>
 		<bonfires>
-			<bonfire level="1" activated="true" x="144" />
+			<bonfire level="1" activated="false" x="144" />
 			<bonfire level="1" activated="false" x="1504" />
 			<bonfire level="1" activated="false" x="3048" />
 		</bonfires>

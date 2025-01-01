@@ -3,12 +3,12 @@
 #include "Entity.h"
 #include "SDL2/SDL.h"
 #include "Animation.h"
-#include "Timer.h"
+#include "Pathfinding.h"
 
 struct SDL_Texture;
 
 enum class StateItem {
-	IDLE, DIE
+	IDLE
 };
 
 enum class ItemType {
@@ -55,18 +55,9 @@ public:
 
 	bool IsCollected();
 
-	
-
-public:
-
 	b2Body* getBody() {
 		return pbody->body;
 	}
-
-	b2Body* getSensorBody() {
-		return sensor->body;
-	}
-	
 
 private:
 
@@ -80,9 +71,9 @@ private:
 	Animation* currentAnimation = nullptr;
 	Animation idle, die;
 	StateItem stItem;
-	
+	b2Vec2 velocity;
+
 	PhysBody* pbody;
-	PhysBody* sensor;
 	int levelItem;
 	bool collected;
 	

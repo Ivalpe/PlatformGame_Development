@@ -47,7 +47,7 @@ bool Scene::Awake()
 	player->SetParameters(configParameters.child("entities").child("player"));
 
 
-	
+
 
 	coordYMenuTp = 350;
 
@@ -76,6 +76,7 @@ bool Scene::Start()
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
 	RestartEnemies();
 	enState = ENEMY::CREATEALL;
+	itemState = ITEM::CREATEALL;
 	CreateEvents();
 
 	return true;
@@ -601,7 +602,6 @@ void Scene::ClearItemList() {
 	case ITEM::CREATEALL:
 		for (int i = 0; i < itemList.size(); i++) {
 			Engine::GetInstance().physics->DeleteBody(itemList[i]->getBody());
-			Engine::GetInstance().physics->DeleteBody(itemList[i]->getSensorBody());
 			Engine::GetInstance().entityManager->DestroyEntity(itemList[i]);
 			itemList.erase(itemList.begin() + i);
 			i--;
@@ -628,7 +628,6 @@ void Scene::ClearItemList() {
 			if (itemList[i]->IsCollected()) {
 				SaveCollectedItem(itemList[i]->GetId());
 				Engine::GetInstance().physics->DeleteBody(itemList[i]->getBody());
-				Engine::GetInstance().physics->DeleteBody(itemList[i]->getSensorBody());
 				Engine::GetInstance().entityManager->DestroyEntity(itemList[i]);
 				itemList.erase(itemList.begin() + i);
 				i--;
@@ -638,7 +637,6 @@ void Scene::ClearItemList() {
 	case ITEM::CREATEXML:
 		for (int i = 0; i < itemList.size(); i++) {
 			Engine::GetInstance().physics->DeleteBody(itemList[i]->getBody());
-			Engine::GetInstance().physics->DeleteBody(itemList[i]->getSensorBody());
 			Engine::GetInstance().entityManager->DestroyEntity(itemList[i]);
 			itemList.erase(itemList.begin() + i);
 			i--;
