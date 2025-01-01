@@ -183,8 +183,15 @@ bool Scene::Update(float dt)
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 		if (ui.IsActive(GuiClass::PAUSE))
 			ui.Disable(GuiClass::PAUSE);
-		else
+		else{
 			ui.Active(GuiClass::PAUSE);
+
+			SDL_Rect rect = { 1280/2,736/2,105,125 };
+			Engine::GetInstance().render.get()->DrawTexture(PauseMenu, SDL_FLIP_NONE,
+				1280/2,
+				736/2,
+				&rect);
+		}
 	}
 
 	if (tp) ui.Active(GuiClass::TPBONFIRE);
