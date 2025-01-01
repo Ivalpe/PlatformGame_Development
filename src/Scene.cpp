@@ -63,6 +63,7 @@ bool Scene::Start()
 {
 	// Texture to highligh mouse position 
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
+	PauseMenu = Engine::GetInstance().textures.get()->Load("Assets/Menus/Options_menu.png");
 
 	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
 	loadSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
@@ -212,6 +213,8 @@ bool Scene::PostUpdate()
 	//If to exit the game
 	if (exitGame)
 		ret = false;
+
+
 
 	//New Level
 	if (level == 0 && player->GetLevel() == Level::NEW) {

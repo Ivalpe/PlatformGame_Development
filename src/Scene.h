@@ -76,6 +76,7 @@ public:
 
 private:
 	SDL_Texture* mouseTileTex = nullptr;
+	SDL_Texture* PauseMenu = nullptr;
 	std::string tilePosDebug = "[0,0]";
 	bool once = false;
 	SDL_Texture* img;
