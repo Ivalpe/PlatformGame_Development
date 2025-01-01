@@ -235,7 +235,7 @@
 				</animations>
 			</poison>
 			<items>
-				<item id="1" name="coin" x="10" y="10" w="16" h="16" texture="Assets/Textures/Items+HUD.png" gravity="false" level="1" collected="false" collectedSave="false">
+				<item id="1" name="coin" x="10" y="10" w="8" h="8" texture="Assets/Textures/Items+HUD.png" gravity="false" level="0" collected="false" collectedSave="false">
 					<animations>
 						<idle loop="true" speed="0.12">
 							<frame x="0" y="80" w="16" h="16" />
@@ -245,11 +245,11 @@
 							<frame x="64" y="80" w="16" h="16" />
 							<frame x="80" y="80" w="16" h="16" />
 							<frame x="96" y="80" w="16" h="16" />
-							<frame x="104" y="80" w="16" h="16" />
+							<frame x="112" y="80" w="16" h="16" />
 						</idle>
 					</animations>
 				</item>
-				<item id="2" name="fireup" x="20" y="10" w="16" h="32" texture="Assets/Textures/Items+HUD.png" gravity="true" level="1" collected="false" collectedSave="false">
+				<item id="2" name="fireup" x="20" y="10" w="8" h="8" texture="Assets/Textures/Items+HUD.png" gravity="true" level="0" collected="false" collectedSave="false">
 					<animations>
 						<idle loop="true" speed="0.12">
 							<frame x="0" y="96" w="16" h="16" />
@@ -259,7 +259,7 @@
 						</idle>
 					</animations>
 				</item>
-				<item id="3" name="health" x="30" y="10" w="16" h="32" texture="Assets/Textures/Items+HUD.png" gravity="true" level="1" collected="false" collectedSave="false">
+				<item id="3" name="health" x="30" y="10" w="8" h="8" texture="Assets/Textures/Items+HUD.png" gravity="true" level="0" collected="false" collectedSave="false">
 					<animations>
 						<idle loop="true" speed="0.12">
 							<frame x="0" y="64" w="16" h="16" />
