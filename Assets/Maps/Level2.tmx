@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="400" height="46" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="251">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="400" height="46" tilewidth="8" tileheight="8" infinite="0" nextlayerid="9" nextobjectid="252">
  <tileset firstgid="1" name="MapMetadata" tilewidth="8" tileheight="8" tilecount="4" columns="4">
   <grid orientation="orthogonal" width="16" height="16"/>
   <image source="MapMetadata.png" width="32" height="8"/>
@@ -92134,17 +92134,17 @@
   <object id="238" x="304" y="184" width="16" height="8"/>
   <object id="239" x="240" y="192" width="16" height="8"/>
   <object id="240" x="176" y="200" width="16" height="8"/>
-  <object id="241" x="3136" y="280" width="16" height="32">
-   <properties>
-    <property name="TYPE" value="WIN"/>
-   </properties>
-  </object>
   <object id="245" x="1704" y="104" width="72" height="48"/>
   <object id="246" x="1312" y="16" width="32" height="72"/>
   <object id="247" x="1344" y="64" width="136" height="24"/>
   <object id="248" x="1504" y="104" width="48" height="8"/>
   <object id="249" x="736" y="144" width="48" height="8"/>
   <object id="250" x="1072" y="144" width="48" height="8"/>
+  <object id="251" x="3135.75" y="280.5" width="16" height="32">
+   <properties>
+    <property name="TYPE" value="NEXTLVL"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer id="5" name="Navigation" width="400" height="46" visible="0">
   <properties>
