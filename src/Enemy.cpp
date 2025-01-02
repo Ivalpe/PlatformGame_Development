@@ -24,8 +24,10 @@ bool Enemy::Awake() {
 
 bool Enemy::Start() {
 
+	tempChangeAnimation = 120;
 	followPlayer = false;
 	speed = 1.9f;
+	directionLeft = false;
 
 	//initilize textures
 	id = parameters.attribute("id").as_int();
@@ -80,6 +82,33 @@ bool Enemy::Update(float dt) {
 
 	if (followPlayer) {
 		MovementEnemy(dt);
+	}
+	else {
+		if (currentAnimation == &walk) {
+			if (directionLeft) {
+				velocity.x = -speed;
+				flipType = SDL_FLIP_HORIZONTAL;
+			}
+			else {
+				velocity.x = +speed;
+				flipType = SDL_FLIP_NONE;
+			}
+		}
+
+		tempChangeAnimation--;
+		if (tempChangeAnimation <= 0) {
+			if (currentAnimation == &walk) {
+				currentAnimation = &idle;
+				tempChangeAnimation = 120;
+				de = DirectionEnemy::RIGHT;
+			}
+			else if (currentAnimation == &idle) {
+				currentAnimation = &walk;
+				tempChangeAnimation = 20;
+				directionLeft = !directionLeft;
+				de = DirectionEnemy::LEFT;
+			}
+		}	
 	}
 	pbody->body->SetLinearVelocity(velocity);
 

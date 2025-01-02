@@ -9,7 +9,7 @@
 struct SDL_Texture;
 
 enum class Level {
-	NEW, LOAD, LEV2, WIN, DISABLED
+	NEW, LOAD, NEXTLVL, WIN, DISABLED
 };
 
 enum class StatePlayer {
@@ -71,6 +71,14 @@ public:
 		return dp;
 	}
 
+	void ActivePlayer() {
+		disablePlayer = false;
+	}
+
+	void DisablePlayer() {
+		disablePlayer = true;
+	}
+
 	Level GetLevel() {
 		return lvl;
 	}
@@ -95,9 +103,12 @@ public:
 	bool isDying = false;
 	bool isDmg = false;
 	bool hasLanded = false;
+	bool disablePlayer = false;
 
 	float deathSoundTimer = 0.0f;
 	const float deathSoundCooldown = 1.0f;
+	float damageSoundTimer = 0.0f;
+	const float damageSoundCooldown = 1.0f;
 	float landSoundTimer = 0.0f;
 	const float landSoundCooldown = 1.0f;
 
@@ -116,4 +127,5 @@ public:
 	int acidkillSFX;
 	int jumpSFX;
 	int landSFX;
+	int damageSFX;
 };

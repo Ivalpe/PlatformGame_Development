@@ -49,6 +49,7 @@ bool Player::Start() {
 	pugi::xml_parse_result result = audioFile.load_file("config.xml");
 
 	pdeathSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("pdeathSFX").attribute("path").as_string());
+	damageSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("damageSFX").attribute("path").as_string());
 
 	jumpSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("jumpSFX").attribute("path").as_string());
 	landSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("landSFX").attribute("path").as_string());
@@ -85,117 +86,119 @@ void Player::ChangeDebug() {
 
 bool Player::Update(float dt)
 {
-	b2Vec2 velocity;
+	if (!disablePlayer) {
+		b2Vec2 velocity;
 
-	if (isDmg) {
-		pbody->body->SetType(b2_staticBody);
-		if (dmg.HasFinished()) {
-			stPlayer = StatePlayer::IDLE;
-			isDmg = false;
-			currentAnimation = &idle;
-			dmg.Reset();
-			pbody->body->SetType(b2_dynamicBody);
-			pbody->body->SetAwake(true);
+		if (isDmg) {
+			pbody->body->SetType(b2_staticBody);
+			if (dmg.HasFinished()) {
+				stPlayer = StatePlayer::IDLE;
+				isDmg = false;
+				currentAnimation = &idle;
+				dmg.Reset();
+				pbody->body->SetType(b2_dynamicBody);
+				pbody->body->SetAwake(true);
+			}
 		}
-	}
-	else if (!isDying) {
+		else if (!isDying) {
 
-		if (debugMode) {
-			velocity = b2Vec2(0, 0);
-			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
-				velocity.y = -speed;
+			if (debugMode) {
+				velocity = b2Vec2(0, 0);
+				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_W) == KEY_REPEAT) {
+					velocity.y = -speed;
+					stPlayer = StatePlayer::RUN;
+				}
+
+				// Move right
+				if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
+					velocity.y = speed;
+					stPlayer = StatePlayer::RUN;
+				}
+			}
+			else velocity = b2Vec2(0, -GRAVITY_Y);
+
+			stPlayer = StatePlayer::IDLE;
+
+			// Move left
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
+				velocity.x = -speed;
+				dp = DirectionPlayer::LEFT;
 				stPlayer = StatePlayer::RUN;
 			}
 
 			// Move right
-			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_S) == KEY_REPEAT) {
-				velocity.y = speed;
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
+				velocity.x = speed;
+				dp = DirectionPlayer::RIGHT;
 				stPlayer = StatePlayer::RUN;
 			}
+
+			// Walk / Run speed
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) speed = 3.0f;
+			else speed = 2.0f;
+
+			//Jump
+			if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && isJumping == false) {
+
+				hasLanded = false;
+
+
+				pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
+				isJumping = true;
+
+				Engine::GetInstance().audio.get()->PlayFx(jumpSFX);
+			}
+
+			// If the player is jumping, we don't want to apply gravity, we use the current velocity prduced by the jump
+			if (isJumping)
+				velocity = pbody->body->GetLinearVelocity();
+
+			if (isDying)
+				velocity = pbody->body->GetLinearVelocity();
+
+
+			// Apply the velocity to the player
+			pbody->body->SetLinearVelocity(velocity);
+
+
+			b2Transform pbodyPos = pbody->body->GetTransform();
+			if (isJumping == true) {
+				if ((int)position.getY() > METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2)
+					stPlayer = StatePlayer::JUMP;
+				else if ((int)position.getY() < METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2)
+					stPlayer = StatePlayer::FALL;
+			}
+
+			position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+			position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+
+
+			if (dp == DirectionPlayer::LEFT)
+				flipType = SDL_FLIP_HORIZONTAL;
+			else
+				flipType = SDL_FLIP_NONE;
+
+			if (stPlayer == StatePlayer::RUN)
+				currentAnimation = &run;
+			else if (stPlayer == StatePlayer::IDLE)
+				currentAnimation = &idle;
+			else if (stPlayer == StatePlayer::JUMP)
+				currentAnimation = &jump;
+			else if (stPlayer == StatePlayer::FALL)
+				currentAnimation = &fall;
+			else if (stPlayer == StatePlayer::DIE)
+				currentAnimation = &die;
 		}
-		else velocity = b2Vec2(0, -GRAVITY_Y);
-
-		stPlayer = StatePlayer::IDLE;
-
-		// Move left
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) {
-			velocity.x = -speed;
-			dp = DirectionPlayer::LEFT;
-			stPlayer = StatePlayer::RUN;
-		}
-
-		// Move right
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) {
-			velocity.x = speed;
-			dp = DirectionPlayer::RIGHT;
-			stPlayer = StatePlayer::RUN;
-		}
-
-		// Walk / Run speed
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) speed = 3.0f;
-		else speed = 2.0f;
-
-		//Jump
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && isJumping == false) {
-
-			hasLanded = false;
-
-
-			pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
-			isJumping = true;
-
-			Engine::GetInstance().audio.get()->PlayFx(jumpSFX);
-		}
-
-		// If the player is jumping, we don't want to apply gravity, we use the current velocity prduced by the jump
-		if (isJumping)
-			velocity = pbody->body->GetLinearVelocity();
-
-		if (isDying)
-			velocity = pbody->body->GetLinearVelocity();
-
-
-		// Apply the velocity to the player
-		pbody->body->SetLinearVelocity(velocity);
-
-
-		b2Transform pbodyPos = pbody->body->GetTransform();
-		if (isJumping == true) {
-			if ((int)position.getY() > METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2)
-				stPlayer = StatePlayer::JUMP;
-			else if ((int)position.getY() < METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2)
-				stPlayer = StatePlayer::FALL;
-		}
-
-		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
-
-
-		if (dp == DirectionPlayer::LEFT)
-			flipType = SDL_FLIP_HORIZONTAL;
-		else
-			flipType = SDL_FLIP_NONE;
-
-		if (stPlayer == StatePlayer::RUN)
-			currentAnimation = &run;
-		else if (stPlayer == StatePlayer::IDLE)
-			currentAnimation = &idle;
-		else if (stPlayer == StatePlayer::JUMP)
-			currentAnimation = &jump;
-		else if (stPlayer == StatePlayer::FALL)
-			currentAnimation = &fall;
-		else if (stPlayer == StatePlayer::DIE)
+		else {
+			pbody->body->SetType(b2_staticBody);
 			currentAnimation = &die;
+
+		}
+
+
+		Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
+		currentAnimation->Update();
 	}
-	else {
-		pbody->body->SetType(b2_staticBody);
-		currentAnimation = &die;
-
-	}
-
-
-	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
-	currentAnimation->Update();
 	return true;
 }
 
@@ -265,9 +268,9 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision LOAD");
 		lvl = Level::LOAD;
 		break;
-	case ColliderType::LEV2:
+	case ColliderType::NEXTLVL:
 		LOG("Collision LOAD");
-		lvl = Level::LEV2;
+		lvl = Level::NEXTLVL;
 		break;
 	case ColliderType::WIN:
 		LOG("Collision LOAD");
@@ -288,6 +291,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			else {
 				currentAnimation = &dmg;
 				isDmg = true;
+				Engine::GetInstance().audio.get()->PlayFx(damageSFX);
 				lifes--;
 			}
 		}
