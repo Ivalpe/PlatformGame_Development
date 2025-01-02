@@ -104,4 +104,6 @@ private:
 	ITEM itemState;
 
 	int bonfireSFX, saveSFX, loadSFX, idBonfire, idNameBonfire;
+	Uint8 alpha;
+	bool fadeIn;
 };

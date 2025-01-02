@@ -35,6 +35,8 @@ Scene::~Scene()
 // Called before render is available
 bool Scene::Awake()
 {
+	alpha = 0;
+	fadeIn = false;
 	LOG("Loading Scene");
 	bool ret = true;
 
@@ -108,12 +110,43 @@ bool Scene::Update(float dt)
 	//Debug Mode
 	DebugMode();
 
+
+
 	//Camera
 	if (level == 0) {
+		SDL_Rect rec;
+		rec.x = 0;
+		rec.y = 0;
+		rec.w = 1500;
+		rec.h = 800;
+		Engine::GetInstance().render.get()->DrawRectangle(rec, 0, 0, 0, alpha, true, false);
+
 		int cameraX = Engine::GetInstance().render.get()->camera.x -= 2;
-		int cameraMaxX = Engine::GetInstance().map.get()->GetWidth() * 8 * -1 - (240 * 8);
-		if (cameraX >= 0) Engine::GetInstance().render.get()->camera.x = 0;
-		if (cameraX <= cameraMaxX) Engine::GetInstance().render.get()->camera.x = cameraMaxX;
+		int cameraMaxX = Engine::GetInstance().map.get()->GetWidth() * 8 * -1 + (10 * 8);
+		if (cameraX <= cameraMaxX) {
+			Engine::GetInstance().render.get()->camera.x = cameraMaxX;
+			if (!fadeIn) {
+				if (alpha < 255) alpha += 5;
+				if (alpha >= 255) alpha = 255;
+			}
+
+
+			if (!fadeIn && alpha == 255) {
+				fadeIn = true;
+				Engine::GetInstance().render.get()->camera.x = 0;
+			}
+
+		}
+
+		if (fadeIn) {
+			if (alpha > 0) alpha -= 5;
+			if (alpha <= 0) alpha = 0;
+		}
+
+		if (fadeIn && alpha == 0) {
+			fadeIn&& alpha == 0;
+			fadeIn = false;
+		}
 	}
 	else {
 		Engine::GetInstance().render.get()->camera.x = ((player->GetX() * -1) + 200) * 2;
