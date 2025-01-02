@@ -80,7 +80,15 @@ bool Enemy::Update(float dt) {
 	if (type == EnemyType::BAT) velocity = b2Vec2(0, 0);
 	else velocity = b2Vec2(0, -GRAVITY_Y);
 
-	if (followPlayer) {
+	if (coolDownPathFinding)
+	coolDown--;
+
+	if (coolDown <= 0) {
+		coolDownPathFinding = false;
+		coolDown = 100;
+	}
+
+	if (followPlayer && !coolDownPathFinding) {
 		MovementEnemy(dt);
 	}
 	else {
@@ -221,6 +229,9 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::PLAYER:
 		if (physA->ctype == ColliderType::SENSOR) {
 			followPlayer = true;
+		}
+		else {
+			coolDownPathFinding = true;
 		}
 		break;
 	default:

@@ -90,15 +90,24 @@ bool Player::Update(float dt)
 		b2Vec2 velocity;
 
 		if (isDmg) {
-			pbody->body->SetType(b2_staticBody);
+			//pbody->body->SetType(b2_staticBody);
 			if (dmg.HasFinished()) {
 				stPlayer = StatePlayer::IDLE;
 				isDmg = false;
 				currentAnimation = &idle;
 				dmg.Reset();
-				pbody->body->SetType(b2_dynamicBody);
-				pbody->body->SetAwake(true);
 			}
+
+			b2Transform pbodyPos = pbody->body->GetTransform();
+			if (isJumping == true) {
+				if ((int)position.getY() > METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2)
+					stPlayer = StatePlayer::JUMP;
+				else if ((int)position.getY() < METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2)
+					stPlayer = StatePlayer::FALL;
+			}
+
+			position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+			position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 		}
 		else if (!isDying) {
 
@@ -160,7 +169,6 @@ bool Player::Update(float dt)
 			// Apply the velocity to the player
 			pbody->body->SetLinearVelocity(velocity);
 
-
 			b2Transform pbodyPos = pbody->body->GetTransform();
 			if (isJumping == true) {
 				if ((int)position.getY() > METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2)
@@ -171,7 +179,6 @@ bool Player::Update(float dt)
 
 			position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 			position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
-
 
 			if (dp == DirectionPlayer::LEFT)
 				flipType = SDL_FLIP_HORIZONTAL;
@@ -194,7 +201,6 @@ bool Player::Update(float dt)
 			currentAnimation = &die;
 
 		}
-
 
 		Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
 		currentAnimation->Update();
@@ -260,14 +266,6 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			lifes = 5;
 		}
 		break;
-	case ColliderType::NEW:
-		LOG("Collision NEW");
-		lvl = Level::NEW;
-		break;
-	case ColliderType::LOAD:
-		LOG("Collision LOAD");
-		lvl = Level::LOAD;
-		break;
 	case ColliderType::NEXTLVL:
 		LOG("Collision LOAD");
 		lvl = Level::NEXTLVL;
@@ -287,10 +285,14 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 					deathSoundTimer = deathSoundCooldown;
 				}
 				isDying = true;
+				lifes = 5;
 			}
 			else {
 				currentAnimation = &dmg;
 				isDmg = true;
+				if (physB->body->GetPosition().x > pbody->body->GetPosition().x) 
+					pbody->body->ApplyLinearImpulseToCenter(b2Vec2(-0.5f, -1.f), true);
+				else pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0.5f, -1.f), true);
 				Engine::GetInstance().audio.get()->PlayFx(damageSFX);
 				lifes--;
 			}

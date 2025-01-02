@@ -21,7 +21,7 @@
 			<map path="Assets/Maps/" name="Level2.tmx" number="2" ix="1910" iy="150" />
 		</levels>
 		<entities>
-			<player dx="95" dy="175" dlevel="1" ix="320" iy="100" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
+			<player dx="95" dy="175" dlevel="1" ix="320" iy="100" x="1504" y="272" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
 					<idle loop="true" speed="0.06">
 						<frame x="0" y="32" w="16" h="32" />
@@ -70,7 +70,7 @@
 				</animations>
 			</player>
 			<enemies>
-				<enemy id="1" name="evilwizard" x="85" y="28" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="false" deadSave="false">
+				<enemy id="1" name="evilwizard" x="85" y="28" w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true" level="1" dead="true" deadSave="false">
 					<animations>
 						<idle loop="true" speed="0.06">
 							<frame x="0" y="96" w="16" h="32" />
@@ -142,7 +142,7 @@
 						</die>
 					</animations>
 				</enemy>
-				<enemy id="5" name="bat" x="111" y="15" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="false" level="1" dead="false" deadSave="false">
+				<enemy id="5" name="bat" x="111" y="15" w="21" h="16" texture="Assets/Textures/Enemies.png" gravity="false" level="1" dead="true" deadSave="false">
 					<animations>
 						<fly loop="true" speed="0.06">
 							<frame x="0" y="160" w="21" h="16" />
@@ -296,7 +296,7 @@
 		</audio>
 		<bonfires>
 			<bonfire level="1" activated="true" x="144" y="184" name="Hoguera 1" id="1" />
-			<bonfire level="1" activated="false" x="1504" y="272" name="Hoguera 2" />
+			<bonfire level="1" activated="true" x="1504" y="272" name="Hoguera 2" id="2" />
 			<bonfire level="1" activated="false" x="3048" y="200" name="Hoguera 3" />
 		</bonfires>
 	</scene>

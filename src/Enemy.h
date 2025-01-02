@@ -95,4 +95,6 @@ private:
 	int enemydSFX;
 	int tempChangeAnimation;
 	bool directionLeft;
+	bool coolDownPathFinding = false;
+	int coolDown = 100;
 };

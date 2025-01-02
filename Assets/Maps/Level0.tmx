@@ -73650,7 +73650,7 @@
    <tile/>
   </data>
  </layer>
- <objectgroup id="4" name="Objects" visible="0">
+ <objectgroup id="4" name="Objects">
   <object id="38" x="0" y="120" width="640" height="248"/>
   <object id="40" x="632" y="40" width="8" height="80">
    <properties>
@@ -73665,16 +73665,6 @@
   <object id="42" x="0" y="40" width="8" height="80">
    <properties>
     <property name="TYPE" value="WALL"/>
-   </properties>
-  </object>
-  <object id="44" x="152" y="88" width="16" height="32">
-   <properties>
-    <property name="TYPE" value="NEW"/>
-   </properties>
-  </object>
-  <object id="45" x="472" y="88" width="16" height="32">
-   <properties>
-    <property name="TYPE" value="LOAD"/>
    </properties>
   </object>
  </objectgroup>

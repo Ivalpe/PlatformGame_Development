@@ -225,32 +225,6 @@ bool Scene::PostUpdate()
 	if (exitGame)
 		ret = false;
 
-	//New Level
-	if (level == 0 && player->GetLevel() == Level::NEW) {
-		level++;
-		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
-		{
-			if (mapNode.attribute("number").as_int() == level) {
-				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-
-				enState = ENEMY::CREATEALL;
-				itemState = ITEM::CREATEALL;
-				CreateEvents();
-
-				pugi::xml_node currentLevel = SearchLevel(level);
-				Vector2D posPlayer;
-				posPlayer.setX(currentLevel.attribute("ix").as_int());
-				posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
-
-				player->SetPosition(posPlayer);
-				ui.Disable(GuiClass::MAIN_MENU);
-
-				break;
-			}
-		}
-		player->SetLevel(Level::DISABLED);
-	}
-
 	//Next Level
 	if (player->GetLevel() == Level::NEXTLVL) {
 		level++;
@@ -269,23 +243,6 @@ bool Scene::PostUpdate()
 
 				player->SetPosition(posPlayer);
 				ui.Disable(GuiClass::MAIN_MENU);
-				break;
-			}
-		}
-		player->SetLevel(Level::DISABLED);
-	}
-
-	//Load Level
-	else if (level == 0 && player->GetLevel() == Level::LOAD) {
-		level++;
-		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
-		{
-			if (mapNode.attribute("number").as_int() == level) {
-				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-				LoadState(LOAD::RESPAWN);
-				enState = ENEMY::CREATEXML;
-				itemState = ITEM::CREATEALL;
-				CreateEvents();
 				break;
 			}
 		}

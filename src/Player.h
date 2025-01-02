@@ -9,7 +9,7 @@
 struct SDL_Texture;
 
 enum class Level {
-	NEW, LOAD, NEXTLVL, WIN, DISABLED
+	NEXTLVL, WIN, DISABLED
 };
 
 enum class StatePlayer {
