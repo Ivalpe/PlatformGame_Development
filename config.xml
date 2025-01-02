@@ -295,15 +295,6 @@
 				<Music1SFX path="Assets/Audio/Music/Character_Config.wav" />
 			</music>
 		</audio>
-		<bonfires>
-			<bonfire level="1" activated="true" x="144" y="184" name="Hoguera 1" id="1" />
-			<bonfire level="1" activated="false" x="1504" y="272" name="Hoguera 2" />
-			<bonfire level="1" activated="false" x="3048" y="200" name="Hoguera 3" />
-			<bonfire level="2" activated="false" x="504" y="312" name="Hoguera 4" />
-			<bonfire level="2" activated="false" x="928" y="136" name="Hoguera 5" />
-			<bonfire level="2" activated="false" x="1848" y="136" name="Hoguera 6" />
-			<bonfire level="2" activated="false" x="2104" y="280" name="Hoguera 7" />
-			<bonfire level="2" activated="true" x="2720" y="96" name="Hoguera 8" id="2" />
-		</bonfires>
+		<bonfires />
 	</scene>
 </config>
