@@ -61,6 +61,11 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
+
+	pugi::xml_node windowConfig = configParameters.child("window").child("resolution");
+	windowWidth = windowConfig.attribute("width").as_int(1280); // Valor predeterminado
+	windowHeight = windowConfig.attribute("height").as_int(736);
+
 	// Texture to highligh mouse position 
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
 	PauseMenu = Engine::GetInstance().textures.get()->Load("Assets/Menus/Options_menu.png");
@@ -116,9 +121,6 @@ bool Scene::Update(float dt)
 		if (cameraX >= 0) Engine::GetInstance().render.get()->camera.x = 0;
 		if (cameraX <= cameraMaxX) Engine::GetInstance().render.get()->camera.x = cameraMaxX;
 	}
-
-	//Open Help
-	if (help) Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png"), SDL_FLIP_NONE, -Engine::GetInstance().render.get()->camera.x / 2, 0);
 
 	// Shoot
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
@@ -181,16 +183,13 @@ bool Scene::Update(float dt)
 
 	//Enable Settings UI
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
-		if (ui.IsActive(GuiClass::PAUSE))
+		if (ui.IsActive(GuiClass::PAUSE)) {
 			ui.Disable(GuiClass::PAUSE);
-		else{
+			showPauseMenu = false; 
+		}
+		else {
 			ui.Active(GuiClass::PAUSE);
-
-			SDL_Rect rect = { 1280/2,736/2,105,125 };
-			Engine::GetInstance().render.get()->DrawTexture(PauseMenu, SDL_FLIP_NONE,
-				1280/2,
-				736/2,
-				&rect);
+			showPauseMenu = true; 
 		}
 	}
 
@@ -221,7 +220,21 @@ bool Scene::PostUpdate()
 	if (exitGame)
 		ret = false;
 
+	if (showPauseMenu)
+	{
+		
+		int menuWidth = 400;  
+		int menuHeight = 300;
+		int menuX = (windowWidth - menuWidth) / 2;
+		int menuY = (windowHeight - menuHeight) / 2;
 
+		
+		Engine::GetInstance().renderer->DrawTexture(PauseMenu, menuX, menuY);
+	}
+
+	ui.Render(); 
+
+	
 
 	//New Level
 	if (level == 0 && player->GetLevel() == Level::NEW) {

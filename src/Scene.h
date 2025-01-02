@@ -90,8 +90,10 @@ private:
 	std::vector<Poison*> poisonList;
 	std::vector<int> bonfireCharged;
 	int level, colRespawn, coordYMenuTp;
-	bool help, firstTimeBonfires, exitGame; //enableTp is for optimization and not making for every frame
+	bool help, firstTimeBonfires, exitGame, showPauseMenu; //enableTp is for optimization and not making for every frame
 	ENEMY enState;
 
 	int bonfireSFX, saveSFX, loadSFX, idBonfire, idNameBonfire;
+
+	int windowWidth, windowHeight;
 };
