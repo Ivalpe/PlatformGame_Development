@@ -51,9 +51,8 @@ bool Scene::Awake()
 	player->SetParameters(configParameters.child("entities").child("player"));
 	player->DisablePlayer();
 
-	//Create a new item using the entity manager and set the position to (200, 672) to test
-	Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
-	item->position = Vector2D(200, 672);
+
+
 
 	coordYMenuTp = 350;
 	return ret;
@@ -75,6 +74,7 @@ bool Scene::Start()
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
 	RestartEnemies();
 	enState = ENEMY::CREATEALL;
+	itemState = ITEM::CREATEALL;
 	CreateEvents();
 
 	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "New Game", { 520, 200, 120,20 }, this, GuiClass::MAIN_MENU));
@@ -151,6 +151,9 @@ bool Scene::Update(float dt)
 		}
 
 
+	itemState = ITEM::CLEARDEADS;
+	ClearItemList();
+
 		// Destroy died enemies
 		enState = ENEMY::CLEARDEADS;
 		ClearEnemyList();
@@ -158,6 +161,7 @@ bool Scene::Update(float dt)
 		bool tp = false;
 		pugi::xml_document saveFile;
 		pugi::xml_parse_result result = saveFile.load_file("config.xml");
+
 
 		// Active bonfire if player touch it
 		for (auto bonfire : bonfireList) {
@@ -228,7 +232,9 @@ bool Scene::PostUpdate()
 		{
 			if (mapNode.attribute("number").as_int() == level) {
 				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+
 				enState = ENEMY::CREATEALL;
+				itemState = ITEM::CREATEALL;
 				CreateEvents();
 
 				pugi::xml_node currentLevel = SearchLevel(level);
@@ -253,6 +259,7 @@ bool Scene::PostUpdate()
 			if (mapNode.attribute("number").as_int() == level) {
 				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
 				enState = ENEMY::CREATEALL;
+				itemState = ITEM::CREATEALL;
 				CreateEvents();
 
 				pugi::xml_node currentLevel = SearchLevel(level);
@@ -277,6 +284,7 @@ bool Scene::PostUpdate()
 				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
 				LoadState(LOAD::RESPAWN);
 				enState = ENEMY::CREATEXML;
+				itemState = ITEM::CREATEALL;
 				CreateEvents();
 				break;
 			}
@@ -564,6 +572,8 @@ void Scene::CreateEvents() {
 
 	//Enemies
 	ClearEnemyList();
+
+	ClearItemList();
 }
 
 //Modify the XML and puts dead="true" to a enemy dead
@@ -592,6 +602,32 @@ void Scene::RestartEnemies() {
 	saveFile.save_file("config.xml");
 
 }
+
+void Scene::SaveCollectedItem(int id) {
+	pugi::xml_document saveFile;
+	pugi::xml_parse_result result = saveFile.load_file("config.xml");
+	pugi::xml_node itemsNode = saveFile.child("config").child("scene").child("entities").child("items");
+
+	for (pugi::xml_node itemNode = itemsNode.child("item"); itemNode; itemNode = itemNode.next_sibling("item")) {
+		if (itemNode.attribute("id").as_int() == id) {
+			itemNode.attribute("collected") = "true";
+		}
+	}
+	saveFile.save_file("config.xml");
+}
+
+// Modify the XML and puts collected="false" to all items
+void Scene::RestartItems() {
+	pugi::xml_document saveFile;
+	pugi::xml_parse_result result = saveFile.load_file("config.xml");
+	pugi::xml_node itemsNode = saveFile.child("config").child("scene").child("entities").child("items");
+
+	for (pugi::xml_node itemNode = itemsNode.child("item"); itemNode; itemNode = itemNode.next_sibling("item")) {
+		itemNode.attribute("collected") = "false";
+	}
+	saveFile.save_file("config.xml");
+}
+
 
 //Clear all Enemy List or remove the dead enemies
 void Scene::ClearEnemyList() {
@@ -663,6 +699,75 @@ void Scene::ClearEnemyList() {
 	}
 }
 
+void Scene::ClearItemList() {
+
+	switch (itemState)
+	{
+	case ITEM::CREATEALL:
+		for (int i = 0; i < itemList.size(); i++) {
+			Engine::GetInstance().physics->DeleteBody(itemList[i]->getBody());
+			Engine::GetInstance().entityManager->DestroyEntity(itemList[i]);
+			itemList.erase(itemList.begin() + i);
+			i--;
+		}
+
+		for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
+		{
+			if (level == itemNode.attribute("level").as_int()) {
+				Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+
+				std::string itemType = itemNode.attribute("name").as_string();
+				if (itemType == "coin") item->SetItemType(ItemType::COIN);
+				else if (itemType == "fireup") item->SetItemType(ItemType::FIREUP);
+				else if (itemType == "health") item->SetItemType(ItemType::HEALTH);
+
+				item->SetParameters(itemNode);
+				item->Start();
+				itemList.push_back(item);
+			}
+		}
+		break;
+	case ITEM::CLEARDEADS:
+		for (int i = 0; i < itemList.size(); i++) {
+			if (itemList[i]->IsCollected()) {
+				SaveCollectedItem(itemList[i]->GetId());
+				Engine::GetInstance().physics->DeleteBody(itemList[i]->getBody());
+				Engine::GetInstance().entityManager->DestroyEntity(itemList[i]);
+				itemList.erase(itemList.begin() + i);
+				i--;
+			}
+		}
+		break;
+	case ITEM::CREATEXML:
+		for (int i = 0; i < itemList.size(); i++) {
+			Engine::GetInstance().physics->DeleteBody(itemList[i]->getBody());
+			Engine::GetInstance().entityManager->DestroyEntity(itemList[i]);
+			itemList.erase(itemList.begin() + i);
+			i--;
+		}
+
+		for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
+		{
+			if (level == itemNode.attribute("level").as_int() && !itemNode.attribute("collected").as_bool()) {
+				Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+
+				std::string itemType = itemNode.attribute("name").as_string();
+				if (itemType == "coin") item->SetItemType(ItemType::COIN);
+				else if (itemType == "fireup") item->SetItemType(ItemType::FIREUP);
+				else if (itemType == "health") item->SetItemType(ItemType::HEALTH);
+
+				item->SetParameters(itemNode);
+				item->Start();
+				itemList.push_back(item);
+			}
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+
 //Clear and create the Poisons of the level
 void Scene::RespawnPoison() {
 	std::list<Vector2D> list = Engine::GetInstance().map->GetPoisonList();
@@ -693,6 +798,7 @@ bool Scene::CleanUp()
 
 	SDL_DestroyTexture(img);
 	enemyList.clear();
+	itemList.clear();
 	fireballList.clear();
 	bonfireList.clear();
 	poisonList.clear();

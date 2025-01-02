@@ -3,6 +3,7 @@
 #include "Module.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Item.h"
 #include "Bonfire.h"
 #include "Poison.h"
 #include "GuiControlButton.h"
@@ -15,6 +16,9 @@ enum class LOAD {
 };
 
 enum class ENEMY {
+	CREATEALL, CLEARDEADS, CREATEXML
+};
+enum class ITEM {
 	CREATEALL, CLEARDEADS, CREATEXML
 };
 
@@ -45,7 +49,11 @@ public:
 
 	void SaveKillEnemy(int id);
 
+	void SaveCollectedItem(int id);
+
 	void RestartEnemies();
+
+	void RestartItems();
 
 	void LoadState(LOAD load);
 	pugi::xml_node SearchLevel(int lvl);
@@ -60,6 +68,7 @@ public:
 	bool CleanUp();
 
 	void ClearEnemyList();
+	void ClearItemList();
 	void RespawnPoison();
 
 	int GetActualLevel() {
@@ -84,6 +93,7 @@ private:
 	//L03: TODO 3b: Declare a Player attribute
 	Player* player;
 	std::vector<Enemy*> enemyList;
+	std::vector<Item*> itemList;
 	std::vector<Fireball*> fireballList;
 	std::vector<Bonfire*> bonfireList;
 	std::vector<Poison*> poisonList;
@@ -91,6 +101,7 @@ private:
 	int level, colRespawn, coordYMenuTp;
 	bool help, firstTimeBonfires, exitGame; //enableTp is for optimization and not making for every frame
 	ENEMY enState;
+	ITEM itemState;
 
 	int bonfireSFX, saveSFX, loadSFX, idBonfire, idNameBonfire;
 };
