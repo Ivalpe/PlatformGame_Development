@@ -151,8 +151,8 @@ bool Scene::Update(float dt)
 		}
 
 
-	itemState = ITEM::CLEARDEADS;
-	ClearItemList();
+		itemState = ITEM::CLEARDEADS;
+		ClearItemList();
 
 		// Destroy died enemies
 		enState = ENEMY::CLEARDEADS;
@@ -413,6 +413,8 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 					posPlayer.setX(currentLevel.attribute("ix").as_int());
 					posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
 
+					player->ActivePlayer();
+					ui.Disable(GuiClass::MAIN_MENU);
 					player->SetPosition(posPlayer);
 
 					break;
