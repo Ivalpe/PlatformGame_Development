@@ -236,6 +236,14 @@ bool Map::Load(std::string path, std::string fileName)
 							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
 							posPoison.push_back(mapCoord);
 						}
+						else if (gid == 4) {
+							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
+							posEnemy.insert({ mapCoord, 1 });
+						}
+						else if (gid == 5) {
+							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
+							posEnemy.insert({ mapCoord, 2 });
+						}
 					}
 				}
 			}
