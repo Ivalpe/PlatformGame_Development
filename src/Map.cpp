@@ -114,6 +114,7 @@ bool Map::Load(std::string path, std::string fileName)
 	collisions.clear();
 	posBonfire.clear();
 	posPoison.clear();
+	posEnemy.clear();
 	mapData.layers.clear();
 
 	bool ret = false;
@@ -284,14 +285,6 @@ bool Map::Load(std::string path, std::string fileName)
 
 	mapLoaded = ret;
 	return ret;
-}
-
-std::list<Vector2D> Map::GetBonfireList() {
-	return posBonfire;
-}
-
-std::list<Vector2D> Map::GetPoisonList() {
-	return posPoison;
 }
 
 // L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions

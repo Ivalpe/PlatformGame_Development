@@ -110,8 +110,6 @@ bool Scene::Update(float dt)
 	//Debug Mode
 	DebugMode();
 
-
-
 	//Camera
 	if (level == 0) {
 		SDL_Rect rec;
@@ -253,6 +251,17 @@ bool Scene::PostUpdate()
 	//If to exit the game
 	if (exitGame)
 		ret = false;
+
+	for (int i = 0; i < enemyList.size(); i++) {
+		if (enemyList[i]->IsDead()) {
+			SaveKillEnemy(enemyList[i]->GetId());
+			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
+			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getSensorBody());
+			Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
+			enemyList.erase(enemyList.begin() + i);
+			i--;
+		}
+	}
 
 	//Next Level
 	if (player->GetLevel() == Level::NEXTLVL) {
@@ -514,6 +523,14 @@ void Scene::CreateEvents() {
 	for (int i = 0; i < bonfireList.size();) {
 		Engine::GetInstance().entityManager->DestroyEntity(bonfireList[i]);
 		bonfireList.erase(bonfireList.begin());
+	}
+
+	//Enemies
+	for (int i = 0; i < enemyList.size();) {
+		Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
+		Engine::GetInstance().physics->DeleteBody(enemyList[i]->getSensorBody());
+		Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
+		enemyList.erase(enemyList.begin() + i);
 	}
 
 
