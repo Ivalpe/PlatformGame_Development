@@ -30,7 +30,6 @@ bool Enemy::Start() {
 	directionLeft = false;
 
 	//initilize textures
-	id = parameters.attribute("id").as_int();
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	levelEnemy = parameters.attribute("level").as_int();
 	position.setX(parameters.attribute("x").as_int() * 8);

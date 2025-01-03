@@ -53,10 +53,12 @@ public:
 
 	void RestartEnemies();
 
+	void RemoveLevelEnemies(int level);
+
 	void RestartItems();
 
 	void LoadState(LOAD load);
-	pugi::xml_node SearchLevel(int lvl);
+
 	void SaveState();
 
 	void CreateEvents();
@@ -96,11 +98,13 @@ private:
 	std::vector<Fireball*> fireballList;
 	std::vector<Bonfire*> bonfireList;
 	std::vector<Poison*> poisonList;
-	std::vector<int> levelLoaded;
+	std::vector<int> levelsLoadedBonfire;
+	std::vector<int> levelsLoadedEnemies;
 	int level, colRespawn, coordYMenuTp;
-	bool help, firstTimeBonfires, exitGame; //enableTp is for optimization and not making for every frame
+	bool help, firstTimeLoad, exitGame; //enableTp is for optimization and not making for every frame
 	ENEMY enState;
 	ITEM itemState;
+	int idEnemy = 1;
 
 	int bonfireSFX, saveSFX, loadSFX, idBonfire, idNameBonfire;
 	Uint8 alpha;

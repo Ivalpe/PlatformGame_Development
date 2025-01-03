@@ -41,7 +41,7 @@ bool Scene::Awake()
 	bool ret = true;
 
 	exitGame = false;
-	firstTimeBonfires = false;
+	firstTimeLoad = false;
 	help = false;
 	colRespawn = 120;
 	level = 0;
@@ -274,7 +274,7 @@ bool Scene::PostUpdate()
 				itemState = ITEM::CREATEALL;
 				CreateEvents();
 
-				pugi::xml_node currentLevel = SearchLevel(level);
+				pugi::xml_node currentLevel = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
 				Vector2D posPlayer;
 				posPlayer.setX(currentLevel.attribute("ix").as_int());
 				posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
@@ -301,24 +301,17 @@ void Scene::DebugMode() {
 
 		int previousLevel = level;
 
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) {
-			level = (level == 0) ? 2 : level - 1;
-		}
-		else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
-			level = (level == 2) ? 0 : level + 1;
-		}
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) level = 1;
+		else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) level = 2;
 
 
-		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map")) {
-			if (mapNode.attribute("number").as_int() == level) {
-				if (level != previousLevel) {
-					Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-				}
-				LoadState(LOAD::INITIAL);
-				CreateEvents();
-				break;
-			}
+		pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
+		if (level != previousLevel) {
+			Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
 		}
+		LoadState(LOAD::INITIAL);
+		RemoveLevelEnemies(level);
+		CreateEvents();
 
 		player->SetLevel(Level::DISABLED);
 	}
@@ -403,7 +396,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 					enState = ENEMY::CREATEALL;
 					CreateEvents();
 
-					pugi::xml_node currentLevel = SearchLevel(level);
+					pugi::xml_node currentLevel = nodes.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
 					Vector2D posPlayer;
 					posPlayer.setX(currentLevel.attribute("ix").as_int());
 					posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
@@ -462,12 +455,13 @@ void Scene::LoadState(LOAD load) {
 	pugi::xml_document playerParameters;
 	pugi::xml_parse_result result = playerParameters.load_file("config.xml");
 	pugi::xml_node playerNode = playerParameters.child("config").child("scene").child("entities").child("player");
+	pugi::xml_node mapNode = playerParameters.child("config").child("scene").child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
 
-	pugi::xml_node currentLevel = SearchLevel(level);
 	Vector2D posPlayer;
 	if (load == LOAD::INITIAL) {
-		posPlayer.setX(playerNode.attribute("ix").as_int());
-		posPlayer.setY(playerNode.attribute("iy").as_int() - 16);
+		posPlayer.setX(mapNode.attribute("ix").as_int());
+		posPlayer.setY(mapNode.attribute("iy").as_int());
+		RestartEnemies();
 	}
 	else if (load == LOAD::RESPAWN) {
 		posPlayer.setX(playerNode.attribute("x").as_int());
@@ -476,7 +470,7 @@ void Scene::LoadState(LOAD load) {
 	else {
 		int lvlSave = playerNode.attribute("dlevel").as_int();
 		if (lvlSave != level) {
-			Engine::GetInstance().map->Load("Assets/Maps/", SearchLevel(lvlSave).attribute("name").as_string());
+			Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").find_child_by_attribute("number", std::to_string(lvlSave).c_str()).attribute("name").as_string());
 			level = lvlSave;
 		}
 		posPlayer.setX(playerNode.attribute("dx").as_int());
@@ -499,14 +493,6 @@ void Scene::SaveState() {
 	saveFile.save_file("config.xml");
 
 	Engine::GetInstance().audio.get()->PlayFx(saveSFX);
-}
-
-pugi::xml_node Scene::SearchLevel(int lvl) {
-	for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map")) {
-		if (mapNode.attribute("number").as_int() == lvl) {
-			return mapNode;
-		}
-	}
 }
 
 // -----------------------------
@@ -534,17 +520,17 @@ void Scene::CreateEvents() {
 	}
 
 
-	if (!firstTimeBonfires) {
+	if (!firstTimeLoad) {
 		saveFile.child("config").child("scene").child("bonfires").remove_children();
 		saveFile.child("config").child("scene").child("enemies").remove_children();
 		saveFile.save_file("config.xml");
-		firstTimeBonfires = true;
+		firstTimeLoad = true;
 	}
 
 
 	bool contains = false;
-	for (int i = 0; i < levelLoaded.size() && !contains; i++) {
-		if (levelLoaded[i] == level) contains = true;
+	for (int i = 0; i < levelsLoadedBonfire.size() && !contains; i++) {
+		if (levelsLoadedBonfire[i] == level) contains = true;
 	}
 
 	list = Engine::GetInstance().map->GetBonfireList();
@@ -570,16 +556,22 @@ void Scene::CreateEvents() {
 		}
 
 	}
+	levelsLoadedBonfire.push_back(level);
+
+	contains = false;
+	for (int i = 0; i < levelsLoadedEnemies.size() && !contains; i++) {
+		if (levelsLoadedEnemies[i] == level) contains = true;
+	}
 
 	listEnemy = Engine::GetInstance().map->GetEnemyList();
 	for (auto enemy : listEnemy) {
 		Enemy* en = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
 		if (enemy.second == 1) {
-			en->SetParameters(configParameters.child("entities").child("enemies").child("evilwizard"));
+			en->SetParameters(configParameters.child("entities").child("enemies").child("evilwizard"), idEnemy);
 			en->SetEnemyType(EnemyType::EV_WIZARD);
 		}
 		else {
-			en->SetParameters(configParameters.child("entities").child("enemies").child("bat"));
+			en->SetParameters(configParameters.child("entities").child("enemies").child("bat"), idEnemy);
 			en->SetEnemyType(EnemyType::BAT);
 		}
 		en->Start();
@@ -588,16 +580,18 @@ void Scene::CreateEvents() {
 
 		if (!contains) {
 			pugi::xml_node new_enemy = saveFile.child("config").child("scene").child("enemies").append_child("enemy");
+			new_enemy.append_attribute("id").set_value(idEnemy++);
 			new_enemy.append_attribute("level").set_value(level);
 			new_enemy.append_attribute("dead").set_value("false");
 			new_enemy.append_attribute("x").set_value(enemy.first.getX());
 			new_enemy.append_attribute("y").set_value(enemy.first.getY());
+
 			saveFile.save_file("config.xml");
 		}
 
 	}
 
-	levelLoaded.push_back(level);
+	levelsLoadedEnemies.push_back(level);
 
 
 	//Poison
@@ -610,13 +604,9 @@ void Scene::CreateEvents() {
 void Scene::SaveKillEnemy(int id) {
 	pugi::xml_document saveFile;
 	pugi::xml_parse_result result = saveFile.load_file("config.xml");
-	pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("entities").child("enemies");
+	pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("enemies").find_child_by_attribute("id", std::to_string(id).c_str());;
 
-	for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
-		if (enemyNode.attribute("id").as_int() == id) {
-			enemyNode.attribute("dead") = "true";
-		}
-	}
+	enemiesNode.attribute("dead") = "true";
 	saveFile.save_file("config.xml");
 }
 
@@ -624,10 +614,27 @@ void Scene::SaveKillEnemy(int id) {
 void Scene::RestartEnemies() {
 	pugi::xml_document saveFile;
 	pugi::xml_parse_result result = saveFile.load_file("config.xml");
-	pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("entities").child("enemies");
+	pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("enemies");
 
 	for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
 		enemyNode.attribute("dead") = "false";
+	}
+	saveFile.save_file("config.xml");
+
+}
+
+void Scene::RemoveLevelEnemies(int levelRemove) {
+	pugi::xml_document saveFile;
+	pugi::xml_parse_result result = saveFile.load_file("config.xml");
+	pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("enemies");
+
+	for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
+		if (enemyNode.attribute("level").as_int() == levelRemove)
+			enemyNode.parent().remove_children();
+		for (size_t i = 0; i < levelsLoadedEnemies.size(); i++){
+			if (levelsLoadedEnemies[i] == levelRemove)
+				levelsLoadedEnemies.erase(levelsLoadedEnemies.begin() + i);
+		}
 	}
 	saveFile.save_file("config.xml");
 
