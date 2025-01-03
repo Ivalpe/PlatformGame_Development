@@ -4,6 +4,7 @@
 #include "Physics.h"
 #include <list>
 #include <vector>
+#include <map>
 
 // L09: TODO 5: Add attributes to the property structure
 struct Properties
@@ -115,9 +116,18 @@ public:
 	// Load new map
 	bool Load(std::string path, std::string mapFileName);
 
-	std::list<Vector2D> GetBonfireList();
-	std::list<Vector2D> GetPoisonList();
-	std::list<Vector2D> GetEnemyList();
+	std::list<Vector2D> GetBonfireList() {
+		return posBonfire;
+	}
+
+	std::list<Vector2D> GetPoisonList() {
+		return posPoison;
+	}
+
+	std::map<Vector2D, int> GetEnemyList() {
+		return posEnemy;
+	}
+
 	std::list<Vector2D> GetItemList();
 
 	// L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
@@ -165,4 +175,5 @@ private:
 	std::list<PhysBody*> collisions;
 	std::list<Vector2D> posBonfire;
 	std::list<Vector2D> posPoison;
+	std::map<Vector2D, int> posEnemy;
 };

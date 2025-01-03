@@ -110,8 +110,6 @@ bool Scene::Update(float dt)
 	//Debug Mode
 	DebugMode();
 
-
-
 	//Camera
 	if (level == 0) {
 		SDL_Rect rec;
@@ -187,10 +185,6 @@ bool Scene::Update(float dt)
 		itemState = ITEM::CLEARDEADS;
 		ClearItemList();
 
-		// Destroy died enemies
-		enState = ENEMY::CLEARDEADS;
-		ClearEnemyList();
-
 		bool tp = false;
 		pugi::xml_document saveFile;
 		pugi::xml_parse_result result = saveFile.load_file("config.xml");
@@ -257,6 +251,17 @@ bool Scene::PostUpdate()
 	//If to exit the game
 	if (exitGame)
 		ret = false;
+
+	for (int i = 0; i < enemyList.size(); i++) {
+		if (enemyList[i]->IsDead()) {
+			SaveKillEnemy(enemyList[i]->GetId());
+			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
+			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getSensorBody());
+			Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
+			enemyList.erase(enemyList.begin() + i);
+			i--;
+		}
+	}
 
 	//Next Level
 	if (player->GetLevel() == Level::NEXTLVL) {
@@ -510,6 +515,7 @@ pugi::xml_node Scene::SearchLevel(int lvl) {
 
 void Scene::CreateEvents() {
 	std::list<Vector2D> list;
+	std::map<Vector2D, int> listEnemy;
 	pugi::xml_document saveFile;
 	pugi::xml_parse_result result = saveFile.load_file("config.xml");
 
@@ -519,21 +525,29 @@ void Scene::CreateEvents() {
 		bonfireList.erase(bonfireList.begin());
 	}
 
+	//Enemies
+	for (int i = 0; i < enemyList.size();) {
+		Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
+		Engine::GetInstance().physics->DeleteBody(enemyList[i]->getSensorBody());
+		Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
+		enemyList.erase(enemyList.begin() + i);
+	}
+
 
 	if (!firstTimeBonfires) {
 		saveFile.child("config").child("scene").child("bonfires").remove_children();
+		saveFile.child("config").child("scene").child("enemies").remove_children();
 		saveFile.save_file("config.xml");
 		firstTimeBonfires = true;
 	}
 
-	list = Engine::GetInstance().map->GetBonfireList();
 
 	bool contains = false;
-	for (int i = 0; i < bonfireCharged.size() && !contains; i++) {
-		if (bonfireCharged[i] == level) contains = true;
+	for (int i = 0; i < levelLoaded.size() && !contains; i++) {
+		if (levelLoaded[i] == level) contains = true;
 	}
 
-
+	list = Engine::GetInstance().map->GetBonfireList();
 	for (auto bonfire : list) {
 		Bonfire* fc = (Bonfire*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BONFIRE);
 		fc->SetParameters(configParameters.child("entities").child("firecamp"));
@@ -556,14 +570,38 @@ void Scene::CreateEvents() {
 		}
 
 	}
-	bonfireCharged.push_back(level);
+
+	listEnemy = Engine::GetInstance().map->GetEnemyList();
+	for (auto enemy : listEnemy) {
+		Enemy* en = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
+		if (enemy.second == 1) {
+			en->SetParameters(configParameters.child("entities").child("enemies").child("evilwizard"));
+			en->SetEnemyType(EnemyType::EV_WIZARD);
+		}
+		else {
+			en->SetParameters(configParameters.child("entities").child("enemies").child("bat"));
+			en->SetEnemyType(EnemyType::BAT);
+		}
+		en->Start();
+		en->SetPosition({ enemy.first.getX(), enemy.first.getY() });
+		enemyList.push_back(en);
+
+		if (!contains) {
+			pugi::xml_node new_enemy = saveFile.child("config").child("scene").child("enemies").append_child("enemy");
+			new_enemy.append_attribute("level").set_value(level);
+			new_enemy.append_attribute("dead").set_value("false");
+			new_enemy.append_attribute("x").set_value(enemy.first.getX());
+			new_enemy.append_attribute("y").set_value(enemy.first.getY());
+			saveFile.save_file("config.xml");
+		}
+
+	}
+
+	levelLoaded.push_back(level);
 
 
 	//Poison
 	RespawnPoison();
-
-	//Enemies
-	ClearEnemyList();
 
 	ClearItemList();
 }
@@ -618,77 +656,6 @@ void Scene::RestartItems() {
 		itemNode.attribute("collected") = "false";
 	}
 	saveFile.save_file("config.xml");
-}
-
-
-//Clear all Enemy List or remove the dead enemies
-void Scene::ClearEnemyList() {
-
-	switch (enState)
-	{
-	case ENEMY::CREATEALL:
-		for (int i = 0; i < enemyList.size(); i++) {
-			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
-			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getSensorBody());
-			Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
-			enemyList.erase(enemyList.begin() + i);
-			i--;
-		}
-
-		for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
-		{
-			if (level == enemyNode.attribute("level").as_int()) {
-				Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
-
-				std::string enemyType = enemyNode.attribute("name").as_string();
-				if (enemyType == "evilwizard") enemy->SetEnemyType(EnemyType::EV_WIZARD);
-				else if (enemyType == "bat") enemy->SetEnemyType(EnemyType::BAT);
-
-				enemy->SetParameters(enemyNode);
-				enemy->Start();
-				enemyList.push_back(enemy);
-			}
-		}
-		break;
-	case ENEMY::CLEARDEADS:
-		for (int i = 0; i < enemyList.size(); i++) {
-			if (enemyList[i]->IsDead()) {
-				SaveKillEnemy(enemyList[i]->GetId());
-				Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
-				Engine::GetInstance().physics->DeleteBody(enemyList[i]->getSensorBody());
-				Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
-				enemyList.erase(enemyList.begin() + i);
-				i--;
-			}
-		}
-		break;
-	case ENEMY::CREATEXML:
-		for (int i = 0; i < enemyList.size(); i++) {
-			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
-			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getSensorBody());
-			Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
-			enemyList.erase(enemyList.begin() + i);
-			i--;
-		}
-
-		for (pugi::xml_node enemyNode = configParameters.child("entities").child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy"))
-		{
-			if (level == enemyNode.attribute("level").as_int() && !enemyNode.attribute("dead").as_bool()) {
-				Enemy* enemy = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
-
-				std::string enemyType = enemyNode.attribute("name").as_string();
-				if (enemyType == "evilwizard") enemy->SetEnemyType(EnemyType::EV_WIZARD);
-				else if (enemyType == "bat") enemy->SetEnemyType(EnemyType::BAT);
-
-				enemy->SetParameters(enemyNode);
-				enemy->Start();
-				enemyList.push_back(enemy);
-			}
-		}
-		break;
-	default:
-		break;
-	}
 }
 
 void Scene::ClearItemList() {

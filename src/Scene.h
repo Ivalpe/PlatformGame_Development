@@ -67,7 +67,6 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-	void ClearEnemyList();
 	void ClearItemList();
 	void RespawnPoison();
 
@@ -97,7 +96,7 @@ private:
 	std::vector<Fireball*> fireballList;
 	std::vector<Bonfire*> bonfireList;
 	std::vector<Poison*> poisonList;
-	std::vector<int> bonfireCharged;
+	std::vector<int> levelLoaded;
 	int level, colRespawn, coordYMenuTp;
 	bool help, firstTimeBonfires, exitGame; //enableTp is for optimization and not making for every frame
 	ENEMY enState;
