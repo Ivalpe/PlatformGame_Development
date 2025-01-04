@@ -78,9 +78,19 @@ void Enemy::SetEnemyType(EnemyType et) {
 }
 
 void Enemy::BossPattern() {
-	if (bossActive)
-	bossCooldown--;
+	velocity = b2Vec2(0, -GRAVITY_Y);
 
+	if (bossActive && !isJumping)
+		bossCooldown--;
+
+	if (bossCooldown <= 0) {
+		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0.f, -0.37f), true);
+		isJumping = true;
+
+		fireball = true;
+		bossCooldown = 120;
+	}
+	if (isJumping)velocity = pbody->body->GetLinearVelocity();
 	pbody->body->SetLinearVelocity(velocity);
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
@@ -98,11 +108,6 @@ void Enemy::BossPattern() {
 		dead = true;
 	}
 
-
-	if (bossCooldown <= 0) {
-		fireball = true;
-		bossCooldown = 120;
-	}
 }
 
 void Enemy::EnemyPattern(float dt) {
@@ -245,6 +250,7 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	{
 	case ColliderType::GROUND:
 		LOG("Collision PLATFORM");
+		isJumping = false;
 		break;
 	case ColliderType::ITEM:
 		LOG("Collision ITEM");
