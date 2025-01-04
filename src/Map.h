@@ -128,7 +128,9 @@ public:
 		return posEnemy;
 	}
 
-	std::list<Vector2D> GetItemList();
+	std::map<Vector2D, int> GetItemList() {
+		return posItems;
+	}
 
 	// L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
 	Vector2D MapToWorld(int x, int y) const;
@@ -159,10 +161,6 @@ public:
 		return mapData.tileHeight;
 	}
 
-	void ClearListBonfire() {
-		posBonfire.clear();
-	}
-
 	
 public:
 	std::string mapFileName;
@@ -176,4 +174,5 @@ private:
 	std::list<Vector2D> posBonfire;
 	std::list<Vector2D> posPoison;
 	std::map<Vector2D, int> posEnemy;
+	std::map<Vector2D, int> posItems;
 };

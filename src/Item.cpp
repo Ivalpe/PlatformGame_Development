@@ -23,7 +23,6 @@ bool Item::Awake() {
 bool Item::Start() {
 
 	//initilize textures
-	id = parameters.attribute("id").as_int();
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	levelItem = parameters.attribute("level").as_int();
 	position.setX(parameters.attribute("x").as_int() * 8);

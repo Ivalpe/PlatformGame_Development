@@ -181,10 +181,6 @@ bool Scene::Update(float dt)
 			}
 		}
 
-
-		itemState = ITEM::CLEARDEADS;
-		ClearItemList();
-
 		bool tp = false;
 		pugi::xml_document saveFile;
 		pugi::xml_parse_result result = saveFile.load_file("config.xml");
@@ -252,6 +248,7 @@ bool Scene::PostUpdate()
 	if (exitGame)
 		ret = false;
 
+	//Clear dead enemies
 	for (int i = 0; i < enemyList.size(); i++) {
 		if (enemyList[i]->IsDead()) {
 			SaveKillEnemy(enemyList[i]->GetId());
@@ -259,6 +256,17 @@ bool Scene::PostUpdate()
 			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getSensorBody());
 			Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
 			enemyList.erase(enemyList.begin() + i);
+			i--;
+		}
+	}
+
+	//Clear Collected items
+	for (int i = 0; i < itemList.size(); i++) {
+		if (itemList[i]->IsCollected()) {
+			SaveCollectedItem(itemList[i]->GetId());
+			Engine::GetInstance().physics->DeleteBody(itemList[i]->getBody());
+			Engine::GetInstance().entityManager->DestroyEntity(itemList[i]);
+			itemList.erase(itemList.begin() + i);
 			i--;
 		}
 	}
@@ -500,8 +508,8 @@ void Scene::SaveState() {
 // -----------------------------
 
 void Scene::CreateEvents() {
-	std::list<Vector2D> list;
-	std::map<Vector2D, int> listEnemy;
+	std::list<Vector2D> listBonfires;
+	std::map<Vector2D, int> listEnemy, listItems;
 	pugi::xml_document saveFile;
 	pugi::xml_parse_result result = saveFile.load_file("config.xml");
 
@@ -519,6 +527,14 @@ void Scene::CreateEvents() {
 		enemyList.erase(enemyList.begin() + i);
 	}
 
+	//Items
+	for (int i = 0; i < itemList.size(); i++) {
+		Engine::GetInstance().physics->DeleteBody(itemList[i]->getBody());
+		Engine::GetInstance().entityManager->DestroyEntity(itemList[i]);
+		itemList.erase(itemList.begin() + i);
+		i--;
+	}
+
 
 	if (!firstTimeLoad) {
 		saveFile.child("config").child("scene").child("bonfires").remove_children();
@@ -527,14 +543,15 @@ void Scene::CreateEvents() {
 		firstTimeLoad = true;
 	}
 
+	// BONFIRES
 
 	bool contains = false;
 	for (int i = 0; i < levelsLoadedBonfire.size() && !contains; i++) {
 		if (levelsLoadedBonfire[i] == level) contains = true;
 	}
 
-	list = Engine::GetInstance().map->GetBonfireList();
-	for (auto bonfire : list) {
+	listBonfires = Engine::GetInstance().map->GetBonfireList();
+	for (auto bonfire : listBonfires) {
 		Bonfire* fc = (Bonfire*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BONFIRE);
 		fc->SetParameters(configParameters.child("entities").child("firecamp"));
 		fc->SetPosition({ bonfire.getX(), bonfire.getY() });
@@ -558,6 +575,8 @@ void Scene::CreateEvents() {
 	}
 	levelsLoadedBonfire.push_back(level);
 
+	//ENEMIES
+
 	contains = false;
 	for (int i = 0; i < levelsLoadedEnemies.size() && !contains; i++) {
 		if (levelsLoadedEnemies[i] == level) contains = true;
@@ -565,7 +584,7 @@ void Scene::CreateEvents() {
 
 	listEnemy = Engine::GetInstance().map->GetEnemyList();
 	for (auto enemy : listEnemy) {
-		int lowestId = GetLowestId();
+		int lowestId = GetLowestId(1);
 		Enemy* en = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
 		if (enemy.second == 1) {
 			en->SetParameters(configParameters.child("entities").child("enemies").child("evilwizard"), lowestId);
@@ -580,12 +599,12 @@ void Scene::CreateEvents() {
 		enemyList.push_back(en);
 
 		if (!contains) {
-			pugi::xml_node new_enemy = saveFile.child("config").child("scene").child("enemies").append_child("enemy");
-			new_enemy.append_attribute("id").set_value(lowestId);
-			new_enemy.append_attribute("level").set_value(level);
-			new_enemy.append_attribute("dead").set_value("false");
-			new_enemy.append_attribute("x").set_value(enemy.first.getX());
-			new_enemy.append_attribute("y").set_value(enemy.first.getY());
+			pugi::xml_node newEnemy = saveFile.child("config").child("scene").child("enemies").append_child("enemy");
+			newEnemy.append_attribute("id").set_value(lowestId);
+			newEnemy.append_attribute("level").set_value(level);
+			newEnemy.append_attribute("dead").set_value("false");
+			newEnemy.append_attribute("x").set_value(enemy.first.getX());
+			newEnemy.append_attribute("y").set_value(enemy.first.getY());
 
 			saveFile.save_file("config.xml");
 		}
@@ -594,11 +613,49 @@ void Scene::CreateEvents() {
 
 	levelsLoadedEnemies.push_back(level);
 
+	//ITEMS
+
+	contains = false;
+	for (int i = 0; i < levelsLoadedItems.size() && !contains; i++) {
+		if (levelsLoadedItems[i] == level) contains = true;
+	}
+
+	listItems = Engine::GetInstance().map->GetItemList();
+	for (auto item : listItems) {
+		int lowestId = GetLowestId(2);
+		Item* it = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+		if (item.second == 1) {
+			it->SetParameters(configParameters.child("entities").child("items").child("coin"), lowestId);
+			it->SetItemType(ItemType::COIN);
+		} else if (item.second == 2) {
+			it->SetParameters(configParameters.child("entities").child("items").child("fireup"), lowestId);
+			it->SetItemType(ItemType::FIREUP);
+		} else {
+			it->SetParameters(configParameters.child("entities").child("items").child("health"), lowestId);
+			it->SetItemType(ItemType::HEALTH);
+		}
+		it->Start();
+		it->SetPosition({ item.first.getX(), item.first.getY() });
+		itemList.push_back(it);
+
+		if (!contains) {
+			pugi::xml_node newItem = saveFile.child("config").child("scene").child("items").append_child("item");
+			newItem.append_attribute("id").set_value(lowestId);
+			newItem.append_attribute("level").set_value(level);
+			newItem.append_attribute("collected").set_value("false");
+			newItem.append_attribute("x").set_value(item.first.getX());
+			newItem.append_attribute("y").set_value(item.first.getY());
+
+			saveFile.save_file("config.xml");
+		}
+
+	}
+
+	levelsLoadedItems.push_back(level);
+
 
 	//Poison
 	RespawnPoison();
-
-	ClearItemList();
 }
 
 //Modify the XML and puts dead="true" to a enemy dead
@@ -645,26 +702,44 @@ void Scene::RemoveLevelEnemies(int levelRemove) {
 
 }
 
-int Scene::GetLowestId() {
+int Scene::GetLowestId(int type) {
 	pugi::xml_document saveFile;
 	pugi::xml_parse_result result = saveFile.load_file("config.xml");
-	pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("enemies");
-
 	int lowest = 1;
+	if (type == 1) {
+		pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("enemies");
 
-	while (true) {
-		bool idExists = false;
+		while (true) {
+			bool idExists = false;
 
-		for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
-			if (enemyNode.attribute("id").as_int() == lowest) {
-				idExists = true;
-				break;
+			for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
+				if (enemyNode.attribute("id").as_int() == lowest) {
+					idExists = true;
+					break;
+				}
 			}
+
+			if (!idExists) break;
+
+			lowest++;
 		}
+	} else {
+		pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("items");
 
-		if (!idExists) break;
+		while (true) {
+			bool idExists = false;
 
-		lowest++;
+			for (pugi::xml_node enemyNode = enemiesNode.child("item"); enemyNode; enemyNode = enemyNode.next_sibling("item")) {
+				if (enemyNode.attribute("id").as_int() == lowest) {
+					idExists = true;
+					break;
+				}
+			}
+
+			if (!idExists) break;
+
+			lowest++;
+		}
 	}
 
 	return lowest;
@@ -693,74 +768,6 @@ void Scene::RestartItems() {
 		itemNode.attribute("collected") = "false";
 	}
 	saveFile.save_file("config.xml");
-}
-
-void Scene::ClearItemList() {
-
-	switch (itemState)
-	{
-	case ITEM::CREATEALL:
-		for (int i = 0; i < itemList.size(); i++) {
-			Engine::GetInstance().physics->DeleteBody(itemList[i]->getBody());
-			Engine::GetInstance().entityManager->DestroyEntity(itemList[i]);
-			itemList.erase(itemList.begin() + i);
-			i--;
-		}
-
-		for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
-		{
-			if (level == itemNode.attribute("level").as_int()) {
-				Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
-
-				std::string itemType = itemNode.attribute("name").as_string();
-				if (itemType == "coin") item->SetItemType(ItemType::COIN);
-				else if (itemType == "fireup") item->SetItemType(ItemType::FIREUP);
-				else if (itemType == "health") item->SetItemType(ItemType::HEALTH);
-
-				item->SetParameters(itemNode);
-				item->Start();
-				itemList.push_back(item);
-			}
-		}
-		break;
-	case ITEM::CLEARDEADS:
-		for (int i = 0; i < itemList.size(); i++) {
-			if (itemList[i]->IsCollected()) {
-				SaveCollectedItem(itemList[i]->GetId());
-				Engine::GetInstance().physics->DeleteBody(itemList[i]->getBody());
-				Engine::GetInstance().entityManager->DestroyEntity(itemList[i]);
-				itemList.erase(itemList.begin() + i);
-				i--;
-			}
-		}
-		break;
-	case ITEM::CREATEXML:
-		for (int i = 0; i < itemList.size(); i++) {
-			Engine::GetInstance().physics->DeleteBody(itemList[i]->getBody());
-			Engine::GetInstance().entityManager->DestroyEntity(itemList[i]);
-			itemList.erase(itemList.begin() + i);
-			i--;
-		}
-
-		for (pugi::xml_node itemNode = configParameters.child("entities").child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item"))
-		{
-			if (level == itemNode.attribute("level").as_int() && !itemNode.attribute("collected").as_bool()) {
-				Item* item = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
-
-				std::string itemType = itemNode.attribute("name").as_string();
-				if (itemType == "coin") item->SetItemType(ItemType::COIN);
-				else if (itemType == "fireup") item->SetItemType(ItemType::FIREUP);
-				else if (itemType == "health") item->SetItemType(ItemType::HEALTH);
-
-				item->SetParameters(itemNode);
-				item->Start();
-				itemList.push_back(item);
-			}
-		}
-		break;
-	default:
-		break;
-	}
 }
 
 

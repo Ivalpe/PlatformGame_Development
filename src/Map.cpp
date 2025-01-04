@@ -237,13 +237,25 @@ bool Map::Load(std::string path, std::string fileName)
 							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
 							posPoison.push_back(mapCoord);
 						}
-						else if (gid == 4) {
+						else if (gid == 4) { // Evil Wizard
 							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
 							posEnemy.insert({ mapCoord, 1 });
 						}
-						else if (gid == 5) {
+						else if (gid == 5) { // Bat
 							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
 							posEnemy.insert({ mapCoord, 2 });
+						}
+						else if (gid == 6) { // Coin
+							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
+							posItems.insert({ mapCoord, 1 });
+						}
+						else if (gid == 7) { // Fire
+							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
+							posItems.insert({ mapCoord, 2 });
+						}
+						else if (gid == 8) { // Health
+							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
+							posItems.insert({ mapCoord, 3 });
 						}
 					}
 				}

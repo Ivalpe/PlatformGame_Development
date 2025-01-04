@@ -40,8 +40,9 @@ public:
 
 	bool CleanUp();
 
-	void SetParameters(pugi::xml_node parameters) {
+	void SetParameters(pugi::xml_node parameters, int id) {
 		this->parameters = parameters;
+		this->id = id;
 	}
 
 	int GetId() {

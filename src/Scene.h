@@ -55,7 +55,7 @@ public:
 
 	void RemoveLevelEnemies(int level);
 
-	int GetLowestId();
+	int GetLowestId(int type);
 
 	void RestartItems();
 
@@ -71,7 +71,6 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-	void ClearItemList();
 	void RespawnPoison();
 
 	int GetActualLevel() {
@@ -102,6 +101,7 @@ private:
 	std::vector<Poison*> poisonList;
 	std::vector<int> levelsLoadedBonfire;
 	std::vector<int> levelsLoadedEnemies;
+	std::vector<int> levelsLoadedItems;
 	int level, colRespawn, coordYMenuTp;
 	bool help, firstTimeLoad, exitGame; //enableTp is for optimization and not making for every frame
 	ENEMY enState;
