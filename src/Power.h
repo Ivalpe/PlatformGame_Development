@@ -8,20 +8,24 @@
 
 struct SDL_Texture;
 
-enum class StateFireball {
-	IDLE,DIE
+enum class StatePower {
+	IDLE, DIE
 };
 
-enum class DirectionFireball {
+enum class DirectionPower {
 	LEFT, RIGHT
 };
 
-class Fireball : public Entity
+enum class TypePower {
+	FIREBALL
+};
+
+class Power : public Entity
 {
 public:
 
-	Fireball();
-	virtual ~Fireball();
+	Power(EntityType et);
+	virtual ~Power();
 
 	bool Awake();
 
@@ -31,8 +35,9 @@ public:
 
 	bool CleanUp();
 
-	void SetParameters(pugi::xml_node parameters) {
+	void SetParameters(pugi::xml_node parameters, TypePower tp) {
 		this->parameters = parameters;
+		power = tp;
 	}
 
 	void SetPosition(Vector2D pos);
@@ -55,10 +60,11 @@ private:
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle, explode;
-	DirectionFireball df;
+	DirectionPower df;
 	SDL_RendererFlip flipType;
-	StateFireball stFireball;
+	StatePower statePower;
 	PhysBody* pbody;
+	TypePower power;
 
 	Timer explosionTimer;
 	float explosionTime;
@@ -71,4 +77,3 @@ private:
 	int fireball1SFX;
 	int fireball2SFX;
 };
-#pragma once

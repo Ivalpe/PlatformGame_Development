@@ -9,7 +9,7 @@
 #include "Entity.h"
 #include "EntityManager.h"
 #include "Player.h"
-#include "fireball.h"
+#include "Power.h"
 #include "Map.h"
 #include "Item.h"
 #include "Enemy.h"
@@ -159,17 +159,39 @@ bool Scene::Update(float dt)
 		// Shoot
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
 
-			Fireball* fireball = (Fireball*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALL);
-			fireball->SetParameters(configParameters.child("entities").child("fireball"));
-			if (player->GetDirection() == DirectionPlayer::LEFT) fireball->Start(true);
-			else fireball->Start(false);
+			Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALLPLAYER);
+			power->SetParameters(configParameters.child("entities").child("fireball"), TypePower::FIREBALL);
+			if (player->GetDirection() == DirectionPlayer::LEFT) power->Start(true);
+			else power->Start(false);
 
 			Vector2D playerPos = player->GetPosition();
-			if (player->GetDirection() == DirectionPlayer::LEFT) fireball->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
-			else fireball->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
+			if (player->GetDirection() == DirectionPlayer::LEFT) power->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
+			else power->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
 
-			fireballList.push_back(fireball);
+			fireballList.push_back(power);
 		}
+
+		// Shoot Boss
+		for (auto e : enemyList) {
+			if (e->GetType() == EnemyType::BOSS) {
+				if (e->GetBossFireball()) {
+
+					Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALLENEMY);
+					power->SetParameters(configParameters.child("entities").child("fireball"), TypePower::FIREBALL);
+					if (e->GetDirection() == DirectionEnemy::LEFT) power->Start(true);
+					else power->Start(false);
+
+					Vector2D enemyPos = e->GetPosition();
+					if (e->GetDirection() == DirectionEnemy::LEFT) power->SetPosition({ enemyPos.getX() - 20, enemyPos.getY() });
+					else power->SetPosition({ enemyPos.getX() + 32, enemyPos.getY() + 14 });
+
+					fireballList.push_back(power);
+					e->SetBossFireball(false);
+					break;
+				}
+			}
+		}
+
 
 		// Destroy fireballs collided
 		for (int i = 0; i < fireballList.size(); i++) {
@@ -248,6 +270,16 @@ bool Scene::PostUpdate()
 	if (exitGame)
 		ret = false;
 
+	if (!bossActive && level == 3 && player->GetX() >= 470) {
+		for (auto e : enemyList) {
+			if (e->GetType() == EnemyType::BOSS) {
+				e->ActiveBoss();
+				bossActive = true;
+				break;
+			}
+		}
+	}
+
 	//Clear dead enemies
 	for (int i = 0; i < enemyList.size(); i++) {
 		if (enemyList[i]->IsDead()) {
@@ -310,7 +342,7 @@ void Scene::DebugMode() {
 		int previousLevel = level;
 
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) level = 1;
-		else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) level = 2;
+		else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) level = 3;
 
 
 		pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
@@ -539,6 +571,7 @@ void Scene::CreateEvents() {
 	if (!firstTimeLoad) {
 		saveFile.child("config").child("scene").child("bonfires").remove_children();
 		saveFile.child("config").child("scene").child("enemies").remove_children();
+		saveFile.child("config").child("scene").child("items").remove_children();
 		saveFile.save_file("config.xml");
 		firstTimeLoad = true;
 	}
@@ -590,9 +623,13 @@ void Scene::CreateEvents() {
 			en->SetParameters(configParameters.child("entities").child("enemies").child("evilwizard"), lowestId);
 			en->SetEnemyType(EnemyType::EV_WIZARD);
 		}
-		else {
+		else if (enemy.second == 2) {
 			en->SetParameters(configParameters.child("entities").child("enemies").child("bat"), lowestId);
 			en->SetEnemyType(EnemyType::BAT);
+		}
+		else {
+			en->SetParameters(configParameters.child("entities").child("enemies").child("boss"), lowestId);
+			en->SetEnemyType(EnemyType::BOSS);
 		}
 		en->Start();
 		en->SetPosition({ enemy.first.getX(), enemy.first.getY() });
@@ -627,10 +664,12 @@ void Scene::CreateEvents() {
 		if (item.second == 1) {
 			it->SetParameters(configParameters.child("entities").child("items").child("coin"), lowestId);
 			it->SetItemType(ItemType::COIN);
-		} else if (item.second == 2) {
+		}
+		else if (item.second == 2) {
 			it->SetParameters(configParameters.child("entities").child("items").child("fireup"), lowestId);
 			it->SetItemType(ItemType::FIREUP);
-		} else {
+		}
+		else {
 			it->SetParameters(configParameters.child("entities").child("items").child("health"), lowestId);
 			it->SetItemType(ItemType::HEALTH);
 		}
@@ -723,7 +762,8 @@ int Scene::GetLowestId(int type) {
 
 			lowest++;
 		}
-	} else {
+	}
+	else {
 		pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("items");
 
 		while (true) {

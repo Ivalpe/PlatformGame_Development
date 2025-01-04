@@ -17,8 +17,8 @@ enum class DirectionEnemy {
 	LEFT, RIGHT
 };
 
-enum class EnemyType { 
-	EV_WIZARD, BAT, KILLERBUNNY, 
+enum class EnemyType {
+	EV_WIZARD, BAT, BOSS,
 };
 
 
@@ -34,6 +34,10 @@ public:
 	bool Start();
 
 	void SetEnemyType(EnemyType et);
+
+	EnemyType GetType() {
+		return type;
+	}
 
 	bool Update(float dt);
 
@@ -58,6 +62,9 @@ public:
 
 	bool IsDead();
 
+	void EnemyPattern(float dt);
+	void BossPattern();
+
 public:
 
 	b2Body* getBody() {
@@ -68,6 +75,22 @@ public:
 		return sensor->body;
 	}
 
+	void ActiveBoss() {
+		bossActive = true;
+	}
+
+	bool GetBossFireball(){
+		return fireball;
+	}
+
+	void SetBossFireball(bool f) {
+		fireball = f;
+	}
+
+	DirectionEnemy GetDirection() {
+		return de;
+	}
+
 
 private:
 
@@ -75,7 +98,7 @@ private:
 	const char* texturePath;
 	int texW, texH;
 	bool isDying = false;
-	
+
 	EnemyType type;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
@@ -98,4 +121,9 @@ private:
 	bool directionLeft;
 	bool coolDownPathFinding = false;
 	int coolDown = 100;
+
+	//BOSS
+	bool bossActive, fireball = false;
+	int bossCooldown = 120;
+	int bossLifes = 10;
 };

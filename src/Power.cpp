@@ -1,4 +1,4 @@
-#include "Fireball.h"
+#include "Power.h"
 #include "Engine.h"
 #include "Textures.h"
 #include "Audio.h"
@@ -9,18 +9,18 @@
 #include "Physics.h"
 #include "Map.h"
 
-Fireball::Fireball() : Entity(EntityType::FIREBALL) {
+Power::Power(EntityType et) : Entity(et) {
 }
 
-Fireball::~Fireball() {
+Power::~Power() {
 }
 
-bool Fireball::Awake() {
-	df = DirectionFireball::RIGHT;
+bool Power::Awake() {
+	df = DirectionPower::RIGHT;
 	return true;
 }
 
-bool Fireball::Start(bool inv) {
+bool Power::Start(bool inv) {
 
 	inverted = inv;
 	col = false;
@@ -46,7 +46,10 @@ bool Fireball::Start(bool inv) {
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 
 	//Assign collider type
-	pbody->ctype = ColliderType::FIREBALL;
+	if (type == EntityType::FIREBALLPLAYER)
+		pbody->ctype = ColliderType::FIREBALLPLAYER;
+	else if (type == EntityType::FIREBALLENEMY)
+		pbody->ctype = ColliderType::FIREBALLENEMY;
 	pbody->listener = this;
 
 	// Set the gravity of the body
@@ -55,18 +58,18 @@ bool Fireball::Start(bool inv) {
 	return true;
 }
 
-bool Fireball::Update(float dt)
+bool Power::Update(float dt)
 {
 
 	// Add a physics to an item - update the position of the object from the physics.  
-	if (stFireball == StateFireball::DIE && currentAnimation->HasFinished()) col = true;
-	else if (stFireball == StateFireball::DIE) pbody->body->SetLinearVelocity({ 0, 0 });
+	if (statePower == StatePower::DIE && currentAnimation->HasFinished()) col = true;
+	else if (statePower == StatePower::DIE) pbody->body->SetLinearVelocity({ 0, 0 });
 	else {
 		float speed = inverted ? -5.0f : 5.0f;
 		pbody->body->SetLinearVelocity({ speed, 0 });
 	}
 
-	if (stFireball == StateFireball::IDLE) currentAnimation = &idle;
+	if (statePower == StatePower::IDLE) currentAnimation = &idle;
 
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
@@ -87,12 +90,12 @@ bool Fireball::Update(float dt)
 	return true;
 }
 
-bool Fireball::CleanUp()
+bool Power::CleanUp()
 {
 	return true;
 }
 
-void Fireball::SetPosition(Vector2D pos) {
+void Power::SetPosition(Vector2D pos) {
 	float offsetX = inverted ? -texW / 2 : texW / 2;
 	pos.setX(pos.getX() + offsetX);
 	pos.setY(pos.getY() + texH / 2);
@@ -101,15 +104,15 @@ void Fireball::SetPosition(Vector2D pos) {
 	pbody->body->SetTransform(bodyPos, 0);
 }
 
-Vector2D Fireball::GetPosition() {
+Vector2D Power::GetPosition() {
 	b2Vec2 bodyPos = pbody->body->GetTransform().p;
 	Vector2D pos = Vector2D(METERS_TO_PIXELS(bodyPos.x), METERS_TO_PIXELS(bodyPos.y));
 	return pos;
 }
-void Fireball::OnCollision(PhysBody* physA, PhysBody* physB) {
+void Power::OnCollision(PhysBody* physA, PhysBody* physB) {
 
-	if (stFireball != StateFireball::DIE && physB->ctype != ColliderType::SENSOR) {
-		stFireball = StateFireball::DIE;
+	if (statePower != StatePower::DIE && physB->ctype != ColliderType::SENSOR) {
+		statePower = StatePower::DIE;
 		currentAnimation = &explode;
 		Engine::GetInstance().audio.get()->PlayFx(fireball2SFX);
 		pbody->body->SetLinearVelocity({ 0, 0 });
@@ -119,6 +122,6 @@ void Fireball::OnCollision(PhysBody* physA, PhysBody* physB) {
 	LOG("-----------------------------------------");
 }
 
-bool Fireball::HasCollision() {
+bool Power::HasCollision() {
 	return col;
 }

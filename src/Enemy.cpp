@@ -64,6 +64,8 @@ bool Enemy::Start() {
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 
+	if (type == EnemyType::BOSS) flipType = SDL_FLIP_HORIZONTAL;
+
 	// Initialize pathfinding
 	pathfinding = new Pathfinding();
 	ResetPath();
@@ -75,7 +77,35 @@ void Enemy::SetEnemyType(EnemyType et) {
 	type = et;
 }
 
-bool Enemy::Update(float dt) {
+void Enemy::BossPattern() {
+	if (bossActive)
+	bossCooldown--;
+
+	pbody->body->SetLinearVelocity(velocity);
+
+	b2Transform pbodyPos = pbody->body->GetTransform();
+	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
+
+	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
+	currentAnimation->Update();
+
+	b2Vec2 enemyPos = pbody->body->GetPosition();
+	sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
+
+	if (currentAnimation == &die && currentAnimation->HasFinished()) {
+		Engine::GetInstance().audio.get()->PlayFx(enemydSFX);
+		dead = true;
+	}
+
+
+	if (bossCooldown <= 0) {
+		fireball = true;
+		bossCooldown = 120;
+	}
+}
+
+void Enemy::EnemyPattern(float dt) {
 	if (type == EnemyType::BAT) velocity = b2Vec2(0, 0);
 	else velocity = b2Vec2(0, -GRAVITY_Y);
 
@@ -119,6 +149,7 @@ bool Enemy::Update(float dt) {
 			}
 		}
 	}
+
 	pbody->body->SetLinearVelocity(velocity);
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
@@ -135,7 +166,11 @@ bool Enemy::Update(float dt) {
 		Engine::GetInstance().audio.get()->PlayFx(enemydSFX);
 		dead = true;
 	}
+}
 
+bool Enemy::Update(float dt) {
+	if (type != EnemyType::BOSS) EnemyPattern(dt);
+	else BossPattern();
 	return true;
 }
 
@@ -221,11 +256,14 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		dead = true;
 		LOG("Collision DIE");
 		break;
-	case ColliderType::FIREBALL:
+	case ColliderType::FIREBALLPLAYER:
 		if (physA->ctype != ColliderType::SENSOR) {
 			currentAnimation = &die;
 			LOG("Collision FIREBALL");
 		}
+		break;
+	case ColliderType::FIREBALLENEMY:
+		LOG("Collision FIREBALLENEMY");
 		break;
 	case ColliderType::PLAYER:
 		if (physA->ctype == ColliderType::SENSOR) {

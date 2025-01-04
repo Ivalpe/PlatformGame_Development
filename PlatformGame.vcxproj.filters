@@ -90,7 +90,7 @@
     <ClCompile Include="src\Pathfinding.cpp">
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="src\Fireball.cpp">
+    <ClCompile Include="src\Power.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\Bonfire.cpp">
@@ -173,7 +173,7 @@
     <ClInclude Include="src\Pathfinding.h">
       <Filter>Source Files\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="src\Fireball.h">
+    <ClInclude Include="src\Power.h">
       <Filter>Source Files\Game</Filter>
     </ClInclude>
     <ClInclude Include="src\Bonfire.h">

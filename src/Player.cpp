@@ -275,7 +275,8 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		lvl = Level::WIN;
 		break;
 	case ColliderType::ENEMY:
-		if (!debugMode && currentAnimation != &dmg) {
+	case ColliderType::FIREBALLENEMY:
+		if (!debugMode && currentAnimation != &dmg && currentAnimation != &die) {
 
 			if (lifes == 0) {
 				stPlayer = StatePlayer::DIE;
@@ -290,7 +291,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			else {
 				currentAnimation = &dmg;
 				isDmg = true;
-				if (physB->body->GetPosition().x > pbody->body->GetPosition().x) 
+				if (physB->body->GetPosition().x > pbody->body->GetPosition().x)
 					pbody->body->ApplyLinearImpulseToCenter(b2Vec2(-0.5f, -1.f), true);
 				else pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0.5f, -1.f), true);
 				Engine::GetInstance().audio.get()->PlayFx(damageSFX);

@@ -97,7 +97,7 @@ void Item::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::DIE:
 		LOG("Collision DIE");
 		break;
-	case ColliderType::FIREBALL:
+	case ColliderType::FIREBALLPLAYER:
 		LOG("Collision FIREBALL");
 		break;
 	case ColliderType::PLAYER:

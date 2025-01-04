@@ -96,7 +96,7 @@ private:
 	Player* player;
 	std::vector<Enemy*> enemyList;
 	std::vector<Item*> itemList;
-	std::vector<Fireball*> fireballList;
+	std::vector<Power*> fireballList;
 	std::vector<Bonfire*> bonfireList;
 	std::vector<Poison*> poisonList;
 	std::vector<int> levelsLoadedBonfire;
@@ -111,4 +111,5 @@ private:
 	int bonfireSFX, saveSFX, loadSFX, idBonfire, idNameBonfire;
 	Uint8 alpha;
 	bool fadeIn;
+	bool bossActive = false;
 };

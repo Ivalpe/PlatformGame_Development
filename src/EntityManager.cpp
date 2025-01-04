@@ -77,8 +77,11 @@ Entity* EntityManager::CreateEntity(EntityType type)
 	case EntityType::ENEMY:
 		entity = new Enemy();
 		break;
-	case EntityType::FIREBALL:
-		entity = new Fireball();
+	case EntityType::FIREBALLPLAYER:
+		entity = new Power(type);
+		break;
+	case EntityType::FIREBALLENEMY:
+		entity = new Power(type);
 		break;
 	case EntityType::BONFIRE:
 		entity = new Bonfire();

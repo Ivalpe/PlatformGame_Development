@@ -257,6 +257,10 @@ bool Map::Load(std::string path, std::string fileName)
 							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
 							posItems.insert({ mapCoord, 3 });
 						}
+						else if (gid == 9) { // Boss
+							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
+							posEnemy.insert({ mapCoord, 3 });
+						}
 					}
 				}
 			}
