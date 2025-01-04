@@ -80,7 +80,7 @@ bool Enemy::Update(float dt) {
 	else velocity = b2Vec2(0, -GRAVITY_Y);
 
 	if (coolDownPathFinding)
-	coolDown--;
+		coolDown--;
 
 	if (coolDown <= 0) {
 		coolDownPathFinding = false;
@@ -102,20 +102,22 @@ bool Enemy::Update(float dt) {
 			}
 		}
 
-		tempChangeAnimation--;
-		if (tempChangeAnimation <= 0) {
-			if (currentAnimation == &walk) {
-				currentAnimation = &idle;
-				tempChangeAnimation = 120;
-				de = DirectionEnemy::RIGHT;
+		if (type == EnemyType::EV_WIZARD) {
+			tempChangeAnimation--;
+			if (tempChangeAnimation <= 0) {
+				if (currentAnimation == &walk) {
+					currentAnimation = &idle;
+					tempChangeAnimation = 120;
+					de = DirectionEnemy::RIGHT;
+				}
+				else if (currentAnimation == &idle) {
+					currentAnimation = &walk;
+					tempChangeAnimation = 20;
+					directionLeft = !directionLeft;
+					de = DirectionEnemy::LEFT;
+				}
 			}
-			else if (currentAnimation == &idle) {
-				currentAnimation = &walk;
-				tempChangeAnimation = 20;
-				directionLeft = !directionLeft;
-				de = DirectionEnemy::LEFT;
-			}
-		}	
+		}
 	}
 	pbody->body->SetLinearVelocity(velocity);
 

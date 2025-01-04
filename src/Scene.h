@@ -55,6 +55,8 @@ public:
 
 	void RemoveLevelEnemies(int level);
 
+	int GetLowestId();
+
 	void RestartItems();
 
 	void LoadState(LOAD load);

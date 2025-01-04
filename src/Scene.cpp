@@ -565,13 +565,14 @@ void Scene::CreateEvents() {
 
 	listEnemy = Engine::GetInstance().map->GetEnemyList();
 	for (auto enemy : listEnemy) {
+		int lowestId = GetLowestId();
 		Enemy* en = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
 		if (enemy.second == 1) {
-			en->SetParameters(configParameters.child("entities").child("enemies").child("evilwizard"), idEnemy);
+			en->SetParameters(configParameters.child("entities").child("enemies").child("evilwizard"), lowestId);
 			en->SetEnemyType(EnemyType::EV_WIZARD);
 		}
 		else {
-			en->SetParameters(configParameters.child("entities").child("enemies").child("bat"), idEnemy);
+			en->SetParameters(configParameters.child("entities").child("enemies").child("bat"), lowestId);
 			en->SetEnemyType(EnemyType::BAT);
 		}
 		en->Start();
@@ -580,7 +581,7 @@ void Scene::CreateEvents() {
 
 		if (!contains) {
 			pugi::xml_node new_enemy = saveFile.child("config").child("scene").child("enemies").append_child("enemy");
-			new_enemy.append_attribute("id").set_value(idEnemy++);
+			new_enemy.append_attribute("id").set_value(lowestId);
 			new_enemy.append_attribute("level").set_value(level);
 			new_enemy.append_attribute("dead").set_value("false");
 			new_enemy.append_attribute("x").set_value(enemy.first.getX());
@@ -628,16 +629,45 @@ void Scene::RemoveLevelEnemies(int levelRemove) {
 	pugi::xml_parse_result result = saveFile.load_file("config.xml");
 	pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("enemies");
 
-	for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
+	for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode;) {
+		pugi::xml_node nextEnemy = enemyNode.next_sibling("enemy");
 		if (enemyNode.attribute("level").as_int() == levelRemove)
-			enemyNode.parent().remove_children();
-		for (size_t i = 0; i < levelsLoadedEnemies.size(); i++){
-			if (levelsLoadedEnemies[i] == levelRemove)
-				levelsLoadedEnemies.erase(levelsLoadedEnemies.begin() + i);
-		}
+			enemiesNode.remove_child(enemyNode);
+
+		enemyNode = nextEnemy;
+	}
+
+	for (size_t i = 0; i < levelsLoadedEnemies.size(); i++) {
+		if (levelsLoadedEnemies[i] == levelRemove)
+			levelsLoadedEnemies.erase(levelsLoadedEnemies.begin() + i);
 	}
 	saveFile.save_file("config.xml");
 
+}
+
+int Scene::GetLowestId() {
+	pugi::xml_document saveFile;
+	pugi::xml_parse_result result = saveFile.load_file("config.xml");
+	pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("enemies");
+
+	int lowest = 1;
+
+	while (true) {
+		bool idExists = false;
+
+		for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
+			if (enemyNode.attribute("id").as_int() == lowest) {
+				idExists = true;
+				break;
+			}
+		}
+
+		if (!idExists) break;
+
+		lowest++;
+	}
+
+	return lowest;
 }
 
 void Scene::SaveCollectedItem(int id) {
