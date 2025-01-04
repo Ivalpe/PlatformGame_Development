@@ -115,6 +115,7 @@ bool Map::Load(std::string path, std::string fileName)
 	posBonfire.clear();
 	posPoison.clear();
 	posEnemy.clear();
+	posItems.clear();
 	mapData.layers.clear();
 
 	bool ret = false;
