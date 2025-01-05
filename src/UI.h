@@ -7,7 +7,7 @@ public:
 
 	UI() {};
 
-	void Add(GuiClass gui, GuiControlButton* button);
+	void Add(GuiClass gui, GuiControl* control);
 
 	void Active(GuiClass gui);
 
@@ -19,12 +19,16 @@ public:
 
 private:
 
-	std::vector<GuiControlButton*> tpMenu;
+	std::vector<GuiControl*> tpMenu;
 	bool tpMenuActive;
 
-	std::vector<GuiControlButton*> pauseMenu;
+	std::vector<GuiControl*> pauseMenu;
 	bool pauseMenuActive;
 
-	std::vector<GuiControlButton*> mainMenu;
+	std::vector<GuiControl*> mainMenu;
 	bool mainMenuActive;
+
+	std::vector<GuiControl*> settings;
+	bool settingsActive;
+
 };

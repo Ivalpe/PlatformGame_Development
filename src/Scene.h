@@ -112,4 +112,12 @@ private:
 	Uint8 alpha;
 	bool fadeIn;
 	bool bossActive = false;
+	bool showSettings = false;
+
+	//UI
+	SDL_Texture* gui;
+	SDL_Texture* lifePlayer;
+	SDL_Texture* sliderBackground;
+	SDL_Texture* sliderMovement;
+
 };

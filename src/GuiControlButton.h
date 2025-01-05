@@ -14,9 +14,6 @@ public:
 	// Called each loop iteration
 	bool Update(float dt);
 
-	void Disable();
-	void Enable();
-
 private:
 
 	bool canClick = true;

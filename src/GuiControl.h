@@ -23,7 +23,8 @@ enum class GuiControlType
 enum class GuiClass {
 	PAUSE,
 	TPBONFIRE,
-	MAIN_MENU
+	MAIN_MENU,
+	SETTINGS
 };
 
 enum class GuiControlState
@@ -61,6 +62,10 @@ public:
 		return typeClass;
 	}
 
+	GuiControlType GetControlType() {
+		return type;
+	}
+
 	// Called each loop iteration
 	virtual bool Update(float dt)
 	{
@@ -86,6 +91,13 @@ public:
 		observer->OnGuiMouseClickEvent(this);
 	}
 
+	void Disable() {
+		state = GuiControlState::DISABLED;
+	}
+
+	void Enable() {
+		state = GuiControlState::NORMAL;
+	}
 public:
 
 	int id;

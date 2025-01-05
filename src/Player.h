@@ -86,6 +86,10 @@ public:
 	void SetLevel(Level lv) {
 		lvl = lv;
 	}
+
+	int GetLifes() {
+		return lifes;
+	}
 public:
 
 	//Declare player parameters

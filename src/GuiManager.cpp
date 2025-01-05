@@ -3,6 +3,7 @@
 #include "Textures.h"
 
 #include "GuiControlButton.h"
+#include "GuiControlSlider.h"
 #include "Audio.h"
 
 GuiManager::GuiManager() :Module()
@@ -17,7 +18,6 @@ bool GuiManager::Start()
 	return true;
 }
 
-// L16: TODO 1: Implement CreateGuiControl function that instantiates a new GUI control and add it to the list of controls
 GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char* text, SDL_Rect bounds, Module* observer, GuiClass gc, SDL_Rect sliderBounds)
 {
 	GuiControl* guiControl = nullptr;
@@ -28,6 +28,8 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 	case GuiControlType::BUTTON:
 		guiControl = new GuiControlButton(id, bounds, text);
 		break;
+	case GuiControlType::SLIDERBAR:
+		guiControl = new GuiControlSlider(id, bounds);
 	}
 
 	//Set the observer
