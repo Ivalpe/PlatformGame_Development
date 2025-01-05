@@ -252,9 +252,7 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision PLATFORM");
 		isJumping = false;
 		break;
-	case ColliderType::ITEM:
-		LOG("Collision ITEM");
-		break;
+	
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
 		break;

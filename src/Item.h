@@ -33,7 +33,7 @@ public:
 
 	void SetItemType(ItemType it);
 
-	ItemType GetType() {
+	ItemType GetItemType() {
 		return ittype;
 	}
 
