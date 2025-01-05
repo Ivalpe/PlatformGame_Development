@@ -16,14 +16,6 @@ GuiControlButton::~GuiControlButton()
 
 }
 
-void GuiControlButton::Disable() {
-	state = GuiControlState::DISABLED;
-}
-
-void GuiControlButton::Enable() {
-	state = GuiControlState::NORMAL;
-}
-
 bool GuiControlButton::Update(float dt)
 {
 	if (state != GuiControlState::DISABLED)

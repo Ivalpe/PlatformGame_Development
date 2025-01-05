@@ -15,6 +15,7 @@
 #include "Enemy.h"
 #include "GuiControl.h"
 #include "GuiManager.h"
+#include "GuiControlSlider.h"
 
 
 // -----------------------------
@@ -65,6 +66,10 @@ bool Scene::Start()
 {
 	// Texture to highligh mouse position 
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
+	gui = Engine::GetInstance().textures.get()->Load("Assets/Textures/hud.png");
+	lifePlayer = Engine::GetInstance().textures.get()->Load("Assets/Textures/life.png");
+	sliderBackground = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider1.png");
+	sliderMovement = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider2.png");
 
 	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
 	loadSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
@@ -79,9 +84,18 @@ bool Scene::Start()
 	itemState = ITEM::CREATEALL;
 	CreateEvents();
 
+	//Main Menu
 	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "New Game", { 520, 200, 120,20 }, this, GuiClass::MAIN_MENU));
 	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Load Game", { 520, 240, 120,20 }, this, GuiClass::MAIN_MENU));
+	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Settings", { 520, 280, 120,20 }, this, GuiClass::MAIN_MENU));
+	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Credits", { 520, 320, 120,20 }, this, GuiClass::MAIN_MENU));
+	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Exit Game", { 520, 360, 120,20 }, this, GuiClass::MAIN_MENU));
 	ui.Active(GuiClass::MAIN_MENU);
+
+	GuiControlSlider* slider = (GuiControlSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDERBAR, ui.GetSize(GuiClass::SETTINGS), "", { 520 / 2, 200, 120,20 }, this, GuiClass::SETTINGS);
+	slider->SetTexture(sliderBackground, sliderMovement);
+	ui.Add(GuiClass::SETTINGS, slider);
+	ui.Disable(GuiClass::SETTINGS);
 
 	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Resume", { 520, 10, 120,20 }, this, GuiClass::PAUSE));
 	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Settings", { 520, 50, 120,20 }, this, GuiClass::PAUSE));
@@ -155,6 +169,19 @@ bool Scene::Update(float dt)
 
 		//Open Help
 		if (help) Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png"), SDL_FLIP_NONE, -Engine::GetInstance().render.get()->camera.x / 2, 0);
+
+		//Gui
+		Engine::GetInstance().render.get()->DrawTexture(gui, SDL_FLIP_NONE, -(Engine::GetInstance().render.get()->camera.x / 2) + 10, 10);
+
+		if (player->GetLifes() >= 0) {
+			int coordX = -(Engine::GetInstance().render.get()->camera.x / 2) + 32;
+
+			for (size_t i = 0; i < player->GetLifes() + 1; i++) {
+				Engine::GetInstance().render.get()->DrawTexture(lifePlayer, SDL_FLIP_NONE, coordX, 14);
+				coordX += 8;
+			}
+		}
+
 
 		// Shoot
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
@@ -245,7 +272,7 @@ bool Scene::Update(float dt)
 	}
 
 	//Enable Settings UI
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
+	if (level != 0 && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 		if (ui.IsActive(GuiClass::PAUSE))
 			ui.Disable(GuiClass::PAUSE);
 		else
@@ -450,10 +477,19 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			}
 			player->SetLevel(Level::DISABLED);
 		}
+		else if (control->id == 2) {
+		}
+		else if (control->id == 3) 	ui.IsActive(GuiClass::SETTINGS) ? ui.Disable(GuiClass::SETTINGS) : ui.Active(GuiClass::SETTINGS);
+		else if (control->id == 4) {
+		}
+		else if (control->id == 5) {
+			exitGame = true;
+		}
 		break;
 	case GuiClass::PAUSE:
 		if (control->id == 1) ui.Disable(GuiClass::PAUSE);
-		if (control->id == 4) exitGame = true;
+		else if (control->id == 2) ui.IsActive(GuiClass::SETTINGS) ? ui.Disable(GuiClass::SETTINGS) : ui.Active(GuiClass::SETTINGS);
+		else if (control->id == 4) exitGame = true;
 		break;
 	case GuiClass::TPBONFIRE:
 		for (pugi::xml_node bonfireNode = nodes.child("bonfires").child("bonfire"); bonfireNode; bonfireNode = bonfireNode.next_sibling("bonfire")) {

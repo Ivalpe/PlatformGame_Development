@@ -73,6 +73,7 @@ void Player::SetPosition(Vector2D posPlayer) {
 
 void Player::Respawn() {
 	isDying = false;
+	lifes = 5;
 	die.SetFrame(0);
 	deathSoundTimer = 0.0f;
 	isJumping = false;
@@ -254,7 +255,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		isJumping = false;
 		break;
 	case ColliderType::ITEM:
-		
+
 		LOG("Collision ITEM");
 		break;
 	case ColliderType::UNKNOWN:
@@ -280,7 +281,8 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::FIREBALLENEMY:
 		if (!debugMode && currentAnimation != &dmg && currentAnimation != &die) {
 
-			if (lifes == 0) {
+			if (lifes <= 0) {
+				lifes--;
 				stPlayer = StatePlayer::DIE;
 
 				if (deathSoundTimer <= 0.0f) {
@@ -288,7 +290,6 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 					deathSoundTimer = deathSoundCooldown;
 				}
 				isDying = true;
-				lifes = 5;
 			}
 			else {
 				currentAnimation = &dmg;

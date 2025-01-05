@@ -99,13 +99,16 @@
     <ClCompile Include="src\Poison.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="src\UI.cpp">
-      <Filter>Source Files\Game</Filter>
-    </ClCompile>
     <ClCompile Include="src\GuiControlButton.cpp">
       <Filter>Source Files\Gui</Filter>
     </ClCompile>
     <ClCompile Include="src\GuiManager.cpp">
+      <Filter>Source Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UI.cpp">
+      <Filter>Source Files\Gui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GuiControlSlider.cpp">
       <Filter>Source Files\Gui</Filter>
     </ClCompile>
   </ItemGroup>
@@ -182,9 +185,6 @@
     <ClInclude Include="src\Poison.h">
       <Filter>Source Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="src\UI.h">
-      <Filter>Source Files\Game</Filter>
-    </ClInclude>
     <ClInclude Include="src\GuiManager.h">
       <Filter>Source Files\Gui</Filter>
     </ClInclude>
@@ -192,6 +192,12 @@
       <Filter>Source Files\Gui</Filter>
     </ClInclude>
     <ClInclude Include="src\GuiControlButton.h">
+      <Filter>Source Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UI.h">
+      <Filter>Source Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GuiControlSlider.h">
       <Filter>Source Files\Gui</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,18 +4,20 @@
 
 
 
-void UI::Add(GuiClass gui, GuiControlButton* button) {
+void UI::Add(GuiClass gui, GuiControl* control) {
 	switch (gui)
 	{
 	case GuiClass::PAUSE:
-		pauseMenu.push_back(button);
+		pauseMenu.push_back(control);
 		break;
 	case GuiClass::TPBONFIRE:
-		tpMenu.push_back(button);
+		tpMenu.push_back(control);
 		break;
 	case GuiClass::MAIN_MENU:
-		mainMenu.push_back(button);
+		mainMenu.push_back(control);
 		break;
+	case GuiClass::SETTINGS:
+		settings.push_back(control);
 	}
 }
 
@@ -40,6 +42,12 @@ void UI::Active(GuiClass gui) {
 		}
 		mainMenuActive = true;
 		break;
+	case GuiClass::SETTINGS:
+		for (auto button : settings) {
+			button->Enable();
+		}
+		settingsActive = true;
+		break;
 	}
 }
 
@@ -63,6 +71,12 @@ void UI::Disable(GuiClass gui) {
 		}
 		mainMenuActive = false;
 		break;
+	case GuiClass::SETTINGS:
+		for (auto button : settings) {
+			button->Disable();
+		}
+		settingsActive = false;
+		break;
 	}
 }
 
@@ -80,7 +94,7 @@ int UI::GetSize(GuiClass gui) {
 	}
 }
 
-bool UI::IsActive(GuiClass gui){
+bool UI::IsActive(GuiClass gui) {
 	switch (gui) {
 	case GuiClass::PAUSE:
 		return pauseMenuActive;
@@ -90,6 +104,9 @@ bool UI::IsActive(GuiClass gui){
 		break;
 	case GuiClass::MAIN_MENU:
 		return mainMenuActive;
+		break;
+	case GuiClass::SETTINGS:
+		return settingsActive;
 		break;
 	}
 }

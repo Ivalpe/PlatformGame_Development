@@ -50,7 +50,7 @@ bool Item::Start() {
 }
 
 void Item::SetItemType(ItemType it) {
-	type = it;
+	ittype = it;
 }
 
 bool Item::Update(float dt)
