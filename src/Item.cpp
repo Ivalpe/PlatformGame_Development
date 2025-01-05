@@ -32,6 +32,7 @@ bool Item::Start() {
 
 	//load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
+	collect.LoadAnimations(parameters.child("animations").child("collect"));
 	currentAnimation = &idle;
 
 
@@ -54,6 +55,20 @@ void Item::SetItemType(ItemType it) {
 
 bool Item::Update(float dt)
 {
+
+	if (stItem == StateItem::DIE) {
+		if (currentAnimation->HasFinished()) {
+			
+			collected = true;
+			return false;  
+		}
+		pbody->body->SetLinearVelocity({ 0, 0 });
+	}
+
+	if (stItem == StateItem::IDLE) {
+		currentAnimation = &idle;
+	}
+
 	velocity = b2Vec2(0, 0);
 	pbody->body->SetLinearVelocity(velocity);
 
@@ -95,13 +110,21 @@ void Item::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision UNKNOWN");
 		break;
 	case ColliderType::DIE:
+		collected = true;
 		LOG("Collision DIE");
 		break;
 	case ColliderType::FIREBALLPLAYER:
 		LOG("Collision FIREBALL");
 		break;
 	case ColliderType::PLAYER:
+		if (stItem != StateItem::DIE && physB->ctype != ColliderType::SENSOR) {
+			stItem = StateItem::DIE;
+			currentAnimation = &collect;
+			currentAnimation->Reset();
+			pbody->body->SetLinearVelocity({ 0, 0 }); 
+		}
 		break;
+
 	default:
 		break;
 	}

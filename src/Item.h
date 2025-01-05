@@ -8,7 +8,7 @@
 struct SDL_Texture;
 
 enum class StateItem {
-	IDLE
+	IDLE, DIE
 };
 
 enum class ItemType {
@@ -70,7 +70,7 @@ private:
 	ItemType type;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
-	Animation idle, die;
+	Animation idle, collect;
 	StateItem stItem;
 	b2Vec2 velocity;
 

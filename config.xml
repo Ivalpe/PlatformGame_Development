@@ -194,6 +194,12 @@
 							<frame x="96" y="80" w="16" h="16" />
 							<frame x="112" y="80" w="16" h="16" />
 						</idle>
+						<collect loop="false" speed="0.12">
+							<frame x="128" y="80" w="16" h="16" />
+							<frame x="144" y="80" w="16" h="16" />
+							<frame x="160" y="80" w="16" h="16" />
+							<frame x="176" y="80" w="16" h="16" />
+						</collect>
 					</animations>
 				</coin>
 				<fireup w="8" h="8" texture="Assets/Textures/Items+HUD.png">
@@ -204,6 +210,13 @@
 							<frame x="32" y="96" w="16" h="16" />
 							<frame x="48" y="96" w="16" h="16" />
 						</idle>
+						<collect loop="false" speed="0.12">
+							<frame x="64" y="96" w="16" h="16" />
+							<frame x="80" y="96" w="16" h="16" />
+							<frame x="96" y="96" w="16" h="16" />
+							<frame x="112" y="96" w="16" h="16" />
+							<frame x="128" y="96" w="16" h="16" />
+						</collect>
 					</animations>
 				</fireup>
 				<health w="8" h="8" texture="Assets/Textures/Items+HUD.png">
@@ -214,11 +227,11 @@
 							<frame x="32" y="64" w="16" h="16" />
 							<frame x="48" y="64" w="16" h="16" />
 						</idle>
-						<die loop="true" speed="0.12">
+						<collect loop="false" speed="0.12">
 							<frame x="64" y="64" w="16" h="16" />
 							<frame x="80" y="64" w="16" h="16" />
 							<frame x="96" y="64" w="16" h="16" />
-						</die>
+						</collect>
 					</animations>
 				</health>
 			</items>
@@ -242,7 +255,7 @@
 			</music>
 		</audio>
 		<bonfires>
-			<bonfire level="1" activated="false" x="144" y="184" name="Hoguera 1" />
+			<bonfire level="1" activated="true" x="144" y="184" name="Hoguera 1" id="1" />
 			<bonfire level="1" activated="false" x="1504" y="272" name="Hoguera 2" />
 			<bonfire level="1" activated="false" x="3048" y="200" name="Hoguera 3" />
 		</bonfires>
