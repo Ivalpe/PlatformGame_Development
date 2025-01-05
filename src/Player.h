@@ -50,7 +50,7 @@ public:
 	void Respawn();
 
 	void SetPosition(Vector2D posPlayer);
-	
+
 	Vector2D GetPosition() {
 		return position;
 	}
@@ -92,23 +92,36 @@ public:
 	}
 public:
 
-	//Declare player parameters
-	float speed = 3.0f;
-	SDL_Texture* texture = NULL;
-	int texW, texH;
 
-	//Audio fx
-	int pickCoinFxId;
+	// --- PLAYER PARAMETERS ---
+	float speed = 3.0f;          // Movement speed
+	SDL_Texture* texture = NULL; // Player texture
+	int texW, texH;              // Texture dimensions
+	bool disablePlayer = false;  // Flag to disable player controls
 
-	// L08 TODO 5: Add physics to the player - declare a Physics body
-	PhysBody* pbody;
-	float jumpForce = 0.37f; // The force to apply when jumping
-	bool isJumping = false; // Flag to check if the player is currently jumping
-	bool isDying = false;
-	bool isDmg = false;
-	bool hasLanded = false;
-	bool disablePlayer = false;
+	// --- PLAYER STATE ---
+	bool isJumping = false;      // Flag to check if the player is jumping
+	bool isDying = false;        // Flag to check if the player is dying
+	bool isDmg = false;          // Flag to check if the player is damaged
+	bool hasLanded = false;      // Flag to check if the player has landed
+	int lifes;                   // Number of lives
+	int coins;                   // Number of coins collected
+	bool firePower;              // Flag for fire power-up
+	bool debugMode;              // Flag for debug mode
 
+	// --- PHYSICS ---
+	PhysBody* pbody;             // Player physics body
+	float jumpForce = 0.37f;     // Jump force
+
+	// --- AUDIO FX ---
+	int pickCoinFxId;            // Audio ID for coin pickup
+	int pdeathSFX;               // Audio ID for player death
+	int acidkillSFX;             // Audio ID for acid death
+	int jumpSFX;                 // Audio ID for jumping
+	int landSFX;                 // Audio ID for landing
+	int damageSFX;               // Audio ID for taking damage
+
+	// --- AUDIO TIMERS ---
 	float deathSoundTimer = 0.0f;
 	const float deathSoundCooldown = 1.0f;
 	float damageSoundTimer = 0.0f;
@@ -116,20 +129,26 @@ public:
 	float landSoundTimer = 0.0f;
 	const float landSoundCooldown = 1.0f;
 
-	pugi::xml_node parameters;
-	Animation* currentAnimation = nullptr;
-	Animation idle, run, jump, fall, die, dmg;
-	DirectionPlayer dp;
-	SDL_RendererFlip flipType;
-	StatePlayer stPlayer;
-	Level lvl;
-	int lifes, coins;
-	bool firePower;
-	bool debugMode;
+	// --- ANIMATION ---
+	Animation* currentAnimation = nullptr; // Current active animation
+	Animation idle;                        // Idle animation
+	Animation run;                         // Run animation
+	Animation jump;                        // Jump animation
+	Animation fall;                        // Fall animation
+	Animation die;                         // Death animation
+	Animation dmg;                         // Damage animation
 
-	int pdeathSFX;
-	int acidkillSFX;
-	int jumpSFX;
-	int landSFX;
-	int damageSFX;
+	// --- PLAYER DIRECTION ---
+	DirectionPlayer dp;           // Player direction
+	SDL_RendererFlip flipType;    // SDL Renderer flip type
+
+	// --- PLAYER STATE MACHINE ---
+	StatePlayer stPlayer;         // Player state
+
+	// --- LEVEL CONFIGURATION ---
+	Level lvl;                    // Current player level
+
+	// --- XML PARAMETERS ---
+	pugi::xml_node parameters;    // XML parameters
+
 };

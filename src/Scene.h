@@ -37,8 +37,16 @@ public:
 	// Called before the first frame
 	bool Start();
 
+	void LoadAssets();
+
+	void SetupUI();
+
 	// Called before all Updates
 	bool PreUpdate();
+
+	void HandleCamera(Engine& engine);
+
+	void HandlePowers();
 
 	void DebugMode();
 
@@ -86,38 +94,61 @@ public:
 	bool OnGuiMouseClickEvent(GuiControl* control);
 
 private:
-	SDL_Texture* mouseTileTex = nullptr;
-	std::string tilePosDebug = "[0,0]";
-	bool once = false;
-	SDL_Texture* img;
-	UI ui;
 
-	//L03: TODO 3b: Declare a Player attribute
-	Player* player;
-	std::vector<Enemy*> enemyList;
-	std::vector<Item*> itemList;
-	std::vector<Power*> fireballList;
-	std::vector<Bonfire*> bonfireList;
-	std::vector<Poison*> poisonList;
-	std::vector<int> levelsLoadedBonfire;
-	std::vector<int> levelsLoadedEnemies;
-	std::vector<int> levelsLoadedItems;
-	int level, colRespawn, coordYMenuTp;
-	bool help, firstTimeLoad, exitGame; //enableTp is for optimization and not making for every frame
-	ENEMY enState;
-	ITEM itemState;
-	int idEnemy = 1;
+	// --- SCENE PARAMETERS ---
+	SDL_Texture* img;              // Scene background or general image
+	int level;                     // Current level
+	bool firstTimeLoad;            // Flag for the first-time loading of the scene
+	bool exitGame;                 // Flag to exit the game
 
-	int bonfireSFX, saveSFX, loadSFX, idBonfire, idNameBonfire;
-	Uint8 alpha;
-	bool fadeIn;
-	bool bossActive = false;
-	bool showSettings = false;
+	// --- TILE AND DEBUG ---
+	SDL_Texture* mouseTileTex = nullptr;  // Texture for the mouse tile
+	std::string tilePosDebug = "[0,0]";   // Debug position of the tile
+	bool once = false;                    // Flag for one-time operations
 
-	//UI
-	SDL_Texture* gui;
-	SDL_Texture* lifePlayer;
-	SDL_Texture* sliderBackground;
-	SDL_Texture* sliderMovement;
+	// --- PLAYER AND ENTITIES ---
+	Player* player;                       // Player instance
+	std::vector<Enemy*> enemyList;        // List of enemies
+	std::vector<Item*> itemList;          // List of items
+	std::vector<Power*> fireballList;     // List of fireballs
+	std::vector<Bonfire*> bonfireList;    // List of bonfires
+	std::vector<Poison*> poisonList;      // List of poison traps
+	std::vector<int> levelsLoadedBonfire; // Levels with bonfires loaded
+	std::vector<int> levelsLoadedEnemies; // Levels with enemies loaded
+	std::vector<int> levelsLoadedItems;   // Levels with items loaded
+	int idEnemy = 1;                      // Identifier for enemies
+	bool bossActive = false;              // Flag to indicate if the boss is active
+
+	// --- ENTITY STATES ---
+	ENEMY enState;        // Current enemy state
+	ITEM itemState;       // Current item state
+
+	// --- BONFIRE ---
+	int idBonfire;        // Bonfire ID
+	int idNameBonfire;    // Bonfire name ID
+
+	// --- AUDIO FX ---
+	int bonfireSFX;       // Sound effect for bonfire activation
+	int saveSFX;          // Sound effect for saving progress
+	int loadSFX;          // Sound effect for loading progress
+
+	// --- USER INTERFACE (UI) ---
+	UI ui;                           // UI instance
+	SDL_Texture* helpMenu;			 // Menu texture
+	SDL_Texture* gui;                // General GUI texture
+	SDL_Texture* lifePlayer;         // Player life texture
+	SDL_Texture* sliderBackground;   // Slider background texture
+	SDL_Texture* sliderMovement;     // Slider movement texture
+	bool showSettings = false;       // Flag to show settings menu
+
+	// --- FADE-IN EFFECT ---
+	Uint8 alpha;         // Alpha transparency for fade-in effect
+	bool fadeIn;         // Flag for fade-in state
+
+	// --- HELP AND TELEPORTATION ---
+	bool help;           // Flag for showing help
+	bool enableTp;       // Teleportation optimization flag
+	int colRespawn;      // Column for respawn position
+	int coordYMenuTp;    // Y-coordinate for menu teleportation
 
 };

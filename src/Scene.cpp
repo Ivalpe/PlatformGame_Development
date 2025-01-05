@@ -64,16 +64,7 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
-	// Texture to highligh mouse position 
-	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
-	gui = Engine::GetInstance().textures.get()->Load("Assets/Textures/hud.png");
-	lifePlayer = Engine::GetInstance().textures.get()->Load("Assets/Textures/life.png");
-	sliderBackground = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider1.png");
-	sliderMovement = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider2.png");
-
-	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
-	loadSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
-	saveSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("saveSFX").attribute("path").as_string());
+	LoadAssets();
 
 	Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music1SFX").attribute("path").as_string(), 0.0f);
 
@@ -84,6 +75,30 @@ bool Scene::Start()
 	itemState = ITEM::CREATEALL;
 	CreateEvents();
 
+	SetupUI();
+
+	return true;
+}
+
+// -----------------------------
+// Game Loop Functions
+// -----------------------------
+
+void Scene::LoadAssets() {
+	// Texture to highligh mouse position 
+	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
+	gui = Engine::GetInstance().textures.get()->Load("Assets/Textures/hud.png");
+	lifePlayer = Engine::GetInstance().textures.get()->Load("Assets/Textures/life.png");
+	sliderBackground = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider1.png");
+	sliderMovement = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider2.png");
+	helpMenu = Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png");
+
+	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
+	loadSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
+	saveSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("saveSFX").attribute("path").as_string());
+}
+
+void Scene::SetupUI() {
 	//Main Menu
 	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "New Game", { 520, 200, 120,20 }, this, GuiClass::MAIN_MENU));
 	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Load Game", { 520, 240, 120,20 }, this, GuiClass::MAIN_MENU));
@@ -103,13 +118,7 @@ bool Scene::Start()
 	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Exit", { 520, 130, 120,20 }, this, GuiClass::PAUSE));
 	ui.Disable(GuiClass::PAUSE);
 	ui.Disable(GuiClass::TPBONFIRE);
-
-	return true;
 }
-
-// -----------------------------
-// Game Loop Functions
-// -----------------------------
 
 // Called each loop iteration
 bool Scene::PreUpdate()
@@ -117,37 +126,28 @@ bool Scene::PreUpdate()
 	return true;
 }
 
-// Called each loop iteration
-bool Scene::Update(float dt)
-{
-
-	//Debug Mode
-	DebugMode();
-
-	//Camera
+void Scene::HandleCamera(Engine& engine) {
 	if (level == 0) {
 		SDL_Rect rec;
 		rec.x = 0;
 		rec.y = 0;
 		rec.w = 1500;
 		rec.h = 800;
-		Engine::GetInstance().render.get()->DrawRectangle(rec, 0, 0, 0, alpha, true, false);
+		engine.render.get()->DrawRectangle(rec, 0, 0, 0, alpha, true, false);
 
-		int cameraX = Engine::GetInstance().render.get()->camera.x -= 2;
-		int cameraMaxX = Engine::GetInstance().map.get()->GetWidth() * 8 * -1 + (10 * 8);
+		int cameraX = engine.render.get()->camera.x -= 2;
+		int cameraMaxX = engine.map.get()->GetWidth() * 8 * -1 + (10 * 8);
 		if (cameraX <= cameraMaxX) {
-			Engine::GetInstance().render.get()->camera.x = cameraMaxX;
+			engine.render.get()->camera.x = cameraMaxX;
 			if (!fadeIn) {
 				if (alpha < 255) alpha += 5;
 				if (alpha >= 255) alpha = 255;
 			}
 
-
 			if (!fadeIn && alpha == 255) {
 				fadeIn = true;
-				Engine::GetInstance().render.get()->camera.x = 0;
+				engine.render.get()->camera.x = 0;
 			}
-
 		}
 
 		if (fadeIn) {
@@ -161,98 +161,107 @@ bool Scene::Update(float dt)
 		}
 	}
 	else {
-		Engine::GetInstance().render.get()->camera.x = ((player->GetX() * -1) + 200) * 2;
-		int cameraX = Engine::GetInstance().render.get()->camera.x;
-		int cameraMaxX = Engine::GetInstance().map.get()->GetWidth() * 8 * -1 - (240 * 8);
-		if (cameraX >= 0) Engine::GetInstance().render.get()->camera.x = 0;
-		if (cameraX <= cameraMaxX) Engine::GetInstance().render.get()->camera.x = cameraMaxX;
+		engine.render.get()->camera.x = ((player->GetX() * -1) + 200) * 2;
+		int cameraX = engine.render.get()->camera.x;
+		int cameraMaxX = engine.map.get()->GetWidth() * 8 * -1 - (240 * 8);
+		if (cameraX >= 0) engine.render.get()->camera.x = 0;
+		if (cameraX <= cameraMaxX) engine.render.get()->camera.x = cameraMaxX;
+	}
+}
+
+void Scene::HandlePowers() {
+	//Power Player Fireball
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
+
+		Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALLPLAYER);
+		power->SetParameters(configParameters.child("entities").child("fireball"), TypePower::FIREBALL);
+		if (player->GetDirection() == DirectionPlayer::LEFT) power->Start(true);
+		else power->Start(false);
+
+		Vector2D playerPos = player->GetPosition();
+		if (player->GetDirection() == DirectionPlayer::LEFT) power->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
+		else power->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
+
+		fireballList.push_back(power);
+	}
+
+	//Power Boss Fireball
+	for (auto& e : enemyList) {
+		if (e->GetType() == EnemyType::BOSS && e->GetBossFireball()) {
+			Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALLENEMY);
+			power->SetParameters(configParameters.child("entities").child("fireball"), TypePower::FIREBALL);
+			power->Start(e->GetDirection() == DirectionEnemy::LEFT);
+
+			Vector2D enemyPos = e->GetPosition();
+			if (e->GetDirection() == DirectionEnemy::LEFT) power->SetPosition({ enemyPos.getX() - 20, enemyPos.getY() });
+			else power->SetPosition({ enemyPos.getX() + 32, enemyPos.getY() + 14 });
+
+			fireballList.push_back(power);
+			e->SetBossFireball(false);
+			break;
+		}
+
+	}
+}
+
+// Called each loop iteration
+bool Scene::Update(float dt)
+{
+	auto& engine = Engine::GetInstance();
+	HandleCamera(engine);
+
+	if (level != 0) {
+		//Debug Mode
+		DebugMode();
 
 		//Open Help
-		if (help) Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png"), SDL_FLIP_NONE, -Engine::GetInstance().render.get()->camera.x / 2, 100);
+		if (help) engine.render.get()->DrawTexture(helpMenu, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2, 100);
 
 		//Gui
-		Engine::GetInstance().render.get()->DrawTexture(gui, SDL_FLIP_NONE, -(Engine::GetInstance().render.get()->camera.x / 2) + 10, 10);
+		engine.render.get()->DrawTexture(gui, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 10);
 
 		if (player->GetLifes() >= 0) {
-			int coordX = -(Engine::GetInstance().render.get()->camera.x / 2) + 32;
+			int coordX = -(engine.render.get()->camera.x / 2) + 32;
 
 			for (size_t i = 0; i < player->GetLifes() + 1; i++) {
-				Engine::GetInstance().render.get()->DrawTexture(lifePlayer, SDL_FLIP_NONE, coordX, 14);
+				engine.render.get()->DrawTexture(lifePlayer, SDL_FLIP_NONE, coordX, 14);
 				coordX += 8;
 			}
 		}
 
-
 		// Shoot
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
-
-			Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALLPLAYER);
-			power->SetParameters(configParameters.child("entities").child("fireball"), TypePower::FIREBALL);
-			if (player->GetDirection() == DirectionPlayer::LEFT) power->Start(true);
-			else power->Start(false);
-
-			Vector2D playerPos = player->GetPosition();
-			if (player->GetDirection() == DirectionPlayer::LEFT) power->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
-			else power->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
-
-			fireballList.push_back(power);
-		}
-
-		// Shoot Boss
-		for (auto e : enemyList) {
-			if (e->GetType() == EnemyType::BOSS) {
-				if (e->GetBossFireball()) {
-
-					Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALLENEMY);
-					power->SetParameters(configParameters.child("entities").child("fireball"), TypePower::FIREBALL);
-					if (e->GetDirection() == DirectionEnemy::LEFT) power->Start(true);
-					else power->Start(false);
-
-					Vector2D enemyPos = e->GetPosition();
-					if (e->GetDirection() == DirectionEnemy::LEFT) power->SetPosition({ enemyPos.getX() - 20, enemyPos.getY() });
-					else power->SetPosition({ enemyPos.getX() + 32, enemyPos.getY() + 14 });
-
-					fireballList.push_back(power);
-					e->SetBossFireball(false);
-					break;
-				}
-			}
-		}
-
+		HandlePowers();
 
 		// Destroy fireballs collided
-		for (int i = 0; i < fireballList.size(); i++) {
-			if (fireballList[i]->HasCollision()) {
-				Engine::GetInstance().physics->DeleteBody(fireballList[i]->getBody());
-				Engine::GetInstance().entityManager->DestroyEntity(fireballList[i]);
-				fireballList.erase(fireballList.begin() + i);
-				i--;
+		for (auto it = fireballList.begin(); it != fireballList.end(); ) {
+			if ((*it)->HasCollision()) {
+				engine.physics->DeleteBody((*it)->getBody());
+				engine.entityManager->DestroyEntity(*it);
+				it = fireballList.erase(it);
 			}
+			else ++it;
 		}
 
 		bool tp = false;
 		pugi::xml_document saveFile;
 		pugi::xml_parse_result result = saveFile.load_file("config.xml");
 
-
 		// Active bonfire if player touch it
-		for (auto bonfire : bonfireList) {
+		for (auto& bonfire : bonfireList) {
 			if (player->GetPosition().getX() >= bonfire->GetPosition().getX() - 16 && player->GetPosition().getX() <= bonfire->GetPosition().getX() + 8 &&
 				player->GetPosition().getY() >= bonfire->GetPosition().getY() - 16 && player->GetPosition().getY() <= bonfire->GetPosition().getY() + 8) {
 
 				int posXBonfire = bonfire->GetPosition().getX();
 				pugi::xml_node bonfires = saveFile.child("config").child("scene").child("bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
 				tp = true;
-				if (bonfires.attribute("activated").as_bool() == false) {
-
+				if (!bonfires.attribute("activated").as_bool()) {
 					bonfire->ActiveBonfire();
-					Engine::GetInstance().audio.get()->PlayFx(bonfireSFX);
-
+					engine.audio.get()->PlayFx(bonfireSFX);
 
 					bonfires.attribute("activated").set_value("true");
 					bonfires.append_attribute("id").set_value(idNameBonfire++);
 
-					ui.Add(GuiClass::TPBONFIRE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 120,20 }, this, GuiClass::TPBONFIRE));
+					ui.Add(GuiClass::TPBONFIRE, (GuiControlButton*)engine.guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 120,20 }, this, GuiClass::TPBONFIRE));
 				}
 
 				saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());
@@ -269,22 +278,21 @@ bool Scene::Update(float dt)
 			player->pbody->body->SetLinearVelocity({ 0,0 });
 			colRespawn--;
 		}
-	}
 
-	//Enable Settings UI
-	if (level != 0 && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
-		if (ui.IsActive(GuiClass::PAUSE))
-			ui.Disable(GuiClass::PAUSE);
-		else
-			ui.Active(GuiClass::PAUSE);
-	}
+		//Enable Settings UI
+		if (level != 0 && engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
+			if (ui.IsActive(GuiClass::PAUSE))
+				ui.Disable(GuiClass::PAUSE);
+			else
+				ui.Active(GuiClass::PAUSE);
+		}
 
-	if (colRespawn <= 0) {
-		player->Respawn();
-		LoadState(LOAD::RESPAWN);
-		colRespawn = 120;
+		if (colRespawn <= 0) {
+			player->Respawn();
+			LoadState(LOAD::RESPAWN);
+			colRespawn = 120;
+		}
 	}
-
 	return true;
 }
 
@@ -293,9 +301,7 @@ bool Scene::PostUpdate()
 {
 	bool ret = true;
 
-	//If to exit the game
-	if (exitGame)
-		ret = false;
+	if (exitGame) ret = false;
 
 	if (!bossActive && level == 3 && player->GetX() >= 470) {
 		for (auto e : enemyList) {
@@ -308,26 +314,26 @@ bool Scene::PostUpdate()
 	}
 
 	//Clear dead enemies
-	for (int i = 0; i < enemyList.size(); i++) {
-		if (enemyList[i]->IsDead()) {
-			SaveKillEnemy(enemyList[i]->GetId());
-			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
-			Engine::GetInstance().physics->DeleteBody(enemyList[i]->getSensorBody());
-			Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
-			enemyList.erase(enemyList.begin() + i);
-			i--;
+	for (auto it = enemyList.begin(); it != enemyList.end(); ) {
+		if ((*it)->IsDead()) {
+			SaveKillEnemy((*it)->GetId());
+			Engine::GetInstance().physics->DeleteBody((*it)->getBody());
+			Engine::GetInstance().physics->DeleteBody((*it)->getSensorBody());
+			Engine::GetInstance().entityManager->DestroyEntity(*it);
+			it = enemyList.erase(it);
 		}
+		else ++it;
 	}
 
 	//Clear Collected items
-	for (int i = 0; i < itemList.size(); i++) {
-		if (itemList[i]->IsCollected()) {
-			SaveCollectedItem(itemList[i]->GetId());
-			Engine::GetInstance().physics->DeleteBody(itemList[i]->getBody());
-			Engine::GetInstance().entityManager->DestroyEntity(itemList[i]);
-			itemList.erase(itemList.begin() + i);
-			i--;
+	for (auto it = itemList.begin(); it != itemList.end(); ) {
+		if ((*it)->IsCollected()) {
+			SaveCollectedItem((*it)->GetId());
+			Engine::GetInstance().physics->DeleteBody((*it)->getBody());
+			Engine::GetInstance().entityManager->DestroyEntity(*it);
+			it = itemList.erase(it);
 		}
+		else ++it;
 	}
 
 	//Next Level

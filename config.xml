@@ -22,7 +22,7 @@
 			<map path="Assets/Maps/" name="Level3.tmx" number="3" ix="100" iy="20" />
 		</levels>
 		<entities>
-			<player dx="95" dy="175" dlevel="1" ix="320" iy="100" x="928" y="136" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
+			<player dx="95" dy="175" dlevel="1" ix="320" iy="100" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
 					<idle loop="true" speed="0.06">
 						<frame x="0" y="32" w="16" h="32" />
@@ -278,7 +278,7 @@
 			</music>
 		</audio>
 		<bonfires>
-			<bonfire level="1" activated="false" x="144" y="184" name="Hoguera 1" />
+			<bonfire level="1" activated="true" x="144" y="184" name="Hoguera 1" id="1" />
 			<bonfire level="1" activated="false" x="1504" y="272" name="Hoguera 2" />
 			<bonfire level="1" activated="false" x="3048" y="200" name="Hoguera 3" />
 		</bonfires>
