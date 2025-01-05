@@ -101,9 +101,6 @@ void Poison::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::GROUND:
 		LOG("Collision PLATFORM");
 		break;
-	case ColliderType::ITEM:
-		LOG("Collision ITEM");
-		break;
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
 		break;

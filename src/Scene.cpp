@@ -168,7 +168,7 @@ bool Scene::Update(float dt)
 		if (cameraX <= cameraMaxX) Engine::GetInstance().render.get()->camera.x = cameraMaxX;
 
 		//Open Help
-		if (help) Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png"), SDL_FLIP_NONE, -Engine::GetInstance().render.get()->camera.x / 2, 0);
+		if (help) Engine::GetInstance().render.get()->DrawTexture(Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png"), SDL_FLIP_NONE, -Engine::GetInstance().render.get()->camera.x / 2, 100);
 
 		//Gui
 		Engine::GetInstance().render.get()->DrawTexture(gui, SDL_FLIP_NONE, -(Engine::GetInstance().render.get()->camera.x / 2) + 10, 10);

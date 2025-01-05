@@ -230,9 +230,21 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		}
 		isJumping = false;
 		break;
-	case ColliderType::ITEM:
-		LOG("Collision ITEM with");
+	case ColliderType::COIN:
+		LOG("Collision COIN");
+		coins++;
 		break;
+
+	case ColliderType::FIREUP:
+		LOG("Collision FIREUP");
+		firePower = true;
+		break;
+
+	case ColliderType::HEALTH:
+		LOG("Collision HEALTH");
+		lifes++;
+		break;
+
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN  with");
 		break;
@@ -254,9 +266,19 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		}
 		isJumping = false;
 		break;
-	case ColliderType::ITEM:
+	case ColliderType::COIN:
+		LOG("Collision COIN");
+		coins++;
+		break;
 
-		LOG("Collision ITEM");
+	case ColliderType::FIREUP:
+		LOG("Collision FIREUP");
+		firePower = true;
+		break;
+
+	case ColliderType::HEALTH:
+		LOG("Collision HEALTH");
+		lifes++;
 		break;
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
@@ -315,10 +337,15 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	{
 	case ColliderType::GROUND:
 		LOG("End Collision PLATFORM DOWN");
-
 		break;
-	case ColliderType::ITEM:
-		LOG("End Collision ITEM");
+	case ColliderType::COIN:
+		LOG("Collision COIN end");
+		break;
+	case ColliderType::FIREUP:
+		LOG("Collision FIREUP end");
+		break;
+	case ColliderType::HEALTH:
+		LOG("Collision HEALTH end");
 		break;
 	case ColliderType::UNKNOWN:
 		LOG("End Collision UNKNOWN");

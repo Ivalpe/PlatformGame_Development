@@ -41,7 +41,9 @@ bool Item::Start() {
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH, (int)position.getY() + texH, texH / 2, bodyType::DYNAMIC);
 
 	// L08 TODO 7: Assign collider type
-	pbody->ctype = ColliderType::ITEM;
+	pbody->ctype = ColliderType::COIN;
+	pbody->ctype = ColliderType::FIREUP;
+	pbody->ctype = ColliderType::HEALTH;
 	pbody->listener = this;
 
 	pbody->body->SetGravityScale(0);
@@ -74,7 +76,7 @@ bool Item::Update(float dt)
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texW - texW/2);
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
@@ -103,9 +105,7 @@ void Item::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::GROUND:
 		LOG("Collision PLATFORM");
 		break;
-	case ColliderType::ITEM:
-		LOG("Collision ITEM");
-		break;
+	
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
 		break;

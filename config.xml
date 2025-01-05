@@ -22,7 +22,7 @@
 			<map path="Assets/Maps/" name="Level3.tmx" number="3" ix="100" iy="20" />
 		</levels>
 		<entities>
-			<player dx="95" dy="175" dlevel="1" ix="320" iy="100" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
+			<player dx="95" dy="175" dlevel="1" ix="320" iy="100" x="928" y="136" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
 					<idle loop="true" speed="0.06">
 						<frame x="0" y="32" w="16" h="32" />
@@ -145,6 +145,29 @@
 					</explode>
 				</animations>
 			</fireball>
+			<bigfireball texture="Assets/Textures/Fireball.png" w="32" h="32">
+				<animations>
+					<idle loop="true" speed="0.12">
+						<frame x="96" y="0" w="32" h="32" />
+						<frame x="128" y="0" w="32" h="32" />
+						<frame x="160" y="0" w="32" h="32" />
+						<frame x="192" y="0" w="32" h="32" />
+					</idle>
+					<fire loop="false" speed="0.12">
+						<frame x="0" y="0" w="32" h="32" />
+						<frame x="32" y="0" w="32" h="32" />
+						<frame x="64" y="0" w="32" h="32" />
+					</fire>
+					<explode loop="false" speed="0.16">
+						<frame x="0" y="48" w="16" h="16" />
+						<frame x="16" y="48" w="16" h="16" />
+						<frame x="32" y="48" w="16" h="16" />
+						<frame x="48" y="48" w="16" h="16" />
+						<frame x="64" y="48" w="16" h="16" />
+						<frame x="80" y="48" w="16" h="16" />
+					</explode>
+				</animations>
+			</bigfireball>
 			<firecamp texture="Assets/Textures/Firecamp.png" w="16" h="16">
 				<animations>
 					<idle loop="false" speed="0.16">
@@ -271,9 +294,9 @@
 			<enemy id="9" level="1" dead="false" x="2712" y="240" />
 		</enemies>
 		<items>
-			<item id="1" level="1" collected="false" x="304" y="216" />
-			<item id="2" level="1" collected="false" x="344" y="216" />
-			<item id="3" level="1" collected="false" x="384" y="216" />
+			<item id="1" level="1" collected="false" x="304" y="272" />
+			<item id="2" level="1" collected="false" x="344" y="272" />
+			<item id="3" level="1" collected="false" x="384" y="272" />
 		</items>
 	</scene>
 </config>
