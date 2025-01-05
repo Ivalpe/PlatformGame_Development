@@ -294,9 +294,9 @@
 			<enemy id="9" level="1" dead="false" x="2712" y="240" />
 		</enemies>
 		<items>
-			<item id="1" level="1" collected="false" x="304" y="216" />
-			<item id="2" level="1" collected="false" x="344" y="216" />
-			<item id="3" level="1" collected="false" x="384" y="216" />
+			<item id="1" level="1" collected="false" x="304" y="272" />
+			<item id="2" level="1" collected="false" x="344" y="272" />
+			<item id="3" level="1" collected="false" x="384" y="272" />
 		</items>
 	</scene>
 </config>

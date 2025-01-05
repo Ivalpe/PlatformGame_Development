@@ -119,7 +119,8 @@ public:
 	SDL_RendererFlip flipType;
 	StatePlayer stPlayer;
 	Level lvl;
-	int lifes;
+	int lifes, coins;
+	bool firePower;
 	bool debugMode;
 
 	int pdeathSFX;
