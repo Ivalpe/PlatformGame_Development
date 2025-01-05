@@ -33,7 +33,10 @@ public:
 
 	void SetItemType(ItemType it);
 
-	
+	ItemType GetType() {
+		return ittype;
+	}
+
 	bool HasCollision();
 
 	bool Update(float dt);
@@ -67,7 +70,7 @@ private:
 	int texW, texH;
 	
 	
-	ItemType type;
+	ItemType ittype;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
 	Animation idle, collect;

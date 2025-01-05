@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "Textures.h"
 #include "Audio.h"
+#include "Item.h"
 #include "Input.h"
 #include "Render.h"
 #include "Scene.h"
@@ -253,6 +254,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		isJumping = false;
 		break;
 	case ColliderType::ITEM:
+		
 		LOG("Collision ITEM");
 		break;
 	case ColliderType::UNKNOWN:
