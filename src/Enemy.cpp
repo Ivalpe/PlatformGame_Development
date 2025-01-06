@@ -111,61 +111,68 @@ void Enemy::BossPattern() {
 }
 
 void Enemy::EnemyPattern(float dt) {
-	if (type == EnemyType::BAT) velocity = b2Vec2(0, 0);
-	else velocity = b2Vec2(0, -GRAVITY_Y);
+	if (!Engine::GetInstance().scene.get()->IsPause()) {
+		if (type == EnemyType::BAT) velocity = b2Vec2(0, 0);
+		else velocity = b2Vec2(0, -GRAVITY_Y);
 
-	if (coolDownPathFinding)
-		coolDown--;
+		if (coolDownPathFinding)
+			coolDown--;
 
-	if (coolDown <= 0) {
-		coolDownPathFinding = false;
-		coolDown = 100;
-	}
+		if (coolDown <= 0) {
+			coolDownPathFinding = false;
+			coolDown = 100;
+		}
 
-	if (followPlayer && !coolDownPathFinding) {
-		MovementEnemy(dt);
-	}
-	else {
-		if (currentAnimation == &walk) {
-			if (directionLeft) {
-				velocity.x = -speed;
-				flipType = SDL_FLIP_HORIZONTAL;
+		if (followPlayer && !coolDownPathFinding) {
+			MovementEnemy(dt);
+		}
+		else {
+			if (currentAnimation == &walk) {
+				if (directionLeft) {
+					velocity.x = -speed;
+					flipType = SDL_FLIP_HORIZONTAL;
+				}
+				else {
+					velocity.x = +speed;
+					flipType = SDL_FLIP_NONE;
+				}
 			}
-			else {
-				velocity.x = +speed;
-				flipType = SDL_FLIP_NONE;
+
+			if (type == EnemyType::EV_WIZARD) {
+				tempChangeAnimation--;
+				if (tempChangeAnimation <= 0) {
+					if (currentAnimation == &walk) {
+						currentAnimation = &idle;
+						tempChangeAnimation = 120;
+						de = DirectionEnemy::RIGHT;
+					}
+					else if (currentAnimation == &idle) {
+						currentAnimation = &walk;
+						tempChangeAnimation = 20;
+						directionLeft = !directionLeft;
+						de = DirectionEnemy::LEFT;
+					}
+				}
 			}
 		}
 
-		if (type == EnemyType::EV_WIZARD) {
-			tempChangeAnimation--;
-			if (tempChangeAnimation <= 0) {
-				if (currentAnimation == &walk) {
-					currentAnimation = &idle;
-					tempChangeAnimation = 120;
-					de = DirectionEnemy::RIGHT;
-				}
-				else if (currentAnimation == &idle) {
-					currentAnimation = &walk;
-					tempChangeAnimation = 20;
-					directionLeft = !directionLeft;
-					de = DirectionEnemy::LEFT;
-				}
-			}
-		}
+		pbody->body->SetLinearVelocity(velocity);
+
+		b2Transform pbodyPos = pbody->body->GetTransform();
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 	}
-
-	pbody->body->SetLinearVelocity(velocity);
-
-	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 
-	b2Vec2 enemyPos = pbody->body->GetPosition();
-	sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
+	if (!Engine::GetInstance().scene.get()->IsPause()) {
+		b2Vec2 enemyPos = pbody->body->GetPosition();
+		sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
+	}
+	else {
+		pbody->body->SetLinearVelocity({ 0,0 });
+	}
 
 	if (currentAnimation == &die && currentAnimation->HasFinished()) {
 		Engine::GetInstance().audio.get()->PlayFx(enemydSFX);
@@ -174,8 +181,10 @@ void Enemy::EnemyPattern(float dt) {
 }
 
 bool Enemy::Update(float dt) {
+
 	if (type != EnemyType::BOSS) EnemyPattern(dt);
 	else BossPattern();
+
 	return true;
 }
 
@@ -252,7 +261,7 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision PLATFORM");
 		isJumping = false;
 		break;
-	
+
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
 		break;

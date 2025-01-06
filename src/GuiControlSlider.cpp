@@ -36,6 +36,7 @@ bool GuiControlSlider::Update(float dt)
 			if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
 				state = GuiControlState::PRESSED;
 				posButton = -(Engine::GetInstance().render.get()->camera.x / 2) + mousePos.getX() - 8;
+				Engine::GetInstance().audio.get()->ChangeVolume((posButton - 255) * 2);
 			}
 
 			if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP) {

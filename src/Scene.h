@@ -85,6 +85,10 @@ public:
 		return level;
 	}
 
+	bool IsPause() {
+		return pause;
+	}
+
 	Vector2D GetPlayerPosition() {
 		return player->GetPosition();
 	}
@@ -135,6 +139,7 @@ private:
 	// --- USER INTERFACE (UI) ---
 	UI ui;                           // UI instance
 	SDL_Texture* helpMenu;			 // Menu texture
+	SDL_Texture* mainMenu;			 // Menu texture
 	SDL_Texture* gui;                // General GUI texture
 	SDL_Texture* lifePlayer;         // Player life texture
 	SDL_Texture* sliderBackground;   // Slider background texture
@@ -148,6 +153,7 @@ private:
 	// --- HELP AND TELEPORTATION ---
 	bool help;           // Flag for showing help
 	bool enableTp;       // Teleportation optimization flag
+	bool pause = false;	 // Flag for is pause the game or not
 	int colRespawn;      // Column for respawn position
 	int coordYMenuTp;    // Y-coordinate for menu teleportation
 

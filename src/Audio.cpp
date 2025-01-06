@@ -129,6 +129,10 @@ bool Audio::PlayMusic(const char* path, float fadeTime)
 	return ret;
 }
 
+void Audio::ChangeVolume(int volume) {
+	Mix_VolumeMusic(volume);
+}
+
 // Load WAV
 int Audio::LoadFx(const char* path)
 {
