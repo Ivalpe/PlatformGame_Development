@@ -88,7 +88,7 @@ void Player::ChangeDebug() {
 
 bool Player::Update(float dt)
 {
-	if (!disablePlayer) {
+	if (!disablePlayer && !Engine::GetInstance().scene.get()->IsPause()) {
 		b2Vec2 velocity;
 
 		if (isDmg) {
@@ -204,9 +204,13 @@ bool Player::Update(float dt)
 
 		}
 
-		Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
-		currentAnimation->Update();
+
 	}
+	else {
+		pbody->body->SetLinearVelocity({ 0,0 });
+	}
+	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
+	currentAnimation->Update();
 	return true;
 }
 

@@ -92,6 +92,7 @@ void Scene::LoadAssets() {
 	sliderBackground = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider1.png");
 	sliderMovement = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider2.png");
 	helpMenu = Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png");
+	mainMenu = Engine::GetInstance().textures.get()->Load("Assets/Menus/MainMenu.png");
 
 	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
 	loadSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
@@ -107,7 +108,7 @@ void Scene::SetupUI() {
 	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Exit Game", { 520, 360, 120,20 }, this, GuiClass::MAIN_MENU));
 	ui.Active(GuiClass::MAIN_MENU);
 
-	GuiControlSlider* slider = (GuiControlSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDERBAR, ui.GetSize(GuiClass::SETTINGS), "", { 520 / 2, 200, 120,20 }, this, GuiClass::SETTINGS);
+	GuiControlSlider* slider = (GuiControlSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDERBAR, ui.GetSize(GuiClass::SETTINGS), "", { 520 / 2, 200, 104,20 }, this, GuiClass::SETTINGS);
 	slider->SetTexture(sliderBackground, sliderMovement);
 	ui.Add(GuiClass::SETTINGS, slider);
 	ui.Disable(GuiClass::SETTINGS);
@@ -281,11 +282,17 @@ bool Scene::Update(float dt)
 
 		//Enable Settings UI
 		if (level != 0 && engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
-			if (ui.IsActive(GuiClass::PAUSE))
+			if (ui.IsActive(GuiClass::PAUSE)) {
+				pause = false;
 				ui.Disable(GuiClass::PAUSE);
-			else
+			}
+			else {
+				pause = true;
 				ui.Active(GuiClass::PAUSE);
+			}
 		}
+
+		if (engine.input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN) engine.audio.get()->ChangeVolume(10);
 
 		if (colRespawn <= 0) {
 			player->Respawn();
@@ -293,6 +300,7 @@ bool Scene::Update(float dt)
 			colRespawn = 120;
 		}
 	}
+
 	return true;
 }
 
@@ -360,6 +368,8 @@ bool Scene::PostUpdate()
 		player->SetLevel(Level::DISABLED);
 	}
 
+	//MAIN MENU IMAGE
+	//if (pause) Engine::GetInstance().render.get()->DrawTexture(mainMenu, SDL_FLIP_NONE, -(Engine::GetInstance().render.get()->camera.x / 2), 0);
 	return ret;
 }
 
@@ -493,7 +503,11 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		}
 		break;
 	case GuiClass::PAUSE:
-		if (control->id == 1) ui.Disable(GuiClass::PAUSE);
+		if (control->id == 1) {
+			ui.Disable(GuiClass::PAUSE);
+			ui.Disable(GuiClass::SETTINGS);
+			pause = false;
+		}
 		else if (control->id == 2) ui.IsActive(GuiClass::SETTINGS) ? ui.Disable(GuiClass::SETTINGS) : ui.Active(GuiClass::SETTINGS);
 		else if (control->id == 4) exitGame = true;
 		break;
