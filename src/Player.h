@@ -98,6 +98,8 @@ public:
 	int GetCoins() {
 		return coins;
 	}
+
+	
 	
 public:
 
@@ -115,7 +117,7 @@ public:
 	bool hasLanded = false;      // Flag to check if the player has landed
 	int lifes;                   // Number of lives
 	int coins;                   // Number of coins collected
-	bool firePower = false;              // Flag for fire power-up
+	bool firePower = false;      // Flag for fire power-up
 	bool debugMode;              // Flag for debug mode
 
 	// --- PHYSICS ---
