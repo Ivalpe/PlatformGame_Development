@@ -246,12 +246,15 @@ bool Scene::Update(float dt)
 			else {
 				engine.render.get()->DrawTexture(powerOff, SDL_FLIP_NONE, fireIconX, 10);
 			}
-
+			
 			if (player->GetCoins() > 0) {
+				std::string coinText = "x " + std::to_string(player->GetCoins());
+				engine.render.get()->DrawText(coinText.c_str(), -(engine.render.get()->camera.x / 2) + 40, 30);
 				engine.render.get()->DrawTexture(pouchfull, SDL_FLIP_NONE, - (engine.render.get()->camera.x / 2) + 10, 30);
 			}
 			else {
 				engine.render.get()->DrawTexture(pouch, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
+				
 			}
 			
 		}
