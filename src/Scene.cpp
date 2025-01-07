@@ -92,7 +92,8 @@ void Scene::LoadAssets() {
 	sliderBackground = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider1.png");
 	sliderMovement = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider2.png");
 	helpMenu = Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png");
-	mainMenu = Engine::GetInstance().textures.get()->Load("Assets/Menus/MainMenu.png");
+	OptionsMenu = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsMenu.png");
+	TitleScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/TitleScreen.png");
 
 	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
 	loadSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("loadsSFX").attribute("path").as_string());

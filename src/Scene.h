@@ -139,7 +139,8 @@ private:
 	// --- USER INTERFACE (UI) ---
 	UI ui;                           // UI instance
 	SDL_Texture* helpMenu;			 // Menu texture
-	SDL_Texture* mainMenu;			 // Menu texture
+	SDL_Texture* OptionsMenu;			 // Menu texture
+	SDL_Texture* TitleScreen;            //Title screen texture
 	SDL_Texture* gui;                // General GUI texture
 	SDL_Texture* lifePlayer;         // Player life texture
 	SDL_Texture* sliderBackground;   // Slider background texture
