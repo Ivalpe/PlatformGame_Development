@@ -90,6 +90,15 @@ public:
 	int GetLifes() {
 		return lifes;
 	}
+
+	int GetfirePower() {
+		return firePower;
+	}
+
+	int GetCoins() {
+		return coins;
+	}
+	
 public:
 
 

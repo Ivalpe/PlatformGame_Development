@@ -41,9 +41,12 @@ bool Item::Start() {
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH, (int)position.getY() + texH, texH / 2, bodyType::DYNAMIC);
 
 	// L08 TODO 7: Assign collider type
-	pbody->ctype = ColliderType::COIN;
-	pbody->ctype = ColliderType::FIREUP;
-	pbody->ctype = ColliderType::HEALTH;
+	if (ittype == ItemType::COIN)
+		pbody->ctype = ColliderType::COIN;
+	else if (ittype == ItemType:: FIREUP)
+		pbody->ctype = ColliderType::FIREUP;
+	else if (ittype == ItemType::HEALTH)
+		pbody->ctype = ColliderType::HEALTH;
 	pbody->listener = this;
 
 	pbody->body->SetGravityScale(0);

@@ -94,6 +94,10 @@ void Scene::LoadAssets() {
 	helpMenu = Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png");
 	OptionsMenu = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsMenu.png");
 	TitleScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/TitleScreen.png");
+	powerOff = Engine::GetInstance().textures.get()->Load("Assets/Textures/powerOff.png");
+	powerOn = Engine::GetInstance().textures.get()->Load("Assets/Textures/powerOn.png");
+	pouch = Engine::GetInstance().textures.get()->Load("Assets/Textures/pouch.png");
+	pouchfull = Engine::GetInstance().textures.get()->Load("Assets/Textures/pouchfull.png");
 
 	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
 	loadSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
@@ -234,7 +238,24 @@ bool Scene::Update(float dt)
 				engine.render.get()->DrawTexture(lifePlayer, SDL_FLIP_NONE, coordX, 14);
 				coordX += 8;
 			}
+
+			int fireIconX = coordX + 20;
+			if (player->GetfirePower()) {
+				engine.render.get()->DrawTexture(powerOn, SDL_FLIP_NONE, fireIconX, 10);
+			}
+			else {
+				engine.render.get()->DrawTexture(powerOff, SDL_FLIP_NONE, fireIconX, 10);
+			}
+
+			if (player->GetCoins() > 0) {
+				engine.render.get()->DrawTexture(pouchfull, SDL_FLIP_NONE, - (engine.render.get()->camera.x / 2) + 10, 30);
+			}
+			else {
+				engine.render.get()->DrawTexture(pouch, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
+			}
+			
 		}
+
 
 		// Shoot
 		HandlePowers();

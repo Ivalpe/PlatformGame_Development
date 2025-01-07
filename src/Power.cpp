@@ -34,6 +34,7 @@ bool Power::Start(bool inv) {
 
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	explode.LoadAnimations(parameters.child("animations").child("explode"));
+	fire.LoadAnimations(parameters.child("animations").child("fire"));
 	currentAnimation = &idle;
 
 	//load Fx
