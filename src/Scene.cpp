@@ -212,6 +212,11 @@ bool Scene::Update(float dt)
 	auto& engine = Engine::GetInstance();
 	HandleCamera(engine);
 
+	if (ui.IsActive(GuiClass::MAIN_MENU))
+	{
+		engine.render.get()->DrawTexture(TitleScreen, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2 + 110, -engine.render.get()->camera.y / 2);
+	}
+
 	if (level != 0) {
 		//Debug Mode
 		DebugMode();
