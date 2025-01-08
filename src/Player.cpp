@@ -88,6 +88,8 @@ void Player::ChangeDebug() {
 
 bool Player::Update(float dt)
 {
+
+
 	if (!disablePlayer && !Engine::GetInstance().scene.get()->IsPause()) {
 		b2Vec2 velocity;
 

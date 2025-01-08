@@ -17,7 +17,7 @@ enum class DirectionPower {
 };
 
 enum class TypePower {
-	FIREBALL
+	FIREBALL, BIGFIREBALL
 };
 
 class Power : public Entity
@@ -64,7 +64,7 @@ private:
 	SDL_RendererFlip flipType;
 	StatePower statePower;
 	PhysBody* pbody;
-	TypePower power;
+	TypePower power, bigpower;
 
 	Timer explosionTimer;
 	float explosionTime;

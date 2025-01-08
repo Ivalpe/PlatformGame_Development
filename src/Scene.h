@@ -2,6 +2,7 @@
 
 #include "Module.h"
 #include "Player.h"
+#include "Power.h"
 #include "Enemy.h"
 #include "Item.h"
 #include "Bonfire.h"
