@@ -117,6 +117,7 @@ void Scene::SetupUI() {
 	slider->SetTexture(sliderBackground, sliderMovement);
 	ui.Add(GuiClass::SETTINGS, slider);
 	ui.Disable(GuiClass::SETTINGS);
+	showSettings = false;
 
 	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Resume", { 520, 10, 120,20 }, this, GuiClass::PAUSE));
 	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Settings", { 520, 50, 120,20 }, this, GuiClass::PAUSE));
@@ -134,36 +135,38 @@ bool Scene::PreUpdate()
 
 void Scene::HandleCamera(Engine& engine) {
 	if (level == 0) {
-		SDL_Rect rec;
-		rec.x = 0;
-		rec.y = 0;
-		rec.w = 1500;
-		rec.h = 800;
-		engine.render.get()->DrawRectangle(rec, 0, 0, 0, alpha, true, false);
+		if (!showSettings) {
+			SDL_Rect rec;
+			rec.x = 0;
+			rec.y = 0;
+			rec.w = 1500;
+			rec.h = 800;
+			engine.render.get()->DrawRectangle(rec, 0, 0, 0, alpha, true, false);
 
-		int cameraX = engine.render.get()->camera.x -= 2;
-		int cameraMaxX = engine.map.get()->GetWidth() * 8 * -1 + (10 * 8);
-		if (cameraX <= cameraMaxX) {
-			engine.render.get()->camera.x = cameraMaxX;
-			if (!fadeIn) {
-				if (alpha < 255) alpha += 5;
-				if (alpha >= 255) alpha = 255;
+			int cameraX = engine.render.get()->camera.x -= 2;
+			int cameraMaxX = engine.map.get()->GetWidth() * 8 * -1 + (10 * 8);
+			if (cameraX <= cameraMaxX) {
+				engine.render.get()->camera.x = cameraMaxX;
+				if (!fadeIn) {
+					if (alpha < 255) alpha += 5;
+					if (alpha >= 255) alpha = 255;
+				}
+
+				if (!fadeIn && alpha == 255) {
+					fadeIn = true;
+					engine.render.get()->camera.x = 0;
+				}
 			}
 
-			if (!fadeIn && alpha == 255) {
-				fadeIn = true;
-				engine.render.get()->camera.x = 0;
+			if (fadeIn) {
+				if (alpha > 0) alpha -= 5;
+				if (alpha <= 0) alpha = 0;
 			}
-		}
 
-		if (fadeIn) {
-			if (alpha > 0) alpha -= 5;
-			if (alpha <= 0) alpha = 0;
-		}
-
-		if (fadeIn && alpha == 0) {
-			fadeIn&& alpha == 0;
-			fadeIn = false;
+			if (fadeIn && alpha == 0) {
+				fadeIn&& alpha == 0;
+				fadeIn = false;
+			}
 		}
 	}
 	else {
@@ -265,16 +268,16 @@ bool Scene::Update(float dt)
 			else {
 				engine.render.get()->DrawTexture(powerOff, SDL_FLIP_NONE, fireIconX, 10);
 			}
-			
+
 			if (player->GetCoins() > 0) {
-				
-				engine.render.get()->DrawTexture(pouchfull, SDL_FLIP_NONE, - (engine.render.get()->camera.x / 2) + 10, 30);
+
+				engine.render.get()->DrawTexture(pouchfull, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
 			}
 			else {
 				engine.render.get()->DrawTexture(pouch, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
-				
+
 			}
-			
+
 		}
 
 
@@ -416,8 +419,6 @@ bool Scene::PostUpdate()
 		player->SetLevel(Level::DISABLED);
 	}
 
-	//MAIN MENU IMAGE
-	//if (pause) Engine::GetInstance().render.get()->DrawTexture(mainMenu, SDL_FLIP_NONE, -(Engine::GetInstance().render.get()->camera.x / 2), 0);
 	return ret;
 }
 
@@ -543,7 +544,16 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		}
 		else if (control->id == 2) {
 		}
-		else if (control->id == 3) 	ui.IsActive(GuiClass::SETTINGS) ? ui.Disable(GuiClass::SETTINGS) : ui.Active(GuiClass::SETTINGS);
+		else if (control->id == 3) {
+			if (ui.IsActive(GuiClass::SETTINGS)) {
+				ui.Disable(GuiClass::SETTINGS);
+				showSettings = false;
+			}
+			else {
+				ui.Active(GuiClass::SETTINGS);
+				showSettings = true;
+			}
+		}
 		else if (control->id == 4) {
 		}
 		else if (control->id == 5) {
