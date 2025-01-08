@@ -54,9 +54,6 @@ bool Scene::Awake()
 	player->SetParameters(configParameters.child("entities").child("player"));
 	player->DisablePlayer();
 
-
-
-
 	coordYMenuTp = 350;
 	return ret;
 }
@@ -407,22 +404,17 @@ bool Scene::PostUpdate()
 	//Next Level
 	if (player->GetLevel() == Level::NEXTLVL) {
 		level++;
-		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
-		{
-			if (mapNode.attribute("number").as_int() == level) {
-				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-				CreateEvents();
+		pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
+		Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+		CreateEvents();
 
-				pugi::xml_node currentLevel = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
-				Vector2D posPlayer;
-				posPlayer.setX(currentLevel.attribute("ix").as_int());
-				posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
+		Vector2D posPlayer;
+		posPlayer.setX(mapNode.attribute("ix").as_int());
+		posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
 
-				player->SetPosition(posPlayer);
-				ui.Disable(GuiClass::MAIN_MENU);
-				break;
-			}
-		}
+		player->SetPosition(posPlayer);
+		ui.Disable(GuiClass::MAIN_MENU);
+
 		player->SetLevel(Level::DISABLED);
 	}
 
@@ -530,20 +522,17 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			level++;
 			pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
 
-			if (mapNode.attribute("number").as_int() == level) {
-				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-				CreateEvents();
+			Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+			CreateEvents();
 
-				Vector2D posPlayer;
-				posPlayer.setX(mapNode.attribute("ix").as_int());
-				posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
+			Vector2D posPlayer;
+			posPlayer.setX(mapNode.attribute("ix").as_int());
+			posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
 
-				player->ActivePlayer();
-				ui.Disable(GuiClass::MAIN_MENU);
-				player->SetPosition(posPlayer);
+			player->ActivePlayer();
+			ui.Disable(GuiClass::MAIN_MENU);
+			player->SetPosition(posPlayer);
 
-				break;
-			}
 
 			player->SetLevel(Level::DISABLED);
 		}
@@ -574,50 +563,44 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		else if (control->id == 2) ui.IsActive(GuiClass::SETTINGS) ? ui.Disable(GuiClass::SETTINGS) : ui.Active(GuiClass::SETTINGS);
 		else if (control->id == 3) {
 			level = 0;
-			for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
-			{
-				if (mapNode.attribute("number").as_int() == level) {
-					Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-					CreateEvents();
+			pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
 
-					pugi::xml_node currentLevel = nodes.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
-					Vector2D posPlayer;
-					posPlayer.setX(currentLevel.attribute("ix").as_int());
-					posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
+			Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+			CreateEvents();
 
-					player->DisablePlayer();
-					ui.Active(GuiClass::MAIN_MENU);
-					ui.Disable(GuiClass::PAUSE);
-					player->SetPosition(posPlayer);
+			pugi::xml_node currentLevel = nodes.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
+			Vector2D posPlayer;
+			posPlayer.setX(currentLevel.attribute("ix").as_int());
+			posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
 
-					break;
-				}
-			}
+			player->DisablePlayer();
+			ui.Active(GuiClass::MAIN_MENU);
+			ui.Disable(GuiClass::PAUSE);
+			player->SetPosition(posPlayer);
+			pause = false;
+
+
 			player->SetLevel(Level::DISABLED);
 		}
 		else if (control->id == 4) exitGame = true;
 		break;
 	case GuiClass::TPBONFIRE:
-		for (pugi::xml_node bonfireNode = nodes.child("bonfires").child("bonfire"); bonfireNode; bonfireNode = bonfireNode.next_sibling("bonfire")) {
-			if (bonfireNode.attribute("id").as_int() == control->id) {
+		pugi::xml_node bonfireNode = nodes.child("bonfires").find_child_by_attribute("id", std::to_string(control->id).c_str());
+		if (bonfireNode.attribute("id").as_int() == control->id) {
 
-				if (bonfireNode.attribute("level").as_int() != level) {
-					level = bonfireNode.attribute("level").as_int();
-					for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map")) {
-						if (mapNode.attribute("number").as_int() == level) {
-							Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-							LoadState(LOAD::RESPAWN);
-							CreateEvents();
-							ActiveBonfires();
-							break;
-						}
-					}
-					player->SetLevel(Level::DISABLED);
+			if (bonfireNode.attribute("level").as_int() != level) {
+				level = bonfireNode.attribute("level").as_int();
+				pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
+				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				LoadState(LOAD::RESPAWN);
+				CreateEvents();
+				ActiveBonfires();
+				player->SetLevel(Level::DISABLED);
 
-				}
-				player->SetPosition({ bonfireNode.attribute("x").as_float(), bonfireNode.attribute("y").as_float() });
 			}
+			player->SetPosition({ bonfireNode.attribute("x").as_float(), bonfireNode.attribute("y").as_float() });
 		}
+
 		break;
 
 	}
