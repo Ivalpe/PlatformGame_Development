@@ -64,7 +64,7 @@ private:
 	SDL_RendererFlip flipType;
 	StatePower statePower;
 	PhysBody* pbody;
-	TypePower power, bigpower;
+	TypePower power, bigPower;
 
 	Timer explosionTimer;
 	float explosionTime;
