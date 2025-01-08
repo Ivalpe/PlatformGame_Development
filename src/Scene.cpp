@@ -91,6 +91,7 @@ void Scene::LoadAssets() {
 	lifePlayer = Engine::GetInstance().textures.get()->Load("Assets/Textures/life.png");
 	sliderBackground = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider1.png");
 	sliderMovement = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider2.png");
+	menuButtonNormal = Engine::GetInstance().textures.get()->Load("Assets/Menus/button.png");
 	helpMenu = Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png");
 	OptionsMenu = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsMenu.png");
 	TitleScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/TitleScreen.png");
@@ -106,23 +107,33 @@ void Scene::LoadAssets() {
 
 void Scene::SetupUI() {
 	//Main Menu
-	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "New Game", { 520, 200, 120,20 }, this, GuiClass::MAIN_MENU));
-	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Load Game", { 520, 240, 120,20 }, this, GuiClass::MAIN_MENU));
-	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Settings", { 520, 280, 120,20 }, this, GuiClass::MAIN_MENU));
-	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Credits", { 520, 320, 120,20 }, this, GuiClass::MAIN_MENU));
-	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Exit Game", { 520, 360, 120,20 }, this, GuiClass::MAIN_MENU));
+	std::vector<const char*> names = { "New Game", "Load Game", "Settings", "Credits" , "Exit Game" };
+	int coordInitial = 200, interspace = 40;
+	GuiControlButton* button;
+	for (auto n : names) {
+		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), n, { 520, coordInitial, 120,20 }, this, GuiClass::MAIN_MENU);
+		button->SetTexture(menuButtonNormal);
+		ui.Add(GuiClass::MAIN_MENU, button);
+		coordInitial += interspace;
+	}
 	ui.Active(GuiClass::MAIN_MENU);
 
+	//Settings
 	GuiControlSlider* slider = (GuiControlSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDERBAR, ui.GetSize(GuiClass::SETTINGS), "", { 520 / 2, 200, 104,20 }, this, GuiClass::SETTINGS);
 	slider->SetTexture(sliderBackground, sliderMovement);
 	ui.Add(GuiClass::SETTINGS, slider);
 	ui.Disable(GuiClass::SETTINGS);
 	showSettings = false;
 
-	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Resume", { 520, 10, 120,20 }, this, GuiClass::PAUSE));
-	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Settings", { 520, 50, 120,20 }, this, GuiClass::PAUSE));
-	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Back To Title", { 520, 90, 120,20 }, this, GuiClass::PAUSE));
-	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Exit", { 520, 130, 120,20 }, this, GuiClass::PAUSE));
+	//Pause menu
+	names = { "Resume", "Settings", "Back To Title", "Exit" };
+	coordInitial = 10, interspace = 40;
+	for (auto n : names) {
+		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), n, { 520, coordInitial, 120,20 }, this, GuiClass::PAUSE);
+		button->SetTexture(menuButtonNormal);
+		ui.Add(GuiClass::PAUSE, button);
+		coordInitial += interspace;
+	}
 	ui.Disable(GuiClass::PAUSE);
 	ui.Disable(GuiClass::TPBONFIRE);
 }
@@ -313,7 +324,9 @@ bool Scene::Update(float dt)
 					bonfires.attribute("activated").set_value("true");
 					bonfires.append_attribute("id").set_value(idNameBonfire++);
 
-					ui.Add(GuiClass::TPBONFIRE, (GuiControlButton*)engine.guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 120,20 }, this, GuiClass::TPBONFIRE));
+					GuiControlButton* button = (GuiControlButton*)engine.guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 120,20 }, this, GuiClass::TPBONFIRE);
+					button->SetTexture(menuButtonNormal);
+					ui.Add(GuiClass::TPBONFIRE, button);
 				}
 
 				saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());

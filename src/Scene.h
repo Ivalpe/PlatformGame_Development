@@ -151,6 +151,7 @@ private:
 	SDL_Texture* powerOff;
 	SDL_Texture* sliderBackground;   // Slider background texture
 	SDL_Texture* sliderMovement;     // Slider movement texture
+	SDL_Texture* menuButtonNormal;     // Slider menu
 	bool showSettings = false;       // Flag to show settings menu
 
 	// --- FADE-IN EFFECT ---
