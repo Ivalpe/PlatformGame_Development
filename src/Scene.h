@@ -125,10 +125,6 @@ private:
 	int idEnemy = 1;                      // Identifier for enemies
 	bool bossActive = false;              // Flag to indicate if the boss is active
 
-	// --- ENTITY STATES ---
-	ENEMY enState;        // Current enemy state
-	ITEM itemState;       // Current item state
-
 	// --- BONFIRE ---
 	int idBonfire;        // Bonfire ID
 	int idNameBonfire;    // Bonfire name ID

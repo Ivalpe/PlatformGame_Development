@@ -71,8 +71,6 @@ bool Scene::Start()
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
 	RestartEnemies();
-	enState = ENEMY::CREATEALL;
-	itemState = ITEM::CREATEALL;
 	CreateEvents();
 
 	SetupUI();
@@ -111,7 +109,7 @@ void Scene::SetupUI() {
 	int coordInitial = 200, interspace = 40;
 	GuiControlButton* button;
 	for (auto n : names) {
-		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), n, { 520, coordInitial, 120,20 }, this, GuiClass::MAIN_MENU);
+		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), n, { 520, coordInitial, 128,32 }, this, GuiClass::MAIN_MENU);
 		button->SetTexture(menuButtonNormal);
 		ui.Add(GuiClass::MAIN_MENU, button);
 		coordInitial += interspace;
@@ -129,7 +127,7 @@ void Scene::SetupUI() {
 	names = { "Resume", "Settings", "Back To Title", "Exit" };
 	coordInitial = 10, interspace = 40;
 	for (auto n : names) {
-		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), n, { 520, coordInitial, 120,20 }, this, GuiClass::PAUSE);
+		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), n, { 520, coordInitial, 128,32 }, this, GuiClass::PAUSE);
 		button->SetTexture(menuButtonNormal);
 		ui.Add(GuiClass::PAUSE, button);
 		coordInitial += interspace;
@@ -249,10 +247,7 @@ bool Scene::Update(float dt)
 	auto& engine = Engine::GetInstance();
 	HandleCamera(engine);
 
-	if (ui.IsActive(GuiClass::MAIN_MENU))
-	{
-		engine.render.get()->DrawTexture(TitleScreen, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2 + 110, -engine.render.get()->camera.y / 2);
-	}
+	if (ui.IsActive(GuiClass::MAIN_MENU)) engine.render.get()->DrawTexture(TitleScreen, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2 + 110, -engine.render.get()->camera.y / 2);
 
 	if (level != 0) {
 		//Debug Mode
@@ -324,7 +319,7 @@ bool Scene::Update(float dt)
 					bonfires.attribute("activated").set_value("true");
 					bonfires.append_attribute("id").set_value(idNameBonfire++);
 
-					GuiControlButton* button = (GuiControlButton*)engine.guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 120,20 }, this, GuiClass::TPBONFIRE);
+					GuiControlButton* button = (GuiControlButton*)engine.guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 128,32 }, this, GuiClass::TPBONFIRE);
 					button->SetTexture(menuButtonNormal);
 					ui.Add(GuiClass::TPBONFIRE, button);
 				}
@@ -349,6 +344,7 @@ bool Scene::Update(float dt)
 			if (ui.IsActive(GuiClass::PAUSE)) {
 				pause = false;
 				ui.Disable(GuiClass::PAUSE);
+				ui.Disable(GuiClass::SETTINGS);
 			}
 			else {
 				pause = true;
@@ -415,8 +411,6 @@ bool Scene::PostUpdate()
 		{
 			if (mapNode.attribute("number").as_int() == level) {
 				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-				enState = ENEMY::CREATEALL;
-				itemState = ITEM::CREATEALL;
 				CreateEvents();
 
 				pugi::xml_node currentLevel = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
@@ -534,25 +528,23 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 	case GuiClass::MAIN_MENU:
 		if (control->id == 1) {
 			level++;
-			for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
-			{
-				if (mapNode.attribute("number").as_int() == level) {
-					Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-					enState = ENEMY::CREATEALL;
-					CreateEvents();
+			pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
 
-					pugi::xml_node currentLevel = nodes.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
-					Vector2D posPlayer;
-					posPlayer.setX(currentLevel.attribute("ix").as_int());
-					posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
+			if (mapNode.attribute("number").as_int() == level) {
+				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				CreateEvents();
 
-					player->ActivePlayer();
-					ui.Disable(GuiClass::MAIN_MENU);
-					player->SetPosition(posPlayer);
+				Vector2D posPlayer;
+				posPlayer.setX(mapNode.attribute("ix").as_int());
+				posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
 
-					break;
-				}
+				player->ActivePlayer();
+				ui.Disable(GuiClass::MAIN_MENU);
+				player->SetPosition(posPlayer);
+
+				break;
 			}
+
 			player->SetLevel(Level::DISABLED);
 		}
 		else if (control->id == 2) {
@@ -580,6 +572,29 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			pause = false;
 		}
 		else if (control->id == 2) ui.IsActive(GuiClass::SETTINGS) ? ui.Disable(GuiClass::SETTINGS) : ui.Active(GuiClass::SETTINGS);
+		else if (control->id == 3) {
+			level = 0;
+			for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
+			{
+				if (mapNode.attribute("number").as_int() == level) {
+					Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+					CreateEvents();
+
+					pugi::xml_node currentLevel = nodes.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
+					Vector2D posPlayer;
+					posPlayer.setX(currentLevel.attribute("ix").as_int());
+					posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
+
+					player->DisablePlayer();
+					ui.Active(GuiClass::MAIN_MENU);
+					ui.Disable(GuiClass::PAUSE);
+					player->SetPosition(posPlayer);
+
+					break;
+				}
+			}
+			player->SetLevel(Level::DISABLED);
+		}
 		else if (control->id == 4) exitGame = true;
 		break;
 	case GuiClass::TPBONFIRE:
@@ -592,7 +607,6 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 						if (mapNode.attribute("number").as_int() == level) {
 							Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
 							LoadState(LOAD::RESPAWN);
-							enState = ENEMY::CREATEXML;
 							CreateEvents();
 							ActiveBonfires();
 							break;
