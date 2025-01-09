@@ -54,9 +54,6 @@ bool Scene::Awake()
 	player->SetParameters(configParameters.child("entities").child("player"));
 	player->DisablePlayer();
 
-
-
-
 	coordYMenuTp = 350;
 	return ret;
 }
@@ -71,8 +68,6 @@ bool Scene::Start()
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
 	RestartEnemies();
-	enState = ENEMY::CREATEALL;
-	itemState = ITEM::CREATEALL;
 	CreateEvents();
 
 	SetupUI();
@@ -91,6 +86,7 @@ void Scene::LoadAssets() {
 	lifePlayer = Engine::GetInstance().textures.get()->Load("Assets/Textures/life.png");
 	sliderBackground = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider1.png");
 	sliderMovement = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider2.png");
+	menuButtonNormal = Engine::GetInstance().textures.get()->Load("Assets/Menus/button.png");
 	helpMenu = Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png");
 	OptionsMenu = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsMenu.png");
 	TitleScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/TitleScreen.png");
@@ -106,22 +102,33 @@ void Scene::LoadAssets() {
 
 void Scene::SetupUI() {
 	//Main Menu
-	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "New Game", { 520, 200, 120,20 }, this, GuiClass::MAIN_MENU));
-	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Load Game", { 520, 240, 120,20 }, this, GuiClass::MAIN_MENU));
-	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Settings", { 520, 280, 120,20 }, this, GuiClass::MAIN_MENU));
-	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Credits", { 520, 320, 120,20 }, this, GuiClass::MAIN_MENU));
-	ui.Add(GuiClass::MAIN_MENU, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), "Exit Game", { 520, 360, 120,20 }, this, GuiClass::MAIN_MENU));
+	std::vector<const char*> names = { "New Game", "Load Game", "Settings", "Credits" , "Exit Game" };
+	int coordInitial = 200, interspace = 40;
+	GuiControlButton* button;
+	for (auto n : names) {
+		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), n, { 520, coordInitial, 128,32 }, this, GuiClass::MAIN_MENU);
+		button->SetTexture(menuButtonNormal);
+		ui.Add(GuiClass::MAIN_MENU, button);
+		coordInitial += interspace;
+	}
 	ui.Active(GuiClass::MAIN_MENU);
 
+	//Settings
 	GuiControlSlider* slider = (GuiControlSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDERBAR, ui.GetSize(GuiClass::SETTINGS), "", { 520 / 2, 200, 104,20 }, this, GuiClass::SETTINGS);
 	slider->SetTexture(sliderBackground, sliderMovement);
 	ui.Add(GuiClass::SETTINGS, slider);
 	ui.Disable(GuiClass::SETTINGS);
+	showSettings = false;
 
-	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Resume", { 520, 10, 120,20 }, this, GuiClass::PAUSE));
-	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Settings", { 520, 50, 120,20 }, this, GuiClass::PAUSE));
-	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Back To Title", { 520, 90, 120,20 }, this, GuiClass::PAUSE));
-	ui.Add(GuiClass::PAUSE, (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), "Exit", { 520, 130, 120,20 }, this, GuiClass::PAUSE));
+	//Pause menu
+	names = { "Resume", "Settings", "Back To Title", "Exit" };
+	coordInitial = 10, interspace = 40;
+	for (auto n : names) {
+		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), n, { 520, coordInitial, 128,32 }, this, GuiClass::PAUSE);
+		button->SetTexture(menuButtonNormal);
+		ui.Add(GuiClass::PAUSE, button);
+		coordInitial += interspace;
+	}
 	ui.Disable(GuiClass::PAUSE);
 	ui.Disable(GuiClass::TPBONFIRE);
 }
@@ -134,36 +141,38 @@ bool Scene::PreUpdate()
 
 void Scene::HandleCamera(Engine& engine) {
 	if (level == 0) {
-		SDL_Rect rec;
-		rec.x = 0;
-		rec.y = 0;
-		rec.w = 1500;
-		rec.h = 800;
-		engine.render.get()->DrawRectangle(rec, 0, 0, 0, alpha, true, false);
+		if (!showSettings) {
+			SDL_Rect rec;
+			rec.x = 0;
+			rec.y = 0;
+			rec.w = 1500;
+			rec.h = 800;
+			engine.render.get()->DrawRectangle(rec, 0, 0, 0, alpha, true, false);
 
-		int cameraX = engine.render.get()->camera.x -= 2;
-		int cameraMaxX = engine.map.get()->GetWidth() * 8 * -1 + (10 * 8);
-		if (cameraX <= cameraMaxX) {
-			engine.render.get()->camera.x = cameraMaxX;
-			if (!fadeIn) {
-				if (alpha < 255) alpha += 5;
-				if (alpha >= 255) alpha = 255;
+			int cameraX = engine.render.get()->camera.x -= 2;
+			int cameraMaxX = engine.map.get()->GetWidth() * 8 * -1 + (10 * 8);
+			if (cameraX <= cameraMaxX) {
+				engine.render.get()->camera.x = cameraMaxX;
+				if (!fadeIn) {
+					if (alpha < 255) alpha += 5;
+					if (alpha >= 255) alpha = 255;
+				}
+
+				if (!fadeIn && alpha == 255) {
+					fadeIn = true;
+					engine.render.get()->camera.x = 0;
+				}
 			}
 
-			if (!fadeIn && alpha == 255) {
-				fadeIn = true;
-				engine.render.get()->camera.x = 0;
+			if (fadeIn) {
+				if (alpha > 0) alpha -= 5;
+				if (alpha <= 0) alpha = 0;
 			}
-		}
 
-		if (fadeIn) {
-			if (alpha > 0) alpha -= 5;
-			if (alpha <= 0) alpha = 0;
-		}
-
-		if (fadeIn && alpha == 0) {
-			fadeIn&& alpha == 0;
-			fadeIn = false;
+			if (fadeIn && alpha == 0) {
+				fadeIn&& alpha == 0;
+				fadeIn = false;
+			}
 		}
 	}
 	else {
@@ -191,24 +200,25 @@ void Scene::HandlePowers() {
 		fireballList.push_back(power);
 	}
 
-	//if (player->GetfirePower() && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-	//	Power* bigPower = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BIGFIREBALLPLAYER);
-	//	bigPower->SetParameters(configParameters.child("entities").child("bigfireball"), TypePower::BIGFIREBALL);
-	//	if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->Start(true);
-	//	else bigPower->Start(false);
+	if (player->GetfirePower() && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
 
-	//	Vector2D playerPos = player->GetPosition();
-	//	if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
-	//	else bigPower->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
+		Power* bigPower = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BIGFIREBALLPLAYER);
+		bigPower->SetParameters(configParameters.child("entities").child("bigfireball"), TypePower::BIGFIREBALL);
+		if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->Start(true);
+		else bigPower->Start(false);
 
-	//	fireballList.push_back(bigPower);
+		Vector2D playerPos = player->GetPosition();
+		if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
+		else bigPower->SetPosition({ playerPos.getX() + 32, playerPos.getY()});
 
-	//	// Play the sound effect for the big fireball
-	//	//Engine::GetInstance().audio.get()->PlayFx(bigFireballSFX);
+		fireballList.push_back(bigPower);
 
-	//	// Reset the firePower flag
-	//	player->SetfirePower(false);
-	//}
+		// Play the sound effect for the big fireball
+		//Engine::GetInstance().audio.get()->PlayFx(bigFireballSFX);
+
+		// Reset the firePower flag
+		player->SetfirePower(false);
+	}
 
 	//Power Boss Fireball
 	for (auto& e : enemyList) {
@@ -235,10 +245,7 @@ bool Scene::Update(float dt)
 	auto& engine = Engine::GetInstance();
 	HandleCamera(engine);
 
-	if (ui.IsActive(GuiClass::MAIN_MENU))
-	{
-		engine.render.get()->DrawTexture(TitleScreen, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2 + 110, -engine.render.get()->camera.y / 2);
-	}
+	if (ui.IsActive(GuiClass::MAIN_MENU)) engine.render.get()->DrawTexture(TitleScreen, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2 + 110, -engine.render.get()->camera.y / 2);
 
 	if (level != 0) {
 		//Debug Mode
@@ -265,16 +272,16 @@ bool Scene::Update(float dt)
 			else {
 				engine.render.get()->DrawTexture(powerOff, SDL_FLIP_NONE, fireIconX, 10);
 			}
-			
+
 			if (player->GetCoins() > 0) {
-				
-				engine.render.get()->DrawTexture(pouchfull, SDL_FLIP_NONE, - (engine.render.get()->camera.x / 2) + 10, 30);
+
+				engine.render.get()->DrawTexture(pouchfull, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
 			}
 			else {
 				engine.render.get()->DrawTexture(pouch, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
-				
+
 			}
-			
+
 		}
 
 
@@ -310,7 +317,9 @@ bool Scene::Update(float dt)
 					bonfires.attribute("activated").set_value("true");
 					bonfires.append_attribute("id").set_value(idNameBonfire++);
 
-					ui.Add(GuiClass::TPBONFIRE, (GuiControlButton*)engine.guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 120,20 }, this, GuiClass::TPBONFIRE));
+					GuiControlButton* button = (GuiControlButton*)engine.guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 128,32 }, this, GuiClass::TPBONFIRE);
+					button->SetTexture(menuButtonNormal);
+					ui.Add(GuiClass::TPBONFIRE, button);
 				}
 
 				saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());
@@ -333,6 +342,7 @@ bool Scene::Update(float dt)
 			if (ui.IsActive(GuiClass::PAUSE)) {
 				pause = false;
 				ui.Disable(GuiClass::PAUSE);
+				ui.Disable(GuiClass::SETTINGS);
 			}
 			else {
 				pause = true;
@@ -395,29 +405,20 @@ bool Scene::PostUpdate()
 	//Next Level
 	if (player->GetLevel() == Level::NEXTLVL) {
 		level++;
-		for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
-		{
-			if (mapNode.attribute("number").as_int() == level) {
-				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-				enState = ENEMY::CREATEALL;
-				itemState = ITEM::CREATEALL;
-				CreateEvents();
+		pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
+		Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+		CreateEvents();
 
-				pugi::xml_node currentLevel = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
-				Vector2D posPlayer;
-				posPlayer.setX(currentLevel.attribute("ix").as_int());
-				posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
+		Vector2D posPlayer;
+		posPlayer.setX(mapNode.attribute("ix").as_int());
+		posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
 
-				player->SetPosition(posPlayer);
-				ui.Disable(GuiClass::MAIN_MENU);
-				break;
-			}
-		}
+		player->SetPosition(posPlayer);
+		ui.Disable(GuiClass::MAIN_MENU);
+
 		player->SetLevel(Level::DISABLED);
 	}
 
-	//MAIN MENU IMAGE
-	//if (pause) Engine::GetInstance().render.get()->DrawTexture(mainMenu, SDL_FLIP_NONE, -(Engine::GetInstance().render.get()->camera.x / 2), 0);
 	return ret;
 }
 
@@ -520,30 +521,34 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 	case GuiClass::MAIN_MENU:
 		if (control->id == 1) {
 			level++;
-			for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map"))
-			{
-				if (mapNode.attribute("number").as_int() == level) {
-					Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-					enState = ENEMY::CREATEALL;
-					CreateEvents();
+			pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
 
-					pugi::xml_node currentLevel = nodes.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
-					Vector2D posPlayer;
-					posPlayer.setX(currentLevel.attribute("ix").as_int());
-					posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
+			Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+			CreateEvents();
 
-					player->ActivePlayer();
-					ui.Disable(GuiClass::MAIN_MENU);
-					player->SetPosition(posPlayer);
+			Vector2D posPlayer;
+			posPlayer.setX(mapNode.attribute("ix").as_int());
+			posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
 
-					break;
-				}
-			}
+			player->ActivePlayer();
+			ui.Disable(GuiClass::MAIN_MENU);
+			player->SetPosition(posPlayer);
+
+
 			player->SetLevel(Level::DISABLED);
 		}
 		else if (control->id == 2) {
 		}
-		else if (control->id == 3) 	ui.IsActive(GuiClass::SETTINGS) ? ui.Disable(GuiClass::SETTINGS) : ui.Active(GuiClass::SETTINGS);
+		else if (control->id == 3) {
+			if (ui.IsActive(GuiClass::SETTINGS)) {
+				ui.Disable(GuiClass::SETTINGS);
+				showSettings = false;
+			}
+			else {
+				ui.Active(GuiClass::SETTINGS);
+				showSettings = true;
+			}
+		}
 		else if (control->id == 4) {
 		}
 		else if (control->id == 5) {
@@ -557,30 +562,46 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			pause = false;
 		}
 		else if (control->id == 2) ui.IsActive(GuiClass::SETTINGS) ? ui.Disable(GuiClass::SETTINGS) : ui.Active(GuiClass::SETTINGS);
+		else if (control->id == 3) {
+			level = 0;
+			pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
+
+			Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+			CreateEvents();
+
+			pugi::xml_node currentLevel = nodes.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
+			Vector2D posPlayer;
+			posPlayer.setX(currentLevel.attribute("ix").as_int());
+			posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
+
+			player->DisablePlayer();
+			ui.Active(GuiClass::MAIN_MENU);
+			ui.Disable(GuiClass::PAUSE);
+			player->SetPosition(posPlayer);
+			pause = false;
+
+
+			player->SetLevel(Level::DISABLED);
+		}
 		else if (control->id == 4) exitGame = true;
 		break;
 	case GuiClass::TPBONFIRE:
-		for (pugi::xml_node bonfireNode = nodes.child("bonfires").child("bonfire"); bonfireNode; bonfireNode = bonfireNode.next_sibling("bonfire")) {
-			if (bonfireNode.attribute("id").as_int() == control->id) {
+		pugi::xml_node bonfireNode = nodes.child("bonfires").find_child_by_attribute("id", std::to_string(control->id).c_str());
+		if (bonfireNode.attribute("id").as_int() == control->id) {
 
-				if (bonfireNode.attribute("level").as_int() != level) {
-					level = bonfireNode.attribute("level").as_int();
-					for (pugi::xml_node mapNode = configParameters.child("levels").child("map"); mapNode; mapNode = mapNode.next_sibling("map")) {
-						if (mapNode.attribute("number").as_int() == level) {
-							Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-							LoadState(LOAD::RESPAWN);
-							enState = ENEMY::CREATEXML;
-							CreateEvents();
-							ActiveBonfires();
-							break;
-						}
-					}
-					player->SetLevel(Level::DISABLED);
+			if (bonfireNode.attribute("level").as_int() != level) {
+				level = bonfireNode.attribute("level").as_int();
+				pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
+				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				LoadState(LOAD::RESPAWN);
+				CreateEvents();
+				ActiveBonfires();
+				player->SetLevel(Level::DISABLED);
 
-				}
-				player->SetPosition({ bonfireNode.attribute("x").as_float(), bonfireNode.attribute("y").as_float() });
 			}
+			player->SetPosition({ bonfireNode.attribute("x").as_float(), bonfireNode.attribute("y").as_float() });
 		}
+
 		break;
 
 	}
