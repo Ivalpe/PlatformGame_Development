@@ -279,11 +279,11 @@ bool Scene::Update(float dt)
 			}
 			
 			if (player->GetCoins() > 0) {
-				Engine::GetInstance().render->DrawText(coinText.c_str(), -(engine.render.get()->camera.x / 2) + 70, 60, 80, 44);
+				Engine::GetInstance().render->DrawText(coinText.c_str(),  60, 60, 80, 44);
 				engine.render.get()->DrawTexture(pouchfull, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
 			}
 			else {
-				Engine::GetInstance().render->DrawText(coinText.c_str(), -(engine.render.get()->camera.x / 2) + 70, 60, 80, 44);
+				Engine::GetInstance().render->DrawText(coinText.c_str(),  60, 60, 80, 44);
 				engine.render.get()->DrawTexture(pouch, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
 
 			}
@@ -323,7 +323,7 @@ bool Scene::Update(float dt)
 					bonfires.attribute("activated").set_value("true");
 					bonfires.append_attribute("id").set_value(idNameBonfire++);
 
-					GuiControlButton* button = (GuiControlButton*)engine.guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 128,32 }, this, GuiClass::TPBONFIRE);
+					GuiControlButton* button = (GuiControlButton*)engine.guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 180,60 }, this, GuiClass::TPBONFIRE);
 					button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed);					ui.Add(GuiClass::TPBONFIRE, button);
 				}
 
@@ -505,7 +505,7 @@ void Scene::DebugMode() {
 void Scene::ActiveBonfires() {
 	for (auto bon : bonfireList) {
 		int posXBonfire = bon->GetPosition().getX();
-		pugi::xml_node bonfires = configParameters.child("bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
+		pugi::xml_node bonfires = configParameters.child("   bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
 
 		if (bonfires.attribute("activated").as_bool() == true) {
 			bon->ActiveBonfire();
