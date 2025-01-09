@@ -211,7 +211,7 @@ void Scene::HandlePowers() {
 
 		Vector2D playerPos = player->GetPosition();
 		if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
-		else bigPower->SetPosition({ playerPos.getX() + 32, playerPos.getY()});
+		else bigPower->SetPosition({ playerPos.getX() + 32, playerPos.getY() });
 
 		fireballList.push_back(bigPower);
 
@@ -277,13 +277,13 @@ bool Scene::Update(float dt)
 			else {
 				engine.render.get()->DrawTexture(powerOff, SDL_FLIP_NONE, fireIconX, 10);
 			}
-			
+
 			if (player->GetCoins() > 0) {
-				Engine::GetInstance().render->DrawText(coinText.c_str(),  60, 60, 80, 44);
+				Engine::GetInstance().render->DrawText(coinText.c_str(), 60, 60, 80, 44);
 				engine.render.get()->DrawTexture(pouchfull, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
 			}
 			else {
-				Engine::GetInstance().render->DrawText(coinText.c_str(),  60, 60, 80, 44);
+				Engine::GetInstance().render->DrawText(coinText.c_str(), 60, 60, 80, 44);
 				engine.render.get()->DrawTexture(pouch, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
 
 			}
@@ -343,7 +343,7 @@ bool Scene::Update(float dt)
 		}
 
 		//Enable Settings UI
-		if (level != 0 && engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
+		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 			if (ui.IsActive(GuiClass::PAUSE)) {
 				pause = false;
 				ui.Disable(GuiClass::PAUSE);
@@ -361,6 +361,16 @@ bool Scene::Update(float dt)
 			player->Respawn();
 			LoadState(LOAD::RESPAWN);
 			colRespawn = 120;
+		}
+	}
+	else {
+		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
+
+			if (ui.IsActive(GuiClass::SETTINGS)) {
+				ui.Active(GuiClass::MAIN_MENU);
+				showSettings = false;
+				ui.Disable(GuiClass::SETTINGS);
+			}
 		}
 	}
 
@@ -550,6 +560,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 				showSettings = false;
 			}
 			else {
+				ui.Disable(GuiClass::MAIN_MENU);
 				ui.Active(GuiClass::SETTINGS);
 				showSettings = true;
 			}
