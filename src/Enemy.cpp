@@ -41,6 +41,7 @@ bool Enemy::Start() {
 	walk.LoadAnimations(parameters.child("animations").child("walk"));
 	die.LoadAnimations(parameters.child("animations").child("die"));
 	crouch.LoadAnimations(parameters.child("animations").child("crouch"));
+	attack.LoadAnimations(parameters.child("animations").child("attack"));
 	currentAnimation = &idle;
 
 	//Load Fx
@@ -53,7 +54,7 @@ bool Enemy::Start() {
 	//Add a physics to an item - initialize the physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY() + texW, texW / 2, bodyType::DYNAMIC);
 
-	sensor = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX(), (int)position.getY() + texH, texW * 4, bodyType::KINEMATIC);
+	sensor = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX(), (int)position.getY() + texH, texW, bodyType::KINEMATIC);
 	sensor->ctype = ColliderType::SENSOR;
 	sensor->listener = this;
 
@@ -81,22 +82,30 @@ void Enemy::BossPattern() {
 	velocity = b2Vec2(0, -GRAVITY_Y);
 
 	if (currentAnimation == &crouch) {
-		texH = 48;
+		sensor->ctype = ColliderType::SENSOR;
 		texW = 48;
 	}
+	else if (currentAnimation == &attack) {
+		sensor->ctype = ColliderType::SENSORATTACK;
+		texW = 80;
+	}
 	else {
+		sensor->ctype = ColliderType::SENSOR;
 		texW = parameters.attribute("w").as_int();
-		texH = parameters.attribute("h").as_int();
 	}
 
-	if (bossActive && !isJumping)
+	if (currentAnimation == &attack && currentAnimation->HasFinished()) currentAnimation = &idle;
+
+	if (bossActive)
 		bossCooldown--;
 
 	if (bossCooldown <= 0) {
-		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0.f, -0.37f), true);
+		//pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0.f, -0.37f), true);
 		isJumping = true;
 
-		fireball = true;
+		currentAnimation = &attack;
+		currentAnimation->Reset();
+		//fireball = true;
 		bossCooldown = 120;
 	}
 	if (isJumping)velocity = pbody->body->GetLinearVelocity();
@@ -106,7 +115,11 @@ void Enemy::BossPattern() {
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
-	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
+	if (currentAnimation != &attack)
+		Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
+	else
+		Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() - 4, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
+
 	currentAnimation->Update();
 
 	b2Vec2 enemyPos = pbody->body->GetPosition();

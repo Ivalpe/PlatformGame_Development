@@ -121,6 +121,9 @@
 						</idle>
 						<crouch loop="true" speed="0.06">
 							<frame x="0" y="48" w="48" h="48" />
+							<frame x="48" y="48" w="48" h="48" />
+							<frame x="96" y="48" w="48" h="48" />
+							<frame x="144" y="48" w="48" h="48" />
 						</crouch>
 						<walk loop="true" speed="0.12">
 							<frame x="0" y="64" w="16" h="32" />
@@ -128,10 +131,19 @@
 							<frame x="32" y="64" w="16" h="32" />
 							<frame x="48" y="64" w="16" h="32" />
 						</walk>
-						<die loop="false" speed="0.06">
-							<frame x="64" y="64" w="16" h="32" />
-							<frame x="80" y="64" w="16" h="32" />
-						</die>
+						<die loop="false" speed="0.06" />
+						<attack loop="false" speed="0.20">
+							<frame x="0" y="96" w="80" h="48" />
+							<frame x="80" y="96" w="80" h="48" />
+							<frame x="160" y="96" w="80" h="48" />
+							<frame x="240" y="96" w="80" h="48" />
+							<frame x="320" y="96" w="80" h="48" />
+							<frame x="0" y="144" w="80" h="48" />
+							<frame x="80" y="144" w="80" h="48" />
+							<frame x="160" y="144" w="80" h="48" />
+							<frame x="240" y="144" w="80" h="48" />
+							<frame x="320" y="144" w="80" h="48" />
+						</attack>
 					</animations>
 				</boss>
 			</enemies>
