@@ -55,11 +55,11 @@ bool GuiControlButton::Update(float dt)
 			//Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 255, true, false);
 			break;
 		case GuiControlState::FOCUSED:
-			Engine::GetInstance().render->DrawTexture(buttonNormal, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			Engine::GetInstance().render->DrawTexture(buttonFocused, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
 			//Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 20, 255, true, false);
 			break;
 		case GuiControlState::PRESSED:
-			Engine::GetInstance().render->DrawTexture(buttonNormal, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			Engine::GetInstance().render->DrawTexture(buttonPressed, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
 			//Engine::GetInstance().render->DrawRectangle(bounds, 0, 255, 0, 255, true, false);
 			break;
 		}

@@ -87,8 +87,10 @@ void Scene::LoadAssets() {
 	sliderBackground = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider1.png");
 	sliderMovement = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider2.png");
 	menuButtonNormal = Engine::GetInstance().textures.get()->Load("Assets/Menus/button.png");
+	menuButtonFocused = Engine::GetInstance().textures.get()->Load("Assets/Menus/buttonfocus.png");
+	menuButtonPressed = Engine::GetInstance().textures.get()->Load("Assets/Menus/buttonPressed.png");
 	helpMenu = Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png");
-	OptionsMenu = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsMenu.png");
+	OptionsBook = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsBook.png");
 	TitleScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/TitleScreen.png");
 	powerOff = Engine::GetInstance().textures.get()->Load("Assets/Textures/powerOff.png");
 	powerOn = Engine::GetInstance().textures.get()->Load("Assets/Textures/powerOn.png");
@@ -102,12 +104,12 @@ void Scene::LoadAssets() {
 
 void Scene::SetupUI() {
 	//Main Menu
-	std::vector<const char*> names = { "New Game", "Load Game", "Settings", "Credits" , "Exit Game" };
-	int coordInitial = 200, interspace = 40;
+	std::vector<const char*> names = { "    New Game", "    Load Game", "    Settings", "    Credits" , "    Exit Game" };
+	int coordInitial = 360, interspace = 70;
 	GuiControlButton* button;
 	for (auto n : names) {
-		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), n, { 520, coordInitial, 128,32 }, this, GuiClass::MAIN_MENU);
-		button->SetTexture(menuButtonNormal);
+		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), n, { 480, coordInitial, 200,60 }, this, GuiClass::MAIN_MENU);
+		button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed);
 		ui.Add(GuiClass::MAIN_MENU, button);
 		coordInitial += interspace;
 	}
@@ -121,11 +123,11 @@ void Scene::SetupUI() {
 	showSettings = false;
 
 	//Pause menu
-	names = { "Resume", "Settings", "Back To Title", "Exit" };
-	coordInitial = 10, interspace = 40;
+	names = { "      Resume", "     Settings", "      Back To Title", "     Exit" };
+	coordInitial = 240, interspace = 70;
 	for (auto n : names) {
-		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), n, { 520, coordInitial, 128,32 }, this, GuiClass::PAUSE);
-		button->SetTexture(menuButtonNormal);
+		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), n, { 480, coordInitial, 180,60 }, this, GuiClass::PAUSE);
+		button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed);
 		ui.Add(GuiClass::PAUSE, button);
 		coordInitial += interspace;
 	}
@@ -246,6 +248,7 @@ bool Scene::Update(float dt)
 	HandleCamera(engine);
 
 	if (ui.IsActive(GuiClass::MAIN_MENU)) engine.render.get()->DrawTexture(TitleScreen, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2 + 110, -engine.render.get()->camera.y / 2);
+	if (ui.IsActive(GuiClass::PAUSE)) engine.render.get()->DrawTexture(OptionsBook, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2 + 185, -engine.render.get()->camera.y / 2 + 20);
 
 	if (level != 0) {
 		//Debug Mode
@@ -258,6 +261,8 @@ bool Scene::Update(float dt)
 		engine.render.get()->DrawTexture(gui, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 10);
 
 		if (player->GetLifes() >= 0) {
+			int coinCount = player->GetCoins();
+			std::string coinText = "Coins: " + std::to_string(coinCount);
 			int coordX = -(engine.render.get()->camera.x / 2) + 32;
 
 			for (size_t i = 0; i < player->GetLifes() + 1; i++) {
@@ -272,12 +277,13 @@ bool Scene::Update(float dt)
 			else {
 				engine.render.get()->DrawTexture(powerOff, SDL_FLIP_NONE, fireIconX, 10);
 			}
-
+			
 			if (player->GetCoins() > 0) {
-
+				Engine::GetInstance().render->DrawText(coinText.c_str(), -(engine.render.get()->camera.x / 2) + 70, 60, 80, 44);
 				engine.render.get()->DrawTexture(pouchfull, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
 			}
 			else {
+				Engine::GetInstance().render->DrawText(coinText.c_str(), -(engine.render.get()->camera.x / 2) + 70, 60, 80, 44);
 				engine.render.get()->DrawTexture(pouch, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
 
 			}
@@ -318,8 +324,7 @@ bool Scene::Update(float dt)
 					bonfires.append_attribute("id").set_value(idNameBonfire++);
 
 					GuiControlButton* button = (GuiControlButton*)engine.guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 128,32 }, this, GuiClass::TPBONFIRE);
-					button->SetTexture(menuButtonNormal);
-					ui.Add(GuiClass::TPBONFIRE, button);
+					button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed);					ui.Add(GuiClass::TPBONFIRE, button);
 				}
 
 				saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());

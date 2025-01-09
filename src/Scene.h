@@ -137,7 +137,7 @@ private:
 	// --- USER INTERFACE (UI) ---
 	UI ui;                           // UI instance
 	SDL_Texture* helpMenu;			 // Menu texture
-	SDL_Texture* OptionsMenu;	     // Menu texture
+	SDL_Texture* OptionsBook;	     // Menu texture
 	SDL_Texture* TitleScreen;        //Title screen texture
 	SDL_Texture* gui;				 // General GUI texture
 	SDL_Texture* lifePlayer;         // Player life texture
@@ -147,8 +147,12 @@ private:
 	SDL_Texture* powerOff;
 	SDL_Texture* sliderBackground;   // Slider background texture
 	SDL_Texture* sliderMovement;     // Slider movement texture
-	SDL_Texture* menuButtonNormal;     // Slider menu
+	SDL_Texture* menuButtonNormal;   // Slider menu
+	SDL_Texture* menuButtonFocused;
+	SDL_Texture* menuButtonPressed;
+	
 	bool showSettings = false;       // Flag to show settings menu
+	          
 
 	// --- FADE-IN EFFECT ---
 	Uint8 alpha;         // Alpha transparency for fade-in effect
