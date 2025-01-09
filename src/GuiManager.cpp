@@ -29,7 +29,7 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 		guiControl = new GuiControlButton(id, bounds, text);
 		break;
 	case GuiControlType::SLIDERBAR:
-		guiControl = new GuiControlSlider(id, bounds);
+		guiControl = new GuiControlSlider(id, bounds, text);
 	}
 
 	//Set the observer

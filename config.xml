@@ -107,12 +107,21 @@
 						</die>
 					</animations>
 				</bat>
-				<boss w="16" h="32" texture="Assets/Textures/Enemies.png" gravity="true">
+				<boss w="32" h="48" texture="Assets/Textures/Boss.png" gravity="true">
 					<animations>
 						<idle loop="true" speed="0.06">
-							<frame x="0" y="96" w="16" h="32" />
-							<frame x="16" y="96" w="16" h="32" />
+							<frame x="0" y="0" w="32" h="48" />
+							<frame x="32" y="0" w="32" h="48" />
+							<frame x="64" y="0" w="32" h="48" />
+							<frame x="96" y="0" w="32" h="48" />
+							<frame x="128" y="0" w="32" h="48" />
+							<frame x="160" y="0" w="32" h="48" />
+							<frame x="192" y="0" w="32" h="48" />
+							<frame x="224" y="0" w="32" h="48" />
 						</idle>
+						<crouch loop="true" speed="0.06">
+							<frame x="0" y="48" w="48" h="48" />
+						</crouch>
 						<walk loop="true" speed="0.12">
 							<frame x="0" y="64" w="16" h="32" />
 							<frame x="16" y="64" w="16" h="32" />
@@ -275,8 +284,28 @@
 				<Music1SFX path="Assets/Audio/Music/Character_Config.wav" />
 			</music>
 		</audio>
-		<bonfires />
-		<enemies />
-		<items />
+		<bonfires>
+			<bonfire level="1" activated="false" x="144" y="184" name="Hoguera 1" />
+			<bonfire level="1" activated="false" x="1504" y="272" name="Hoguera 2" />
+			<bonfire level="1" activated="false" x="3048" y="200" name="Hoguera 3" />
+			<bonfire level="3" activated="false" x="80" y="80" name="Hoguera 4" />
+		</bonfires>
+		<enemies>
+			<enemy id="1" level="1" dead="false" x="576" y="104" />
+			<enemy id="2" level="1" dead="false" x="680" y="224" />
+			<enemy id="3" level="1" dead="false" x="888" y="136" />
+			<enemy id="4" level="1" dead="false" x="1120" y="320" />
+			<enemy id="5" level="1" dead="false" x="1352" y="168" />
+			<enemy id="6" level="1" dead="false" x="1992" y="304" />
+			<enemy id="7" level="1" dead="false" x="2128" y="304" />
+			<enemy id="8" level="1" dead="false" x="2416" y="304" />
+			<enemy id="9" level="1" dead="false" x="2712" y="240" />
+			<enemy id="10" level="3" dead="false" x="1016" y="288" />
+		</enemies>
+		<items>
+			<item id="1" level="1" collected="false" x="304" y="272" />
+			<item id="2" level="1" collected="false" x="344" y="272" />
+			<item id="3" level="1" collected="false" x="384" y="272" />
+		</items>
 	</scene>
 </config>

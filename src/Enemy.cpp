@@ -23,7 +23,6 @@ bool Enemy::Awake() {
 }
 
 bool Enemy::Start() {
-
 	tempChangeAnimation = 120;
 	followPlayer = false;
 	speed = 1.9f;
@@ -41,6 +40,7 @@ bool Enemy::Start() {
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
 	walk.LoadAnimations(parameters.child("animations").child("walk"));
 	die.LoadAnimations(parameters.child("animations").child("die"));
+	crouch.LoadAnimations(parameters.child("animations").child("crouch"));
 	currentAnimation = &idle;
 
 	//Load Fx
@@ -53,7 +53,7 @@ bool Enemy::Start() {
 	//Add a physics to an item - initialize the physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY() + texW, texW / 2, bodyType::DYNAMIC);
 
-	sensor = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX(), (int)position.getY() + texW, texW * 4, bodyType::KINEMATIC);
+	sensor = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX(), (int)position.getY() + texH, texW * 4, bodyType::KINEMATIC);
 	sensor->ctype = ColliderType::SENSOR;
 	sensor->listener = this;
 
@@ -79,6 +79,15 @@ void Enemy::SetEnemyType(EnemyType et) {
 
 void Enemy::BossPattern() {
 	velocity = b2Vec2(0, -GRAVITY_Y);
+
+	if (currentAnimation == &crouch) {
+		texH = 48;
+		texW = 48;
+	}
+	else {
+		texW = parameters.attribute("w").as_int();
+		texH = parameters.attribute("h").as_int();
+	}
 
 	if (bossActive && !isJumping)
 		bossCooldown--;
@@ -271,8 +280,11 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::FIREBALLPLAYER:
 		if (physA->ctype != ColliderType::SENSOR) {
-			currentAnimation = &die;
+			//currentAnimation = &die;
 			LOG("Collision FIREBALL");
+		}
+		else {
+			currentAnimation = &crouch;
 		}
 		break;
 	case ColliderType::FIREBALLENEMY:
@@ -298,6 +310,9 @@ void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
 		if (physA->ctype == ColliderType::SENSOR) {
 			followPlayer = false;
 		}
+		break;
+	case ColliderType::FIREBALLPLAYER:
+		currentAnimation = &idle;
 		break;
 	default:
 		break;

@@ -8,7 +8,7 @@ class GuiControlSlider : public GuiControl
 
 public:
 
-	GuiControlSlider(int id, SDL_Rect bounds);
+	GuiControlSlider(int id, SDL_Rect bounds, const char* text);
 	virtual ~GuiControlSlider();
 
 	// Called each loop iteration

@@ -116,7 +116,7 @@ void Scene::SetupUI() {
 	ui.Active(GuiClass::MAIN_MENU);
 
 	//Settings
-	GuiControlSlider* slider = (GuiControlSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDERBAR, ui.GetSize(GuiClass::SETTINGS), "", { 520 / 2, 200, 104,20 }, this, GuiClass::SETTINGS);
+	GuiControlSlider* slider = (GuiControlSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDERBAR, ui.GetSize(GuiClass::SETTINGS), "Music", { 520 / 2, 200, 104,20 }, this, GuiClass::SETTINGS);
 	slider->SetTexture(sliderBackground, sliderMovement);
 	ui.Add(GuiClass::SETTINGS, slider);
 	ui.Disable(GuiClass::SETTINGS);
@@ -344,7 +344,7 @@ bool Scene::Update(float dt)
 
 		//Enable Settings UI
 		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
-			if (ui.IsActive(GuiClass::PAUSE)) {
+			if (ui.IsActive(GuiClass::PAUSE) || ui.IsActive(GuiClass::SETTINGS)) {
 				pause = false;
 				ui.Disable(GuiClass::PAUSE);
 				ui.Disable(GuiClass::SETTINGS);
@@ -577,7 +577,10 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			ui.Disable(GuiClass::SETTINGS);
 			pause = false;
 		}
-		else if (control->id == 2) ui.IsActive(GuiClass::SETTINGS) ? ui.Disable(GuiClass::SETTINGS) : ui.Active(GuiClass::SETTINGS);
+		else if (control->id == 2) {
+			ui.Active(GuiClass::SETTINGS);
+			ui.Disable(GuiClass::PAUSE);
+		}
 		else if (control->id == 3) {
 			level = 0;
 			pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());

@@ -4,9 +4,10 @@
 #include "Audio.h"
 #include "Log.h"
 
-GuiControlSlider::GuiControlSlider(int id, SDL_Rect bounds) : GuiControl(GuiControlType::BUTTON, id)
+GuiControlSlider::GuiControlSlider(int id, SDL_Rect bounds, const char* text) : GuiControl(GuiControlType::BUTTON, id)
 {
 	this->bounds = bounds;
+	this->text = text;
 	posTexture.setY(bounds.y);
 	posHitbox.setY(bounds.y);
 	posButton = -(Engine::GetInstance().render.get()->camera.x / 2) + bounds.x;
@@ -67,8 +68,11 @@ bool GuiControlSlider::Update(float dt)
 			Engine::GetInstance().render->DrawTexture(sliderMovement, SDL_FLIP_NONE, posButton, bounds.y);
 			break;
 		}
+		Engine::GetInstance().render->DrawText(text.c_str(), posHitbox.getX() * 2, (posHitbox.getY() * 2) - 48, bounds.w, text.size()*10);
 	}
 	else posButton = -(Engine::GetInstance().render.get()->camera.x / 2) + bounds.x;
+
+
 
 	return false;
 }
