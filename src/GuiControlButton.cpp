@@ -7,7 +7,8 @@ GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text) : 
 {
 	this->bounds = bounds;
 	this->text = text;
-
+	posTexture.setY(bounds.y / 2);
+	posHitbox.setY(bounds.y);
 	drawBasic = false;
 }
 
@@ -20,11 +21,13 @@ bool GuiControlButton::Update(float dt)
 {
 	if (state != GuiControlState::DISABLED)
 	{
+		posHitbox.setX(bounds.x);
+		posTexture.setX(-(Engine::GetInstance().render.get()->camera.x / 2) + bounds.x / 2);
 		// L16: TODO 3: Update the state of the GUiButton according to the mouse position
 		Vector2D mousePos = Engine::GetInstance().input->GetMousePosition();
 
 		//If the position of the mouse if inside the bounds of the button 
-		if (mousePos.getX() > bounds.x / 2 && mousePos.getX() < (bounds.x + bounds.w) / 2 && mousePos.getY() > bounds.y / 2 && mousePos.getY() < (bounds.y + bounds.h) / 2) {
+		if (mousePos.getX() > posHitbox.getX() / 2 && mousePos.getX() < (posHitbox.getX() + bounds.w) / 2 && mousePos.getY() > posHitbox.getY() / 2 && mousePos.getY() < (posHitbox.getY() + bounds.h) / 2) {
 		
 			state = GuiControlState::FOCUSED;
 
@@ -44,16 +47,20 @@ bool GuiControlButton::Update(float dt)
 		switch (state)
 		{
 		case GuiControlState::DISABLED:
-			Engine::GetInstance().render->DrawRectangle(bounds, 200, 200, 200, 255, true, false);
+			Engine::GetInstance().render->DrawTexture(buttonNormal, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			//Engine::GetInstance().render->DrawRectangle(bounds, 200, 200, 200, 255, true, false);
 			break;
 		case GuiControlState::NORMAL:
-			Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 255, true, false);
+			Engine::GetInstance().render->DrawTexture(buttonNormal, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			//Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 255, true, false);
 			break;
 		case GuiControlState::FOCUSED:
-			Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 20, 255, true, false);
+			Engine::GetInstance().render->DrawTexture(buttonNormal, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			//Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 20, 255, true, false);
 			break;
 		case GuiControlState::PRESSED:
-			Engine::GetInstance().render->DrawRectangle(bounds, 0, 255, 0, 255, true, false);
+			Engine::GetInstance().render->DrawTexture(buttonNormal, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			//Engine::GetInstance().render->DrawRectangle(bounds, 0, 255, 0, 255, true, false);
 			break;
 		}
 
