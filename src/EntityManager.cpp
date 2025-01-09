@@ -78,8 +78,9 @@ Entity* EntityManager::CreateEntity(EntityType type)
 		entity = new Enemy();
 		break;
 	case EntityType::FIREBALLPLAYER:
+		entity = new Power(type);
+		break;
 	case EntityType::FIREBALLENEMY:
-	case EntityType::BIGFIREBALLPLAYER:
 		entity = new Power(type);
 		break;
 	case EntityType::BONFIRE:

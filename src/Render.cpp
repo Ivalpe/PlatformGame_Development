@@ -116,8 +116,8 @@ bool Render::DrawTexture(SDL_Texture* texture, SDL_RendererFlip flip, int x, int
 	int scale = Engine::GetInstance().window.get()->GetScale();
 
 	SDL_Rect rect;
-	rect.x = (int)(camera.x) + x * scale;
-	rect.y = (int)(camera.y) + y * scale;
+	rect.x = (int)(camera.x * speed) + x * scale;
+	rect.y = (int)(camera.y * speed) + y * scale;
 
 	if(section != NULL)
 	{

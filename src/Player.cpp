@@ -284,7 +284,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 
 	case ColliderType::HEALTH:
 		LOG("Collision HEALTH");
-		if (lifes < 5) lifes++;
+		lifes++;
 		break;
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");

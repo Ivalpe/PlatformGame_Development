@@ -43,20 +43,14 @@ bool Power::Start(bool inv) {
 
 	fireball1SFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("fireball1SFX").attribute("path").as_string());
 	fireball2SFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("fireball2SFX").attribute("path").as_string());
+	//Add a physics to an item - initialize the physics body
+	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH / 2, (int)position.getY() + texH / 2, texH / 2, bodyType::DYNAMIC);
 
 	//Assign collider type
-	if (type == EntityType::FIREBALLPLAYER) {
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texH / 2, bodyType::DYNAMIC);
+	if (type == EntityType::FIREBALLPLAYER)
 		pbody->ctype = ColliderType::FIREBALLPLAYER;
-	}
-	else if (type == EntityType::FIREBALLENEMY) {
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texH / 2, bodyType::DYNAMIC);
+	else if (type == EntityType::FIREBALLENEMY)
 		pbody->ctype = ColliderType::FIREBALLENEMY;
-	}
-	else if (type == EntityType::BIGFIREBALLPLAYER) {
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texH / 4, bodyType::DYNAMIC);
-		pbody->ctype = ColliderType::FIREBALLPLAYER;
-	}
 	pbody->listener = this;
 
 	// Set the gravity of the body
@@ -85,6 +79,7 @@ bool Power::Update(float dt)
 	if (inverted) position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
 	else position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - texW / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH);
+
 
 
 	Engine::GetInstance().render.get()->DrawTexture(texture, inverted ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());

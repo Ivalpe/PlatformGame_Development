@@ -14,18 +14,10 @@ public:
 	// Called each loop iteration
 	bool Update(float dt);
 
-	void SetTexture(SDL_Texture* normal) {
-		buttonNormal = normal;
-	}
-
 private:
 
 	bool canClick = true;
 	bool drawBasic = false;
-
-	SDL_Texture* buttonNormal;
-	Vector2D posHitbox;
-	Vector2D posTexture;
 };
 
 #pragma once

@@ -9,7 +9,7 @@ GuiControlSlider::GuiControlSlider(int id, SDL_Rect bounds) : GuiControl(GuiCont
 	this->bounds = bounds;
 	posTexture.setY(bounds.y);
 	posHitbox.setY(bounds.y);
-	posButton = -(Engine::GetInstance().render.get()->camera.x / 2) + bounds.x;
+	posButton = 0;
 	drawBasic = false;
 }
 
@@ -27,7 +27,7 @@ bool GuiControlSlider::Update(float dt)
 		posTexture.setX(-(Engine::GetInstance().render.get()->camera.x / 2) + bounds.x);
 		// L16: TODO 3: Update the state of the GUiButton according to the mouse position
 		Vector2D mousePos = Engine::GetInstance().input->GetMousePosition();
-
+		
 		//If the position of the mouse if inside the bounds of the button 
 		if (mousePos.getX() > posHitbox.getX() && mousePos.getX() < (posHitbox.getX() + (bounds.w / 2)) && mousePos.getY() > posHitbox.getY() && mousePos.getY() < (posHitbox.getY() + bounds.h)) {
 
@@ -53,22 +53,25 @@ bool GuiControlSlider::Update(float dt)
 		case GuiControlState::DISABLED:
 			Engine::GetInstance().render->DrawTexture(sliderBackground, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
 			Engine::GetInstance().render->DrawTexture(sliderMovement, SDL_FLIP_NONE, posButton, bounds.y);
+			//Engine::GetInstance().render->DrawRectangle(bounds, 200, 200, 200, 255, true, false);
 			break;
 		case GuiControlState::NORMAL:
 			Engine::GetInstance().render->DrawTexture(sliderBackground, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
 			Engine::GetInstance().render->DrawTexture(sliderMovement, SDL_FLIP_NONE, posButton, bounds.y);
+			//Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 255, 255, true, false);
 			break;
 		case GuiControlState::FOCUSED:
 			Engine::GetInstance().render->DrawTexture(sliderBackground, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
 			Engine::GetInstance().render->DrawTexture(sliderMovement, SDL_FLIP_NONE, posButton, bounds.y);
+			//Engine::GetInstance().render->DrawRectangle(bounds, 0, 0, 20, 255, true, false);
 			break;
 		case GuiControlState::PRESSED:
 			Engine::GetInstance().render->DrawTexture(sliderBackground, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
 			Engine::GetInstance().render->DrawTexture(sliderMovement, SDL_FLIP_NONE, posButton, bounds.y);
+			//Engine::GetInstance().render->DrawRectangle(bounds, 0, 255, 0, 255, true, false);
 			break;
 		}
 	}
-	else posButton = -(Engine::GetInstance().render.get()->camera.x / 2) + bounds.x;
 
 	return false;
 }
