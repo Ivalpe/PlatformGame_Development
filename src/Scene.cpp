@@ -201,6 +201,7 @@ void Scene::HandlePowers() {
 	}
 
 	if (player->GetfirePower() && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
+
 		Power* bigPower = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BIGFIREBALLPLAYER);
 		bigPower->SetParameters(configParameters.child("entities").child("bigfireball"), TypePower::BIGFIREBALL);
 		if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->Start(true);
@@ -208,7 +209,7 @@ void Scene::HandlePowers() {
 
 		Vector2D playerPos = player->GetPosition();
 		if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
-		else bigPower->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
+		else bigPower->SetPosition({ playerPos.getX() + 32, playerPos.getY()});
 
 		fireballList.push_back(bigPower);
 
