@@ -211,7 +211,7 @@ void Scene::HandlePowers() {
 
 		Vector2D playerPos = player->GetPosition();
 		if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
-		else bigPower->SetPosition({ playerPos.getX() + 32, playerPos.getY() });
+		else bigPower->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14});
 
 		fireballList.push_back(bigPower);
 
