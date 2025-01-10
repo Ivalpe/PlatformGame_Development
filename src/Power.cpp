@@ -56,7 +56,7 @@ bool Power::Start(bool inv) {
 	}
 	else if (type == EntityType::BIGFIREBALLPLAYER) {
 		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texH / 2, bodyType::DYNAMIC);
-		pbody->ctype = ColliderType::FIREBALLPLAYER;
+		pbody->ctype = ColliderType::BIGFIREBALLPLAYER;
 	}
 	else {
 		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)(position.getX()), (int)(position.getY()), texH / 2, bodyType::STATIC);

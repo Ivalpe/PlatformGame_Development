@@ -125,6 +125,6 @@ private:
 	//BOSS
 	bool bossActive, fireball = false;
 	int bossCooldown = 120;
-	int bossLifes = 10;
+	int lifes;
 	bool isJumping = false;
 };

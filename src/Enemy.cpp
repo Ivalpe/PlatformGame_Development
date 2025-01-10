@@ -63,6 +63,21 @@ bool Enemy::Start() {
 	pbody->ctype = ColliderType::ENEMY;
 	pbody->listener = this;
 
+	switch (type)
+	{
+	case EnemyType::EV_WIZARD:
+		lifes = 3;
+		break;
+	case EnemyType::BAT:
+		lifes = 4;
+		break;
+	case EnemyType::BOSS:
+		lifes = 10;
+		break;
+	default:
+		break;
+	}
+
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
 
@@ -81,8 +96,6 @@ void Enemy::SetEnemyType(EnemyType et) {
 
 void Enemy::BossPattern() {
 	velocity = b2Vec2(0, -GRAVITY_Y);
-
-	if (bossLifes == 0) currentAnimation = &die;
 
 	if (currentAnimation == &crouch) texW = 48;
 	else if (currentAnimation == &attack) texW = 80;
@@ -144,6 +157,8 @@ void Enemy::EnemyPattern(float dt) {
 	if (!Engine::GetInstance().scene.get()->IsPause()) {
 		if (type == EnemyType::BAT) velocity = b2Vec2(0, 0);
 		else velocity = b2Vec2(0, -GRAVITY_Y);
+
+		if (currentAnimation == &dmg && currentAnimation->HasFinished()) currentAnimation = &idle;
 
 		if (coolDownPathFinding)
 			coolDown--;
@@ -211,6 +226,8 @@ void Enemy::EnemyPattern(float dt) {
 }
 
 bool Enemy::Update(float dt) {
+
+	if (lifes == 0) currentAnimation = &die;
 
 	if (type != EnemyType::BOSS) EnemyPattern(dt);
 	else BossPattern();
@@ -300,22 +317,16 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision DIE");
 		break;
 	case ColliderType::FIREBALLPLAYER:
-		if (type == EnemyType::BOSS) {
-			if (physA->ctype != ColliderType::SENSOR) {
-				bossLifes--;
-				currentAnimation = &dmg;
-				currentAnimation->Reset();
-				LOG("Collision FIREBALL");
-			}
-			else if (currentAnimation == &idle) {
-				currentAnimation = &crouch;
-			}
+	case ColliderType::BIGFIREBALLPLAYER:
+		if (physA->ctype != ColliderType::SENSOR) {
+			if (physB->ctype == ColliderType::FIREBALLPLAYER) lifes--;
+			else lifes -= 4;
+			currentAnimation = &dmg;
+			currentAnimation->Reset();
+			LOG("Collision FIREBALL");
 		}
-		else {
-			if (physA->ctype != ColliderType::SENSOR) {
-				currentAnimation = &die;
-				LOG("Collision FIREBALL");
-			}
+		else if (type == EnemyType::BOSS && currentAnimation == &idle) {
+			currentAnimation = &crouch;
 		}
 
 		break;
