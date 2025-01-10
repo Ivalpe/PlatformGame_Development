@@ -293,7 +293,7 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::FIREBALLPLAYER:
 		if (physA->ctype != ColliderType::SENSOR) {
-			//currentAnimation = &die;
+			currentAnimation = &die;
 			LOG("Collision FIREBALL");
 		}
 		else {

@@ -54,7 +54,12 @@ bool Power::Start(bool inv) {
 		pbody->ctype = ColliderType::FIREBALLENEMY;
 	}
 	else if (type == EntityType::BIGFIREBALLPLAYER) {
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texH / 4, bodyType::DYNAMIC);
+		// Define offset for the big fireball hitbox
+		int offsetX = 100; // Adjust as needed
+		int offsetY = 500;  // Adjust as needed
+
+		// Create circle with new position
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)(position.getX() + offsetX), (int)(position.getY() + offsetY), texH / 4, bodyType::DYNAMIC);
 		pbody->ctype = ColliderType::FIREBALLPLAYER;
 	}
 	pbody->listener = this;
