@@ -307,7 +307,6 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		break;
 	case ColliderType::ENEMY:
 	case ColliderType::FIREBALLENEMY:
-	case ColliderType::SENSORATTACK:
 		if (!debugMode && currentAnimation != &dmg && currentAnimation != &die) {
 
 			if (lifes <= 0) {

@@ -80,6 +80,7 @@ Entity* EntityManager::CreateEntity(EntityType type)
 	case EntityType::FIREBALLPLAYER:
 	case EntityType::FIREBALLENEMY:
 	case EntityType::BIGFIREBALLPLAYER:
+	case EntityType::MELEEATTACK:
 		entity = new Power(type);
 		break;
 	case EntityType::BONFIRE:

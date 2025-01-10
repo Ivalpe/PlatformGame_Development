@@ -102,7 +102,7 @@ private:
 	EnemyType type;
 	pugi::xml_node parameters;
 	Animation* currentAnimation = nullptr;
-	Animation idle, walk, fly, die, crouch, attack;
+	Animation idle, walk, fly, die, crouch, attack, dmg;
 	DirectionEnemy de;
 	SDL_RendererFlip flipType;
 	StateEnemy stEnemy;

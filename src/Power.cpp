@@ -25,7 +25,8 @@ bool Power::Start(bool inv) {
 	inverted = inv;
 	col = false;
 	//initilize textures
-	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
+	if (type != EntityType::MELEEATTACK)
+		texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
 
@@ -54,13 +55,12 @@ bool Power::Start(bool inv) {
 		pbody->ctype = ColliderType::FIREBALLENEMY;
 	}
 	else if (type == EntityType::BIGFIREBALLPLAYER) {
-		// Define offset for the big fireball hitbox
-		int offsetX = 100; // Adjust as needed
-		int offsetY = 500;  // Adjust as needed
-
-		// Create circle with new position
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)(position.getX() + offsetX), (int)(position.getY() + offsetY), texH / 4, bodyType::DYNAMIC);
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)(position.getX()), (int)(position.getY()), texH / 2, bodyType::DYNAMIC);
 		pbody->ctype = ColliderType::FIREBALLPLAYER;
+	}
+	else {
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)(position.getX()), (int)(position.getY()), texH / 2, bodyType::STATIC);
+		pbody->ctype = ColliderType::ENEMY;
 	}
 	pbody->listener = this;
 
@@ -73,30 +73,40 @@ bool Power::Start(bool inv) {
 bool Power::Update(float dt)
 {
 
-	// Add a physics to an item - update the position of the object from the physics.  
-	if (statePower == StatePower::DIE && currentAnimation->HasFinished()) col = true;
-	else if (statePower == StatePower::DIE) pbody->body->SetLinearVelocity({ 0, 0 });
-	else {
-		float speed = inverted ? -5.0f : 5.0f;
-		pbody->body->SetLinearVelocity({ speed, 0 });
+	if (type != EntityType::MELEEATTACK) {
+		if (statePower == StatePower::DIE && currentAnimation->HasFinished()) col = true;
+		else if (statePower == StatePower::DIE) pbody->body->SetLinearVelocity({ 0, 0 });
+		else {
+			float speed = inverted ? -5.0f : 5.0f;
+			pbody->body->SetLinearVelocity({ speed, 0 });
+		}
+
+
+		if (statePower == StatePower::IDLE) currentAnimation = &idle;
+
+
+		b2Transform pbodyPos = pbody->body->GetTransform();
+
+
+		if (inverted) position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
+		else position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - texW / 2);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH);
+
+
+		Engine::GetInstance().render.get()->DrawTexture(texture, inverted ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		currentAnimation->Update();
+
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
+			Engine::GetInstance().audio.get()->PlayFx(fireball1SFX);
+		}
+
 	}
+	else {
+		tempAttack--;
 
-	if (statePower == StatePower::IDLE) currentAnimation = &idle;
-
-
-	b2Transform pbodyPos = pbody->body->GetTransform();
-
-
-	if (inverted) position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
-	else position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - texW / 2);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH);
-
-
-	Engine::GetInstance().render.get()->DrawTexture(texture, inverted ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	currentAnimation->Update();
-
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
-		Engine::GetInstance().audio.get()->PlayFx(fireball1SFX);
+		if (tempAttack <= 0) {
+			col = true;
+		}
 	}
 	return true;
 }

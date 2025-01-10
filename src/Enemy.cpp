@@ -42,6 +42,7 @@ bool Enemy::Start() {
 	die.LoadAnimations(parameters.child("animations").child("die"));
 	crouch.LoadAnimations(parameters.child("animations").child("crouch"));
 	attack.LoadAnimations(parameters.child("animations").child("attack"));
+	dmg.LoadAnimations(parameters.child("animations").child("dmg"));
 	currentAnimation = &idle;
 
 	//Load Fx
@@ -54,7 +55,7 @@ bool Enemy::Start() {
 	//Add a physics to an item - initialize the physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY() + texW, texW / 2, bodyType::DYNAMIC);
 
-	sensor = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX(), (int)position.getY() + texH, texW, bodyType::KINEMATIC);
+	sensor = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX(), (int)position.getY() + texH, texW * 4, bodyType::KINEMATIC);
 	sensor->ctype = ColliderType::SENSOR;
 	sensor->listener = this;
 
@@ -81,33 +82,40 @@ void Enemy::SetEnemyType(EnemyType et) {
 void Enemy::BossPattern() {
 	velocity = b2Vec2(0, -GRAVITY_Y);
 
-	if (currentAnimation == &crouch) {
-		sensor->ctype = ColliderType::SENSOR;
-		texW = 48;
-	}
-	else if (currentAnimation == &attack) {
-		sensor->ctype = ColliderType::SENSORATTACK;
-		texW = 80;
-	}
-	else {
-		sensor->ctype = ColliderType::SENSOR;
-		texW = parameters.attribute("w").as_int();
-	}
+	if (bossLifes == 0) currentAnimation = &die;
 
-	if (currentAnimation == &attack && currentAnimation->HasFinished()) currentAnimation = &idle;
+	if (currentAnimation == &crouch) texW = 48;
+	else if (currentAnimation == &attack) texW = 80;
+	else if (currentAnimation == &die) texW = 64;
+	else texW = parameters.attribute("w").as_int();
+
+	if ((currentAnimation == &attack || currentAnimation == &dmg) && currentAnimation->HasFinished()) currentAnimation = &idle;
 
 	if (bossActive)
 		bossCooldown--;
 
 	if (bossCooldown <= 0) {
-		//pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0.f, -0.37f), true);
-		isJumping = true;
+		int random = rand() % 3 + 1;
 
-		currentAnimation = &attack;
-		currentAnimation->Reset();
-		//fireball = true;
-		bossCooldown = 120;
+		switch (random) {
+		case 2:
+			currentAnimation = &attack;
+			currentAnimation->Reset();
+			bossCooldown = 120;
+			break;
+		case 3:
+			pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0.f, 10.f), true);
+			bossCooldown = 240;
+			break;
+		default:
+			break;
+		}
 	}
+
+	if (currentAnimation == &attack &&
+		currentAnimation->GetCurrentFrame().x == 160.0f)
+		fireball = true;
+
 	if (isJumping)velocity = pbody->body->GetLinearVelocity();
 	pbody->body->SetLinearVelocity(velocity);
 
@@ -292,13 +300,24 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 		LOG("Collision DIE");
 		break;
 	case ColliderType::FIREBALLPLAYER:
-		if (physA->ctype != ColliderType::SENSOR) {
-			currentAnimation = &die;
-			LOG("Collision FIREBALL");
+		if (type == EnemyType::BOSS) {
+			if (physA->ctype != ColliderType::SENSOR) {
+				bossLifes--;
+				currentAnimation = &dmg;
+				currentAnimation->Reset();
+				LOG("Collision FIREBALL");
+			}
+			else if (currentAnimation == &idle) {
+				currentAnimation = &crouch;
+			}
 		}
 		else {
-			currentAnimation = &crouch;
+			if (physA->ctype != ColliderType::SENSOR) {
+				currentAnimation = &die;
+				LOG("Collision FIREBALL");
+			}
 		}
+
 		break;
 	case ColliderType::FIREBALLENEMY:
 		LOG("Collision FIREBALLENEMY");
@@ -325,7 +344,8 @@ void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
 		}
 		break;
 	case ColliderType::FIREBALLPLAYER:
-		currentAnimation = &idle;
+		if (currentAnimation != &dmg)
+			currentAnimation = &idle;
 		break;
 	default:
 		break;

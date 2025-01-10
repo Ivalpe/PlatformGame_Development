@@ -35,7 +35,6 @@ enum class ColliderType {
 	FIRECAMP,
 	ENEMY,
 	SENSOR,
-	SENSORATTACK,
 	DIE,
 	NEW,
 	LOAD,

@@ -17,7 +17,7 @@ enum class DirectionPower {
 };
 
 enum class TypePower {
-	FIREBALL, BIGFIREBALL
+	FIREBALL, BIGFIREBALL, MELEEATTACKBOSS
 };
 
 class Power : public Entity
@@ -76,4 +76,6 @@ private:
 
 	int fireball1SFX;
 	int fireball2SFX;
+
+	int tempAttack = 1;
 };

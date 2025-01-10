@@ -225,13 +225,13 @@ void Scene::HandlePowers() {
 	//Power Boss Fireball
 	for (auto& e : enemyList) {
 		if (e->GetType() == EnemyType::BOSS && e->GetBossFireball()) {
-			Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALLENEMY);
-			power->SetParameters(configParameters.child("entities").child("fireball"), TypePower::FIREBALL);
+			Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::MELEEATTACK);
+			power->SetParameters(configParameters.child("entities").child("meleeattack"), TypePower::MELEEATTACKBOSS);
 			power->Start(e->GetDirection() == DirectionEnemy::LEFT);
 
 			Vector2D enemyPos = e->GetPosition();
-			if (e->GetDirection() == DirectionEnemy::LEFT) power->SetPosition({ enemyPos.getX() - 20, enemyPos.getY() });
-			else power->SetPosition({ enemyPos.getX() + 32, enemyPos.getY() + 14 });
+			if (e->GetDirection() == DirectionEnemy::LEFT) power->SetPosition({ enemyPos.getX() - 20, enemyPos.getY() - 10});
+			else power->SetPosition({ enemyPos.getX() + 20, enemyPos.getY() -10 });
 
 			fireballList.push_back(power);
 			e->SetBossFireball(false);
