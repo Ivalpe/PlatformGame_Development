@@ -77,6 +77,9 @@
 							<frame x="0" y="96" w="16" h="32" />
 							<frame x="16" y="96" w="16" h="32" />
 						</idle>
+						<dmg loop="false" speed="0.06">
+							<frame x="64" y="64" w="16" h="32" />
+						</dmg>
 						<walk loop="true" speed="0.12">
 							<frame x="0" y="64" w="16" h="32" />
 							<frame x="16" y="64" w="16" h="32" />
@@ -321,7 +324,7 @@
 			</music>
 		</audio>
 		<bonfires>
-			<bonfire level="1" activated="false" x="144" y="184" name="Hoguera 1" />
+			<bonfire level="1" activated="true" x="144" y="184" name="Hoguera 1" id="1" />
 			<bonfire level="1" activated="false" x="1504" y="272" name="Hoguera 2" />
 			<bonfire level="1" activated="false" x="3048" y="200" name="Hoguera 3" />
 			<bonfire level="3" activated="false" x="80" y="80" name="Hoguera 4" />

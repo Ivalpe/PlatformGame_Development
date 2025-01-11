@@ -49,6 +49,8 @@ public:
 
 	void HandlePowers();
 
+	void HandleGui();
+
 	void DebugMode();
 
 	void ActiveBonfires();
@@ -135,7 +137,6 @@ private:
 	int loadSFX;          // Sound effect for loading progress
 
 	// --- USER INTERFACE (UI) ---
-	UI ui;                           // UI instance
 	SDL_Texture* helpMenu;			 // Menu texture
 	SDL_Texture* OptionsBook;	     // Menu texture
 	SDL_Texture* TitleScreen;        //Title screen texture
@@ -152,6 +153,7 @@ private:
 	SDL_Texture* menuButtonPressed;
 	
 	bool showSettings = false;       // Flag to show settings menu
+	bool showTp = false;
 	          
 
 	// --- FADE-IN EFFECT ---
