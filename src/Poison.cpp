@@ -10,6 +10,7 @@
 #include "Physics.h"
 #include "Map.h"
 #include <random>
+#include "tracy/Tracy.hpp"
 
 Poison::Poison() : Entity(EntityType::POISON) {
 }
@@ -64,8 +65,7 @@ bool Poison::Start() {
 
 bool Poison::Update(float dt)
 {
-	
-
+	ZoneScoped;
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW);

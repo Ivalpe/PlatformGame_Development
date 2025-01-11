@@ -324,13 +324,13 @@
 			</music>
 		</audio>
 		<bonfires>
-			<bonfire level="1" activated="false" x="144" y="184" name="Hoguera 1" />
+			<bonfire level="1" activated="true" x="144" y="184" name="Hoguera 1" id="1" />
 			<bonfire level="1" activated="false" x="1504" y="272" name="Hoguera 2" />
 			<bonfire level="1" activated="false" x="3048" y="200" name="Hoguera 3" />
 		</bonfires>
 		<enemies>
-			<enemy id="1" level="1" dead="false" x="576" y="104" />
-			<enemy id="2" level="1" dead="false" x="680" y="224" />
+			<enemy id="1" level="1" dead="true" x="576" y="104" />
+			<enemy id="2" level="1" dead="true" x="680" y="224" />
 			<enemy id="3" level="1" dead="false" x="888" y="136" />
 			<enemy id="4" level="1" dead="false" x="1120" y="320" />
 			<enemy id="5" level="1" dead="false" x="1352" y="168" />
