@@ -122,8 +122,10 @@ void Item::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::PLAYER:
 		if (stItem != StateItem::DIE && physB->ctype != ColliderType::SENSOR) {
 			stItem = StateItem::DIE;
-			currentAnimation = &collect;
-			currentAnimation->Reset();
+			currentAnimation = &idle;
+			collected = true;
+
+			//currentAnimation->Reset();
 			pbody->body->SetLinearVelocity({ 0, 0 }); 
 		}
 		break;
