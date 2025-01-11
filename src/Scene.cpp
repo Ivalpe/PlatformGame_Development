@@ -17,6 +17,7 @@
 #include "GuiManager.h"
 #include "GuiControlSlider.h"
 #include "tracy/Tracy.hpp"
+#include "Npc.h"
 
 // -----------------------------
 // Constructor and Destructor
@@ -200,7 +201,9 @@ void Scene::HandleCamera(Engine& engine) {
 		}
 	}
 	else {
-		engine.render.get()->camera.x = ((player->GetX() * -1) + 200) * 2;
+		if (level != 4) engine.render.get()->camera.x = ((player->GetX() * -1) + 200) * 2;
+		else engine.render.get()->camera.x = 0;
+
 		int cameraX = engine.render.get()->camera.x;
 		int cameraMaxX = engine.map.get()->GetWidth() * 8 * -1 - (240 * 8);
 		if (cameraX >= 0) engine.render.get()->camera.x = 0;
@@ -484,6 +487,21 @@ bool Scene::PostUpdate()
 			Engine::GetInstance().audio->PlayMusic(musicPath.c_str(), 0.7f);
 		}
 	}
+	else if (player->GetLevel() == Level::WIN) {
+		level++;
+		pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
+		Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+		CreateEvents();
+
+		Vector2D posPlayer;
+		posPlayer.setX(mapNode.attribute("ix").as_int());
+		posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
+
+		player->SetPosition(posPlayer);
+		Engine::GetInstance().uiManager.get()->Disable(GuiClass::MAIN_MENU);
+
+		player->SetLevel(Level::DISABLED);
+	}
 
 	HandleGui();
 
@@ -738,7 +756,7 @@ void Scene::SaveState() {
 
 void Scene::CreateEvents() {
 	std::list<Vector2D> listBonfires;
-	std::map<Vector2D, int> listEnemy, listItems;
+	std::map<Vector2D, int> listEnemy, listItems, listNpcs;
 	pugi::xml_document saveFile;
 	pugi::xml_parse_result result = saveFile.load_file("config.xml");
 
@@ -889,6 +907,45 @@ void Scene::CreateEvents() {
 
 	levelsLoadedItems.push_back(level);
 
+	//NPCS
+	if (level == 4) {
+		contains = false;
+		for (int i = 0; i < levelsLoadedNpcs.size() && !contains; i++) {
+			if (levelsLoadedNpcs[i] == level) contains = true;
+		}
+
+		listNpcs = Engine::GetInstance().map->GetNpcList();
+		for (auto npc : listNpcs) {
+			int lowestId = GetLowestId(3);
+			Npc* npcEnt = (Npc*)Engine::GetInstance().entityManager->CreateEntity(EntityType::NPC);
+			if (npc.second == 1) {
+				npcEnt->SetParameters(configParameters.child("entities").child("npcs").child("king"), lowestId);
+			}
+			else if (npc.second == 2) {
+				npcEnt->SetParameters(configParameters.child("entities").child("npcs").child("queen"), lowestId);
+			}
+			else {
+				npcEnt->SetParameters(configParameters.child("entities").child("npcs").child("king"), lowestId);
+			}
+			npcEnt->Start();
+			npcEnt->SetPosition({ npc.first.getX(), npc.first.getY() });
+			npcList.push_back(npcEnt);
+
+			if (!contains) {
+				pugi::xml_node newNpc = saveFile.child("config").child("scene").child("npcs").append_child("npc");
+				newNpc.append_attribute("id").set_value(lowestId);
+				newNpc.append_attribute("level").set_value(level);
+				newNpc.append_attribute("x").set_value(npc.first.getX());
+				newNpc.append_attribute("y").set_value(npc.first.getY());
+
+				saveFile.save_file("config.xml");
+			}
+
+		}
+
+		levelsLoadedEnemies.push_back(level);
+	}
+
 
 	//Poison
 	RespawnPoison();
@@ -960,13 +1017,31 @@ int Scene::GetLowestId(int type) {
 			lowest++;
 		}
 	}
-	else {
+	else if (type == 2) {
 		pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("items");
 
 		while (true) {
 			bool idExists = false;
 
 			for (pugi::xml_node enemyNode = enemiesNode.child("item"); enemyNode; enemyNode = enemyNode.next_sibling("item")) {
+				if (enemyNode.attribute("id").as_int() == lowest) {
+					idExists = true;
+					break;
+				}
+			}
+
+			if (!idExists) break;
+
+			lowest++;
+		}
+	}
+	else if (type == 3) {
+		pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("npcs");
+
+		while (true) {
+			bool idExists = false;
+
+			for (pugi::xml_node enemyNode = enemiesNode.child("npc"); enemyNode; enemyNode = enemyNode.next_sibling("npc")) {
 				if (enemyNode.attribute("id").as_int() == lowest) {
 					idExists = true;
 					break;

@@ -117,6 +117,7 @@ bool Map::Load(std::string path, std::string fileName)
 	posPoison.clear();
 	posEnemy.clear();
 	posItems.clear();
+	posNpcs.clear();
 	mapData.layers.clear();
 
 	bool ret = false;
@@ -262,6 +263,14 @@ bool Map::Load(std::string path, std::string fileName)
 						else if (gid == 9) { // Boss
 							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
 							posEnemy.insert({ mapCoord, 3 });
+						}
+						else if (gid == 10) { // King
+							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
+							posNpcs.insert({ mapCoord, 1 });
+						}
+						else if (gid == 11) { // Queen
+							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
+							posNpcs.insert({ mapCoord, 2 });
 						}
 					}
 				}

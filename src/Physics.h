@@ -39,6 +39,7 @@ enum class ColliderType {
 	DIE,
 	NEW,
 	LOAD,
+	NPC,
 	NEXTLVL,
 	WIN,
 	UNKNOWN

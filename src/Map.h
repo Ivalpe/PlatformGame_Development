@@ -132,6 +132,10 @@ public:
 		return posItems;
 	}
 
+	std::map<Vector2D, int> GetNpcList() {
+		return posNpcs;
+	}
+
 	// L07: TODO 8: Create a method that translates x,y coordinates from map positions to world positions
 	Vector2D MapToWorld(int x, int y) const;
 
@@ -175,4 +179,5 @@ private:
 	std::list<Vector2D> posPoison;
 	std::map<Vector2D, int> posEnemy;
 	std::map<Vector2D, int> posItems;
+	std::map<Vector2D, int> posNpcs;
 };

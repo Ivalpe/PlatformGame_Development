@@ -9,6 +9,7 @@
 #include "Poison.h"
 #include "GuiControlButton.h"
 #include "UI.h"
+#include "Npc.h"
 
 struct SDL_Texture;
 
@@ -120,9 +121,11 @@ private:
 	std::vector<Power*> fireballList;     // List of fireballs
 	std::vector<Bonfire*> bonfireList;    // List of bonfires
 	std::vector<Poison*> poisonList;      // List of poison traps
+	std::vector<Npc*> npcList;			  // List of npcs
 	std::vector<int> levelsLoadedBonfire; // Levels with bonfires loaded
 	std::vector<int> levelsLoadedEnemies; // Levels with enemies loaded
 	std::vector<int> levelsLoadedItems;   // Levels with items loaded
+	std::vector<int> levelsLoadedNpcs;    // Levels with npcs loaded
 	int idEnemy = 1;                      // Identifier for enemies
 	bool bossActive = false;              // Flag to indicate if the boss is active
 
@@ -166,5 +169,8 @@ private:
 	bool pause = false;	 // Flag for is pause the game or not
 	int colRespawn;      // Column for respawn position
 	int coordYMenuTp;    // Y-coordinate for menu teleportation
+
+	// --- FINAL SCENE ---
+
 
 };

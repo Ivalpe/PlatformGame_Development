@@ -14,6 +14,7 @@ enum class EntityType
 	MELEEATTACK,
 	POISON,
 	BONFIRE,
+	NPC,
 	UNKNOWN
 };
 
