@@ -94,7 +94,7 @@ void Enemy::SetEnemyType(EnemyType et) {
 	type = et;
 }
 
-void Enemy::BossPattern() {
+void Enemy::BossPattern(float dt) {
 	velocity = b2Vec2(0, -GRAVITY_Y);
 
 	if (currentAnimation == &crouch) texW = 48;
@@ -104,11 +104,12 @@ void Enemy::BossPattern() {
 
 	if ((currentAnimation == &attack || currentAnimation == &dmg) && currentAnimation->HasFinished()) currentAnimation = &idle;
 
-	if (bossActive)
+	if (bossActive && bossCooldown >= 0)
 		bossCooldown--;
 
 	if (bossCooldown <= 0) {
 		int random = rand() % 3 + 1;
+		random = 3;
 
 		switch (random) {
 		case 2:
@@ -117,8 +118,13 @@ void Enemy::BossPattern() {
 			bossCooldown = 120;
 			break;
 		case 3:
-			pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0.f, 10.f), true);
-			bossCooldown = 240;
+			if (followPlayer) {
+				currentAnimation = &walk;
+				MovementEnemy(dt);
+			}
+			else {
+				currentAnimation = &idle;
+			}
 			break;
 		default:
 			break;
@@ -230,7 +236,7 @@ bool Enemy::Update(float dt) {
 	if (lifes == 0) currentAnimation = &die;
 
 	if (type != EnemyType::BOSS) EnemyPattern(dt);
-	else BossPattern();
+	else BossPattern(dt);
 
 	return true;
 }

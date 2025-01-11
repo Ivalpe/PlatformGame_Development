@@ -77,6 +77,9 @@
 							<frame x="0" y="96" w="16" h="32" />
 							<frame x="16" y="96" w="16" h="32" />
 						</idle>
+						<dmg loop="false" speed="0.06">
+							<frame x="64" y="64" w="16" h="32" />
+						</dmg>
 						<walk loop="true" speed="0.12">
 							<frame x="0" y="64" w="16" h="32" />
 							<frame x="16" y="64" w="16" h="32" />
@@ -131,10 +134,14 @@
 							<frame x="144" y="48" w="48" h="48" />
 						</crouch>
 						<walk loop="true" speed="0.12">
-							<frame x="0" y="64" w="16" h="32" />
-							<frame x="16" y="64" w="16" h="32" />
-							<frame x="32" y="64" w="16" h="32" />
-							<frame x="48" y="64" w="16" h="32" />
+							<frame x="0" y="240" w="48" h="48" />
+							<frame x="48" y="240" w="48" h="48" />
+							<frame x="96" y="240" w="48" h="48" />
+							<frame x="144" y="240" w="48" h="48" />
+							<frame x="192" y="240" w="48" h="48" />
+							<frame x="240" y="240" w="48" h="48" />
+							<frame x="288" y="240" w="48" h="48" />
+							<frame x="336" y="240" w="48" h="48" />
 						</walk>
 						<die loop="false" speed="0.06">
 							<frame x="0" y="192" w="64" h="48" />
