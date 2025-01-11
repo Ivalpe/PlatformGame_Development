@@ -389,7 +389,7 @@ bool Scene::Update(float dt)
 			colRespawn--;
 		}
 
-		if (colRespawn <= 0) {
+		if (false && colRespawn <= 0) {
 			player->Respawn();
 			LoadState(LOAD::RESPAWN);
 			colRespawn = 120;

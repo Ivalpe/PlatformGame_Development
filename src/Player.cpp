@@ -204,7 +204,6 @@ bool Player::Update(float dt)
 		else {
 			pbody->body->SetType(b2_staticBody);
 			currentAnimation = &die;
-
 		}
 
 
@@ -229,42 +228,6 @@ bool Player::CleanUp()
 
 // L08 TODO 6: Define OnCollision function for the player. 
 void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
-	switch (physA->ctype)
-	{
-	case ColliderType::GROUND:
-		LOG("Collision PLATFORM");
-		if (isJumping && !hasLanded) {
-
-			Engine::GetInstance().audio.get()->PlayFx(landSFX);
-			hasLanded = true;
-		}
-		isJumping = false;
-		break;
-	case ColliderType::COIN:
-		LOG("Collision COIN");
-		coins++;
-		break;
-
-	case ColliderType::FIREUP:
-		LOG("Collision FIREUP");
-		firePower = true;
-		break;
-
-	case ColliderType::HEALTH:
-		LOG("Collision HEALTH");
-		lifes++;
-		break;
-
-	case ColliderType::UNKNOWN:
-		LOG("Collision UNKNOWN  with");
-		break;
-	case ColliderType::PLAYER:
-		LOG("Collision PLAYER with");
-		break;
-	default:
-		break;
-	}
-
 	switch (physB->ctype)
 	{
 	case ColliderType::GROUND:
@@ -298,7 +261,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			LOG("Collision DIE");
 			stPlayer = StatePlayer::DIE;
 			isDying = true;
-			lifes = 5;
+			lifes = 0;
 		}
 		break;
 	case ColliderType::NEXTLVL:
@@ -312,7 +275,6 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::ENEMY:
 	case ColliderType::FIREBALLENEMY:
 		if (!debugMode && currentAnimation != &dmg && currentAnimation != &die) {
-
 			if (lifes <= 0) {
 				lifes--;
 				stPlayer = StatePlayer::DIE;
