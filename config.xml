@@ -83,6 +83,9 @@
 							<frame x="32" y="64" w="16" h="32" />
 							<frame x="48" y="64" w="16" h="32" />
 						</walk>
+						<dmg loop="false" speed="0.06">
+							<frame x="64" y="64" w="16" h="32" />
+						</dmg>
 						<die loop="false" speed="0.06">
 							<frame x="64" y="64" w="16" h="32" />
 							<frame x="80" y="64" w="16" h="32" />
@@ -315,7 +318,6 @@
 			<bonfire level="1" activated="true" x="144" y="184" name="Hoguera 1" id="1" />
 			<bonfire level="1" activated="false" x="1504" y="272" name="Hoguera 2" />
 			<bonfire level="1" activated="false" x="3048" y="200" name="Hoguera 3" />
-			<bonfire level="3" activated="false" x="80" y="80" name="Hoguera 4" />
 		</bonfires>
 		<enemies>
 			<enemy id="1" level="1" dead="false" x="576" y="104" />
@@ -327,7 +329,6 @@
 			<enemy id="7" level="1" dead="false" x="2128" y="304" />
 			<enemy id="8" level="1" dead="false" x="2416" y="304" />
 			<enemy id="9" level="1" dead="false" x="2712" y="240" />
-			<enemy id="10" level="3" dead="false" x="1016" y="288" />
 		</enemies>
 		<items>
 			<item id="1" level="1" collected="false" x="304" y="272" />

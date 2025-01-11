@@ -1,8 +1,14 @@
 #include "GuiControl.h"
 #include "GuiControlButton.h"
 #include "UI.h"
+#include "Engine.h"
 
+bool UI::Update(float dt) {
+	if (IsActive(GuiClass::MAIN_MENU)) Engine::GetInstance().render.get()->DrawTexture(TitleScreen, SDL_FLIP_NONE, -Engine::GetInstance().render.get()->camera.x / 2 + 110, -Engine::GetInstance().render.get()->camera.y / 2);
+	if (IsActive(GuiClass::PAUSE)) Engine::GetInstance().render.get()->DrawTexture(OptionsBook, SDL_FLIP_NONE, -Engine::GetInstance().render.get()->camera.x / 2 + 185, -Engine::GetInstance().render.get()->camera.y / 2 + 20);
 
+	return true;
+}
 
 void UI::Add(GuiClass gui, GuiControl* control) {
 	switch (gui)

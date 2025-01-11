@@ -90,8 +90,6 @@ void Scene::LoadAssets() {
 	menuButtonFocused = Engine::GetInstance().textures.get()->Load("Assets/Menus/buttonfocus.png");
 	menuButtonPressed = Engine::GetInstance().textures.get()->Load("Assets/Menus/buttonPressed.png");
 	helpMenu = Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png");
-	OptionsBook = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsBook.png");
-	TitleScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/TitleScreen.png");
 	powerOff = Engine::GetInstance().textures.get()->Load("Assets/Textures/powerOff.png");
 	powerOn = Engine::GetInstance().textures.get()->Load("Assets/Textures/powerOn.png");
 	pouch = Engine::GetInstance().textures.get()->Load("Assets/Textures/pouch.png");
@@ -100,6 +98,10 @@ void Scene::LoadAssets() {
 	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
 	loadSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
 	saveSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("saveSFX").attribute("path").as_string());
+	
+	OptionsBook = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsBook.png");
+	TitleScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/TitleScreen.png");
+	Engine::GetInstance().uiManager.get()->LoadTextures(TitleScreen, OptionsBook);
 }
 
 void Scene::SetupUI() {
@@ -108,31 +110,31 @@ void Scene::SetupUI() {
 	int coordInitial = 360, interspace = 70;
 	GuiControlButton* button;
 	for (auto n : names) {
-		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::MAIN_MENU), n, { 480, coordInitial, 200,60 }, this, GuiClass::MAIN_MENU);
+		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager->GetSize(GuiClass::MAIN_MENU), n, { 480, coordInitial, 200,60 }, this, GuiClass::MAIN_MENU);
 		button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed);
-		ui.Add(GuiClass::MAIN_MENU, button);
+		Engine::GetInstance().uiManager->Add(GuiClass::MAIN_MENU, button);
 		coordInitial += interspace;
 	}
-	ui.Active(GuiClass::MAIN_MENU);
+	Engine::GetInstance().uiManager->Active(GuiClass::MAIN_MENU);
 
 	//Settings
-	GuiControlSlider* slider = (GuiControlSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDERBAR, ui.GetSize(GuiClass::SETTINGS), "Music", { 520 / 2, 200, 104,20 }, this, GuiClass::SETTINGS);
+	GuiControlSlider* slider = (GuiControlSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDERBAR, Engine::GetInstance().uiManager->GetSize(GuiClass::SETTINGS), "Music", { 520 / 2, 200, 104,20 }, this, GuiClass::SETTINGS);
 	slider->SetTexture(sliderBackground, sliderMovement);
-	ui.Add(GuiClass::SETTINGS, slider);
-	ui.Disable(GuiClass::SETTINGS);
+	Engine::GetInstance().uiManager->Add(GuiClass::SETTINGS, slider);
+	Engine::GetInstance().uiManager->Disable(GuiClass::SETTINGS);
 	showSettings = false;
 
 	//Pause menu
 	names = { "      Resume", "     Settings", "      Back To Title", "     Exit" };
 	coordInitial = 240, interspace = 70;
 	for (auto n : names) {
-		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::PAUSE), n, { 480, coordInitial, 180,60 }, this, GuiClass::PAUSE);
+		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager->GetSize(GuiClass::PAUSE), n, { 480, coordInitial, 180,60 }, this, GuiClass::PAUSE);
 		button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed);
-		ui.Add(GuiClass::PAUSE, button);
+		Engine::GetInstance().uiManager->Add(GuiClass::PAUSE, button);
 		coordInitial += interspace;
 	}
-	ui.Disable(GuiClass::PAUSE);
-	ui.Disable(GuiClass::TPBONFIRE);
+	Engine::GetInstance().uiManager->Disable(GuiClass::PAUSE);
+	Engine::GetInstance().uiManager->Disable(GuiClass::TPBONFIRE);
 }
 
 // Called each loop iteration
@@ -188,7 +190,7 @@ void Scene::HandleCamera(Engine& engine) {
 
 void Scene::HandlePowers() {
 	//Power Player Fireball
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
+	if (player->GetState() != StatePlayer::DIE && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
 
 		Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALLPLAYER);
 		power->SetParameters(configParameters.child("entities").child("fireball"), TypePower::FIREBALL);
@@ -211,7 +213,7 @@ void Scene::HandlePowers() {
 
 		Vector2D playerPos = player->GetPosition();
 		if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
-		else bigPower->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14});
+		else bigPower->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
 
 		fireballList.push_back(bigPower);
 
@@ -230,8 +232,8 @@ void Scene::HandlePowers() {
 			power->Start(e->GetDirection() == DirectionEnemy::LEFT);
 
 			Vector2D enemyPos = e->GetPosition();
-			if (e->GetDirection() == DirectionEnemy::LEFT) power->SetPosition({ enemyPos.getX() - 20, enemyPos.getY() - 10});
-			else power->SetPosition({ enemyPos.getX() + 20, enemyPos.getY() -10 });
+			if (e->GetDirection() == DirectionEnemy::LEFT) power->SetPosition({ enemyPos.getX() - 20, enemyPos.getY() - 10 });
+			else power->SetPosition({ enemyPos.getX() + 20, enemyPos.getY() - 10 });
 
 			fireballList.push_back(power);
 			e->SetBossFireball(false);
@@ -241,19 +243,10 @@ void Scene::HandlePowers() {
 	}
 }
 
-// Called each loop iteration
-bool Scene::Update(float dt)
-{
+void Scene::HandleGui() {
 	auto& engine = Engine::GetInstance();
-	HandleCamera(engine);
-
-	if (ui.IsActive(GuiClass::MAIN_MENU)) engine.render.get()->DrawTexture(TitleScreen, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2 + 110, -engine.render.get()->camera.y / 2);
-	if (ui.IsActive(GuiClass::PAUSE)) engine.render.get()->DrawTexture(OptionsBook, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2 + 185, -engine.render.get()->camera.y / 2 + 20);
 
 	if (level != 0) {
-		//Debug Mode
-		DebugMode();
-
 		//Open Help
 		if (help) engine.render.get()->DrawTexture(helpMenu, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2, 100);
 
@@ -271,12 +264,8 @@ bool Scene::Update(float dt)
 			}
 
 			int fireIconX = coordX + 20;
-			if (player->GetfirePower()) {
-				engine.render.get()->DrawTexture(powerOn, SDL_FLIP_NONE, fireIconX, 10);
-			}
-			else {
-				engine.render.get()->DrawTexture(powerOff, SDL_FLIP_NONE, fireIconX, 10);
-			}
+			if (player->GetfirePower()) engine.render.get()->DrawTexture(powerOn, SDL_FLIP_NONE, fireIconX, 10);
+			else engine.render.get()->DrawTexture(powerOff, SDL_FLIP_NONE, fireIconX, 10);
 
 			if (player->GetCoins() > 0) {
 				Engine::GetInstance().render->DrawText(coinText.c_str(), 60, 60, 80, 44);
@@ -285,11 +274,47 @@ bool Scene::Update(float dt)
 			else {
 				Engine::GetInstance().render->DrawText(coinText.c_str(), 60, 60, 80, 44);
 				engine.render.get()->DrawTexture(pouch, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
-
 			}
 
 		}
 
+		if (showTp && !pause) Engine::GetInstance().uiManager->Active(GuiClass::TPBONFIRE);
+		else Engine::GetInstance().uiManager->Disable(GuiClass::TPBONFIRE);
+
+		//Enable Settings UI
+		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
+			if (Engine::GetInstance().uiManager->IsActive(GuiClass::PAUSE) || Engine::GetInstance().uiManager->IsActive(GuiClass::SETTINGS)) {
+				pause = false;
+				Engine::GetInstance().uiManager->Disable(GuiClass::PAUSE);
+				Engine::GetInstance().uiManager->Disable(GuiClass::SETTINGS);
+			}
+			else {
+				pause = true;
+				Engine::GetInstance().uiManager->Active(GuiClass::PAUSE);
+			}
+		}
+	}
+	else {
+		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
+
+			if (Engine::GetInstance().uiManager->IsActive(GuiClass::SETTINGS)) {
+				Engine::GetInstance().uiManager->Active(GuiClass::MAIN_MENU);
+				showSettings = false;
+				Engine::GetInstance().uiManager->Disable(GuiClass::SETTINGS);
+			}
+		}
+	}
+}
+
+// Called each loop iteration
+bool Scene::Update(float dt)
+{
+	auto& engine = Engine::GetInstance();
+	HandleCamera(engine);
+
+	if (level != 0) {
+		//Debug Mode
+		DebugMode();
 
 		// Shoot
 		HandlePowers();
@@ -304,7 +329,7 @@ bool Scene::Update(float dt)
 			else ++it;
 		}
 
-		bool tp = false;
+		showTp = false;
 		pugi::xml_document saveFile;
 		pugi::xml_parse_result result = saveFile.load_file("config.xml");
 
@@ -315,7 +340,7 @@ bool Scene::Update(float dt)
 
 				int posXBonfire = bonfire->GetPosition().getX();
 				pugi::xml_node bonfires = saveFile.child("config").child("scene").child("bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
-				tp = true;
+				showTp = true;
 				if (!bonfires.attribute("activated").as_bool()) {
 					bonfire->ActiveBonfire();
 					engine.audio.get()->PlayFx(bonfireSFX);
@@ -323,8 +348,9 @@ bool Scene::Update(float dt)
 					bonfires.attribute("activated").set_value("true");
 					bonfires.append_attribute("id").set_value(idNameBonfire++);
 
-					GuiControlButton* button = (GuiControlButton*)engine.guiManager->CreateGuiControl(GuiControlType::BUTTON, ui.GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 180,60 }, this, GuiClass::TPBONFIRE);
-					button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed);					ui.Add(GuiClass::TPBONFIRE, button);
+					GuiControlButton* button = (GuiControlButton*)engine.guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager->GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 180,60 }, this, GuiClass::TPBONFIRE);
+					button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed);
+					Engine::GetInstance().uiManager->Add(GuiClass::TPBONFIRE, button);
 				}
 
 				saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());
@@ -333,44 +359,16 @@ bool Scene::Update(float dt)
 			}
 		}
 
-		if (tp) ui.Active(GuiClass::TPBONFIRE);
-		else ui.Disable(GuiClass::TPBONFIRE);
-
 		//When player dies, dont move the hitbox
 		if (player->GetState() == StatePlayer::DIE) {
 			player->pbody->body->SetLinearVelocity({ 0,0 });
 			colRespawn--;
 		}
 
-		//Enable Settings UI
-		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
-			if (ui.IsActive(GuiClass::PAUSE) || ui.IsActive(GuiClass::SETTINGS)) {
-				pause = false;
-				ui.Disable(GuiClass::PAUSE);
-				ui.Disable(GuiClass::SETTINGS);
-			}
-			else {
-				pause = true;
-				ui.Active(GuiClass::PAUSE);
-			}
-		}
-
-		if (engine.input.get()->GetKey(SDL_SCANCODE_J) == KEY_DOWN) engine.audio.get()->ChangeVolume(10);
-
 		if (colRespawn <= 0) {
 			player->Respawn();
 			LoadState(LOAD::RESPAWN);
 			colRespawn = 120;
-		}
-	}
-	else {
-		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
-
-			if (ui.IsActive(GuiClass::SETTINGS)) {
-				ui.Active(GuiClass::MAIN_MENU);
-				showSettings = false;
-				ui.Disable(GuiClass::SETTINGS);
-			}
 		}
 	}
 
@@ -380,6 +378,7 @@ bool Scene::Update(float dt)
 // Called each loop iteration
 bool Scene::PostUpdate()
 {
+
 	bool ret = true;
 
 	if (exitGame) ret = false;
@@ -429,10 +428,12 @@ bool Scene::PostUpdate()
 		posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
 
 		player->SetPosition(posPlayer);
-		ui.Disable(GuiClass::MAIN_MENU);
+		Engine::GetInstance().uiManager->Disable(GuiClass::MAIN_MENU);
 
 		player->SetLevel(Level::DISABLED);
 	}
+
+	HandleGui();
 
 	return ret;
 }
@@ -546,7 +547,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
 
 			player->ActivePlayer();
-			ui.Disable(GuiClass::MAIN_MENU);
+			Engine::GetInstance().uiManager->Disable(GuiClass::MAIN_MENU);
 			player->SetPosition(posPlayer);
 
 
@@ -555,13 +556,13 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		else if (control->id == 2) {
 		}
 		else if (control->id == 3) {
-			if (ui.IsActive(GuiClass::SETTINGS)) {
-				ui.Disable(GuiClass::SETTINGS);
+			if (Engine::GetInstance().uiManager->IsActive(GuiClass::SETTINGS)) {
+				Engine::GetInstance().uiManager->Disable(GuiClass::SETTINGS);
 				showSettings = false;
 			}
 			else {
-				ui.Disable(GuiClass::MAIN_MENU);
-				ui.Active(GuiClass::SETTINGS);
+				Engine::GetInstance().uiManager->Disable(GuiClass::MAIN_MENU);
+				Engine::GetInstance().uiManager->Active(GuiClass::SETTINGS);
 				showSettings = true;
 			}
 		}
@@ -573,13 +574,13 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		break;
 	case GuiClass::PAUSE:
 		if (control->id == 1) {
-			ui.Disable(GuiClass::PAUSE);
-			ui.Disable(GuiClass::SETTINGS);
+			Engine::GetInstance().uiManager->Disable(GuiClass::PAUSE);
+			Engine::GetInstance().uiManager->Disable(GuiClass::SETTINGS);
 			pause = false;
 		}
 		else if (control->id == 2) {
-			ui.Active(GuiClass::SETTINGS);
-			ui.Disable(GuiClass::PAUSE);
+			Engine::GetInstance().uiManager->Active(GuiClass::SETTINGS);
+			Engine::GetInstance().uiManager->Disable(GuiClass::PAUSE);
 		}
 		else if (control->id == 3) {
 			level = 0;
@@ -594,8 +595,8 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
 
 			player->DisablePlayer();
-			ui.Active(GuiClass::MAIN_MENU);
-			ui.Disable(GuiClass::PAUSE);
+			Engine::GetInstance().uiManager->Active(GuiClass::MAIN_MENU);
+			Engine::GetInstance().uiManager->Disable(GuiClass::PAUSE);
 			player->SetPosition(posPlayer);
 			pause = false;
 

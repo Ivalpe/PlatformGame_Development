@@ -355,7 +355,7 @@ void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
 		}
 		break;
 	case ColliderType::FIREBALLPLAYER:
-		if (currentAnimation != &dmg)
+		if (type == EnemyType::BOSS && currentAnimation != &dmg)
 			currentAnimation = &idle;
 		break;
 	default:
