@@ -9,7 +9,7 @@
 struct SDL_Texture;
 
 enum class StatePower {
-	IDLE, DIE
+	IDLE, DIE, FIRE
 };
 
 enum class DirectionPower {
@@ -65,6 +65,8 @@ private:
 	StatePower statePower;
 	PhysBody* pbody;
 	TypePower power, bigPower;
+	bool hasPlayedFire = false;
+
 
 	Timer explosionTimer;
 	float explosionTime;
@@ -76,6 +78,8 @@ private:
 
 	int fireball1SFX;
 	int fireball2SFX;
+	int bigfireball1SFX;
+	int bigfireball2SFX;
 
 	int tempAttack = 1;
 };

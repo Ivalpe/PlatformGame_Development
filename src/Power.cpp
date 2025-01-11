@@ -44,6 +44,8 @@ bool Power::Start(bool inv) {
 
 	fireball1SFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("fireball1SFX").attribute("path").as_string());
 	fireball2SFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("fireball2SFX").attribute("path").as_string());
+	bigfireball1SFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("bigfireball1SFX").attribute("path").as_string());
+	bigfireball2SFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("bigfireball2SFX").attribute("path").as_string());
 
 	//Assign collider type
 	if (type == EntityType::FIREBALLPLAYER) {
@@ -99,7 +101,9 @@ bool Power::Update(float dt)
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
 			Engine::GetInstance().audio.get()->PlayFx(fireball1SFX);
 		}
-
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
+			Engine::GetInstance().audio.get()->PlayFx(bigfireball1SFX);
+		}
 	}
 	else {
 		tempAttack--;
@@ -135,7 +139,19 @@ void Power::OnCollision(PhysBody* physA, PhysBody* physB) {
 	if (statePower != StatePower::DIE && physB->ctype != ColliderType::SENSOR) {
 		statePower = StatePower::DIE;
 		currentAnimation = &explode;
-		Engine::GetInstance().audio.get()->PlayFx(fireball2SFX);
+		
+		// Verifica el tipo de entidad y reproduce el sonido correspondiente
+		switch (type) {
+			case EntityType::FIREBALLPLAYER:
+			case EntityType::FIREBALLENEMY:
+				Engine::GetInstance().audio.get()->PlayFx(fireball2SFX);
+				break;
+
+			case EntityType::BIGFIREBALLPLAYER:
+				Engine::GetInstance().audio.get()->PlayFx(bigfireball2SFX);
+				break;
+		}
+
 		pbody->body->SetLinearVelocity({ 0, 0 });
 		LOG("Fireball collided, starting explosion animation.");
 	}

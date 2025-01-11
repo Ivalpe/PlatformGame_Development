@@ -7,7 +7,6 @@
 #include "PerfTimer.h"
 #include "pugixml.hpp"
 #include "GuiManager.h"
-#include "UI.h"
 
 // Modules
 class Window;
@@ -18,6 +17,7 @@ class Audio;
 class Scene;
 class EntityManager;
 class Map;
+//L08 TODO 2: Add Physics module
 class Physics;
 
 class Engine
@@ -100,7 +100,6 @@ public:
 	// L08: TODO 2: Add Physics module
 	std::shared_ptr<Physics> physics;
 	std::shared_ptr<GuiManager> guiManager;
-	std::shared_ptr<UI> uiManager;
 
 
 private: 

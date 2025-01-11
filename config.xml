@@ -83,9 +83,6 @@
 							<frame x="32" y="64" w="16" h="32" />
 							<frame x="48" y="64" w="16" h="32" />
 						</walk>
-						<dmg loop="false" speed="0.06">
-							<frame x="64" y="64" w="16" h="32" />
-						</dmg>
 						<die loop="false" speed="0.06">
 							<frame x="64" y="64" w="16" h="32" />
 							<frame x="80" y="64" w="16" h="32" />
@@ -304,6 +301,8 @@
 			<fx>
 				<fireball1SFX path="Assets/Audio/Fx/magic-fireball.ogg" />
 				<fireball2SFX path="Assets/Audio/Fx/fireball_land.ogg" />
+				<bigfireball1SFX path="Assets/Audio/Fx/big_fireball.ogg" />
+				<bigfireball2SFX path="Assets/Audio/Fx/bigfireball_land.ogg" />
 				<enemydSFX path="Assets/Audio/Fx/enemy_die.ogg" />
 				<saveSFX path="Assets/Audio/Fx/save.ogg" />
 				<loadSFX path="Assets/Audio/Fx/load_save.ogg" />
@@ -316,6 +315,9 @@
 			</fx>
 			<music>
 				<Music1SFX path="Assets/Audio/Music/Character_Config.wav" />
+				<Music2SFX path="Assets/Audio/Music/bg3-8-bit.wav" />
+				<Music3SFX path="Assets/Audio/Music/Enter-Hallownest-8-Bit.wav" />
+				<Music4SFX path="Assets/Audio/Music/Lord-of-Cinder.wav" />
 			</music>
 		</audio>
 		<bonfires>
