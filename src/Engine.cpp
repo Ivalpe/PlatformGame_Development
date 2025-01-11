@@ -13,6 +13,7 @@
 #include "EntityManager.h"
 #include "Map.h"
 #include "Physics.h"
+#include "tracy/Tracy.hpp"
 
 // Constructor
 Engine::Engine() {
@@ -133,6 +134,7 @@ void Engine::LimitFPS() {
 
 // Called each loop iteration
 bool Engine::Update() {
+	ZoneScoped;
 
 	bool ret = true;
 	PrepareUpdate();
@@ -178,12 +180,14 @@ bool Engine::CleanUp() {
 // ---------------------------------------------
 void Engine::PrepareUpdate()
 {
+	ZoneScoped;
 	frameTime.Start();
 }
 
 // ---------------------------------------------
 void Engine::FinishUpdate()
 {
+	ZoneScoped;
 	// L03: TODO 1: Cap the framerate of the gameloop
 	double currentDt = frameTime.ReadMs();
 	if (maxFrameDuration > 0 && currentDt < maxFrameDuration) {
@@ -233,6 +237,7 @@ void Engine::FinishUpdate()
 // Call modules before each loop iteration
 bool Engine::PreUpdate()
 {
+	ZoneScoped;
 	//Iterates the module list and calls PreUpdate on each module
 	bool result = true;
 	for (const auto& module : moduleList) {
@@ -248,6 +253,7 @@ bool Engine::PreUpdate()
 // Call modules on each loop iteration
 bool Engine::DoUpdate()
 {
+	ZoneScoped;
 	//Iterates the module list and calls Update on each module
 	bool result = true;
 	for (const auto& module : moduleList) {
@@ -263,6 +269,7 @@ bool Engine::DoUpdate()
 // Call modules after each loop iteration
 bool Engine::PostUpdate()
 {
+	ZoneScoped;
 	//Iterates the module list and calls PostUpdate on each module
 	bool result = true;
 	for (const auto& module : moduleList) {

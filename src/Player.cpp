@@ -8,6 +8,7 @@
 #include "Scene.h"
 #include "Log.h"
 #include "Physics.h"
+#include "tracy/Tracy.hpp"
 
 Player::Player() : Entity(EntityType::PLAYER)
 {
@@ -88,7 +89,7 @@ void Player::ChangeDebug() {
 
 bool Player::Update(float dt)
 {
-
+	ZoneScoped;
 
 	if (!disablePlayer && !Engine::GetInstance().scene.get()->IsPause()) {
 		b2Vec2 velocity;
