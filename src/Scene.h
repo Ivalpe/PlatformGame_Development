@@ -104,7 +104,6 @@ public:
 private:
 
 	// --- SCENE PARAMETERS ---
-	SDL_Texture* img;              // Scene background or general image
 	int level;                     // Current level
 	bool firstTimeLoad;            // Flag for the first-time loading of the scene
 	bool exitGame;                 // Flag to exit the game
@@ -151,6 +150,7 @@ private:
 	SDL_Texture* menuButtonNormal;   // Slider menu
 	SDL_Texture* menuButtonFocused;
 	SDL_Texture* menuButtonPressed;
+	SDL_Texture* gameOver;
 	
 	bool showSettings = false;       // Flag to show settings menu
 	bool showTp = false;

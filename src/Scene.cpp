@@ -24,7 +24,6 @@
 Scene::Scene() : Module()
 {
 	name = "scene";
-	img = nullptr;
 }
 Scene::~Scene()
 {}
@@ -114,6 +113,7 @@ void Scene::LoadAssets() {
 	powerOn = Engine::GetInstance().textures.get()->Load("Assets/Textures/powerOn.png");
 	pouch = Engine::GetInstance().textures.get()->Load("Assets/Textures/pouch.png");
 	pouchfull = Engine::GetInstance().textures.get()->Load("Assets/Textures/pouchfull.png");
+	gameOver = Engine::GetInstance().textures.get()->Load("Assets/Menus/Die.png");
 
 	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
 	loadSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
@@ -277,15 +277,15 @@ void Scene::HandleGui() {
 			int coinCount = player->GetCoins();
 			std::string coinText = "Coins: " + std::to_string(coinCount);
 			int coordX = -(engine.render.get()->camera.x / 2) + 32;
+			int powerCoordX = -(engine.render.get()->camera.x / 2) + (32 * 3);
 
 			for (size_t i = 0; i < player->GetLifes() + 1; i++) {
 				engine.render.get()->DrawTexture(lifePlayer, SDL_FLIP_NONE, coordX, 14);
 				coordX += 8;
 			}
 
-			int fireIconX = coordX + 20;
-			if (player->GetfirePower()) engine.render.get()->DrawTexture(powerOn, SDL_FLIP_NONE, fireIconX, 10);
-			else engine.render.get()->DrawTexture(powerOff, SDL_FLIP_NONE, fireIconX, 10);
+			if (player->GetfirePower()) engine.render.get()->DrawTexture(powerOn, SDL_FLIP_NONE, powerCoordX, 10);
+			else engine.render.get()->DrawTexture(powerOff, SDL_FLIP_NONE, powerCoordX, 10);
 
 			if (player->GetCoins() > 0) {
 				Engine::GetInstance().render->DrawText(coinText.c_str(), 60, 60, 80, 44);
@@ -296,6 +296,9 @@ void Scene::HandleGui() {
 				engine.render.get()->DrawTexture(pouch, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
 			}
 
+		}
+		else {
+			Engine::GetInstance().render.get()->DrawTexture(gameOver, SDL_FLIP_NONE, 0, 0);
 		}
 
 		if (showTp && !pause) Engine::GetInstance().uiManager->Active(GuiClass::TPBONFIRE);
@@ -1030,7 +1033,6 @@ bool Scene::CleanUp()
 {
 	LOG("Freeing scene");
 
-	SDL_DestroyTexture(img);
 	enemyList.clear();
 	itemList.clear();
 	fireballList.clear();
