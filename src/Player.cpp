@@ -261,7 +261,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 			LOG("Collision DIE");
 			stPlayer = StatePlayer::DIE;
 			isDying = true;
-			lifes = 0;
+			lifes = -1;
 		}
 		break;
 	case ColliderType::NEXTLVL:

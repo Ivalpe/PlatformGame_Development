@@ -43,7 +43,7 @@ bool Scene::Awake()
 	exitGame = false;
 	firstTimeLoad = false;
 	help = false;
-	colRespawn = 120;
+	colRespawn = 480;
 	level = 0;
 	idBonfire = 1;
 	idNameBonfire = 1;
@@ -273,32 +273,35 @@ void Scene::HandleGui() {
 		//Gui
 		engine.render.get()->DrawTexture(gui, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 10);
 
+		//LIFES
 		if (player->GetLifes() >= 0) {
-			int coinCount = player->GetCoins();
-			std::string coinText = "Coins: " + std::to_string(coinCount);
 			int coordX = -(engine.render.get()->camera.x / 2) + 32;
-			int powerCoordX = -(engine.render.get()->camera.x / 2) + (32 * 3);
 
 			for (size_t i = 0; i < player->GetLifes() + 1; i++) {
 				engine.render.get()->DrawTexture(lifePlayer, SDL_FLIP_NONE, coordX, 14);
 				coordX += 8;
 			}
-
-			if (player->GetfirePower()) engine.render.get()->DrawTexture(powerOn, SDL_FLIP_NONE, powerCoordX, 10);
-			else engine.render.get()->DrawTexture(powerOff, SDL_FLIP_NONE, powerCoordX, 10);
-
-			if (player->GetCoins() > 0) {
-				Engine::GetInstance().render->DrawText(coinText.c_str(), 60, 60, 80, 44);
-				engine.render.get()->DrawTexture(pouchfull, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
-			}
-			else {
-				Engine::GetInstance().render->DrawText(coinText.c_str(), 60, 60, 80, 44);
-				engine.render.get()->DrawTexture(pouch, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
-			}
-
 		}
 		else {
-			Engine::GetInstance().render.get()->DrawTexture(gameOver, SDL_FLIP_NONE, 0, 0);
+			Engine::GetInstance().render.get()->DrawTexture(gameOver, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2), 0);
+		}
+
+		int powerCoordX = -(engine.render.get()->camera.x / 2) + (32 * 3);
+		int coinCount = player->GetCoins();
+		std::string coinText = "Coins: " + std::to_string(coinCount);
+
+		//POWER
+		if (player->GetfirePower()) engine.render.get()->DrawTexture(powerOn, SDL_FLIP_NONE, powerCoordX, 10);
+		else engine.render.get()->DrawTexture(powerOff, SDL_FLIP_NONE, powerCoordX, 10);
+
+		//COINS
+		if (player->GetCoins() > 0) {
+			Engine::GetInstance().render->DrawText(coinText.c_str(), 60, 60, 80, 44);
+			engine.render.get()->DrawTexture(pouchfull, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
+		}
+		else {
+			Engine::GetInstance().render->DrawText(coinText.c_str(), 60, 60, 80, 44);
+			engine.render.get()->DrawTexture(pouch, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
 		}
 
 		if (showTp && !pause) Engine::GetInstance().uiManager->Active(GuiClass::TPBONFIRE);
@@ -389,10 +392,10 @@ bool Scene::Update(float dt)
 			colRespawn--;
 		}
 
-		if (false && colRespawn <= 0) {
+		if (colRespawn <= 0) {
 			player->Respawn();
 			LoadState(LOAD::RESPAWN);
-			colRespawn = 120;
+			colRespawn = 480;
 		}
 	}
 
