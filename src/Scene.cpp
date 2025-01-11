@@ -63,7 +63,7 @@ bool Scene::Start()
 {
 	LoadAssets();
 
-	Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music1SFX").attribute("path").as_string(), 0.0f);
+	
 
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
@@ -432,6 +432,33 @@ bool Scene::PostUpdate()
 		ui.Disable(GuiClass::MAIN_MENU);
 
 		player->SetLevel(Level::DISABLED);
+
+		
+		std::string musicPath;
+
+		// Determine the music path based on the new level number
+		switch (level) {
+		case 0:
+			Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music1SFX").attribute("path").as_string(), 0.7f);
+			break;
+		case 1:
+			Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music2SFX").attribute("path").as_string(), 0.7f);			
+			break;
+		case 2:
+			Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music2SFX").attribute("path").as_string(), 0.7f);
+			break;
+		case 3:
+			Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music3SFX").attribute("path").as_string(), 0.7f);
+			break;
+		default:
+			// Optional: handle cases where the level number is out of range
+			break;
+		}
+
+		// Play the music if the path is valid
+		if (!musicPath.empty()) {
+			Engine::GetInstance().audio->PlayMusic(musicPath.c_str(), 0.7f);
+		}
 	}
 
 	return ret;
