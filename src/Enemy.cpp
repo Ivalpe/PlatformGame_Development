@@ -8,6 +8,7 @@
 #include "Log.h"
 #include "Physics.h"
 #include "Map.h"
+#include "tracy/Tracy.hpp"
 
 Enemy::Enemy() : Entity(EntityType::ENEMY)
 {
@@ -232,8 +233,9 @@ void Enemy::EnemyPattern(float dt) {
 }
 
 bool Enemy::Update(float dt) {
+	ZoneScoped;
 
-	if (lifes == 0) currentAnimation = &die;
+	if (lifes <= 0) currentAnimation = &die;
 
 	if (type != EnemyType::BOSS) EnemyPattern(dt);
 	else BossPattern(dt);

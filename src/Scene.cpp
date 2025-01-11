@@ -16,7 +16,7 @@
 #include "GuiControl.h"
 #include "GuiManager.h"
 #include "GuiControlSlider.h"
-
+#include "tracy/Tracy.hpp"
 
 // -----------------------------
 // Constructor and Destructor
@@ -329,6 +329,7 @@ void Scene::HandleGui() {
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
+	ZoneScoped;
 	auto& engine = Engine::GetInstance();
 	HandleCamera(engine);
 
