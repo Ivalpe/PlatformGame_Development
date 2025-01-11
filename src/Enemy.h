@@ -63,7 +63,7 @@ public:
 	bool IsDead();
 
 	void EnemyPattern(float dt);
-	void BossPattern();
+	void BossPattern(float dt);
 
 public:
 
