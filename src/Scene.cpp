@@ -63,7 +63,27 @@ bool Scene::Start()
 {
 	LoadAssets();
 
+	int levelNumber = configParameters.child("levels").child("map").attribute("number").as_int();
 
+	// Play different music based on the level number
+	switch (levelNumber)
+	{
+	case 0:
+		Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music1SFX").attribute("path").as_string(), 0.7f);
+		break;
+	case 1:
+		Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music2SFX").attribute("path").as_string(), 0.7f);
+		break;
+	case 2:
+		Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music3SFX").attribute("path").as_string(), 0.7f);
+		break;
+	case 3:
+		Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music4SFX").attribute("path").as_string(), 0.7f);
+		break;
+	default:
+		// Optional: handle cases where the level number is out of range
+		break;
+	}
 
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
