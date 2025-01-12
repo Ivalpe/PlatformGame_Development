@@ -109,6 +109,7 @@ void Scene::LoadAssets() {
 	menuButtonNormal = Engine::GetInstance().textures.get()->Load("Assets/Menus/button.png");
 	menuButtonFocused = Engine::GetInstance().textures.get()->Load("Assets/Menus/buttonfocus.png");
 	menuButtonPressed = Engine::GetInstance().textures.get()->Load("Assets/Menus/buttonPressed.png");
+	menuButtonDisabled = Engine::GetInstance().textures.get()->Load("Assets/Menus/buttonfdisabled.png");
 	helpMenu = Engine::GetInstance().textures.get()->Load("Assets/Textures/HelpMenu.png");
 	powerOff = Engine::GetInstance().textures.get()->Load("Assets/Textures/powerOff.png");
 	powerOn = Engine::GetInstance().textures.get()->Load("Assets/Textures/powerOn.png");
@@ -132,7 +133,7 @@ void Scene::SetupUI() {
 	GuiControlButton* button;
 	for (auto n : names) {
 		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::MAIN_MENU), n, { 480, coordInitial, 200,60 }, this, GuiClass::MAIN_MENU);
-		button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed);
+		button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed, menuButtonDisabled);
 		Engine::GetInstance().uiManager.get()->Add(GuiClass::MAIN_MENU, button);
 		coordInitial += interspace;
 	}
@@ -150,7 +151,7 @@ void Scene::SetupUI() {
 	coordInitial = 240, interspace = 70;
 	for (auto n : names) {
 		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::PAUSE), n, { 480, coordInitial, 180,60 }, this, GuiClass::PAUSE);
-		button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed);
+		button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed, menuButtonDisabled);
 		Engine::GetInstance().uiManager.get()->Add(GuiClass::PAUSE, button);
 		coordInitial += interspace;
 	}

@@ -155,6 +155,7 @@ private:
 	SDL_Texture* menuButtonNormal;   // Slider menu
 	SDL_Texture* menuButtonFocused;
 	SDL_Texture* menuButtonPressed;
+	SDL_Texture* menuButtonDisabled;
 	SDL_Texture* gameOver;
 	
 	bool showSettings = false;       // Flag to show settings menu
