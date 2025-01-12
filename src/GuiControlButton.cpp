@@ -47,7 +47,7 @@ bool GuiControlButton::Update(float dt)
 		switch (state)
 		{
 		case GuiControlState::DISABLED:
-			Engine::GetInstance().render->DrawTexture(buttonNormal, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			Engine::GetInstance().render->DrawTexture(buttonDisabled, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
 			//Engine::GetInstance().render->DrawRectangle(bounds, 200, 200, 200, 255, true, false);
 			break;
 		case GuiControlState::NORMAL:
