@@ -56,6 +56,8 @@ public:
 
 	void ActiveBonfires();
 
+	void RestartBonfires();
+
 	// Called each loop iteration
 	bool Update(float dt);
 

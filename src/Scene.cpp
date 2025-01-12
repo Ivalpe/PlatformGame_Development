@@ -128,7 +128,7 @@ void Scene::LoadAssets() {
 
 void Scene::SetupUI() {
 	//Main Menu
-	std::vector<const char*> names = { "    New Game", "    Load Game", "    Settings", "    Credits" , "    Exit Game" };
+	std::vector<const char*> names = { "New Game", "Load Game", "Settings", "Credits" , "Exit Game" };
 	int coordInitial = 360, interspace = 70;
 	GuiControlButton* button;
 	for (auto n : names) {
@@ -137,17 +137,17 @@ void Scene::SetupUI() {
 		Engine::GetInstance().uiManager.get()->Add(GuiClass::MAIN_MENU, button);
 		coordInitial += interspace;
 	}
-	Engine::GetInstance().uiManager.get()->Active(GuiClass::MAIN_MENU);
+	Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, true);
 
 	//Settings
 	GuiControlSlider* slider = (GuiControlSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDERBAR, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::SETTINGS), "Music", { 520 / 2, 200, 104,20 }, this, GuiClass::SETTINGS);
 	slider->SetTexture(sliderBackground, sliderMovement);
 	Engine::GetInstance().uiManager.get()->Add(GuiClass::SETTINGS, slider);
-	Engine::GetInstance().uiManager.get()->Disable(GuiClass::SETTINGS);
+	Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, false);
 	showSettings = false;
 
 	//Pause menu
-	names = { "      Resume", "     Settings", "      Back To Title", "     Exit" };
+	names = { "Resume", "Settings", "Back To Title", "Exit" };
 	coordInitial = 240, interspace = 70;
 	for (auto n : names) {
 		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::PAUSE), n, { 480, coordInitial, 180,60 }, this, GuiClass::PAUSE);
@@ -155,8 +155,8 @@ void Scene::SetupUI() {
 		Engine::GetInstance().uiManager.get()->Add(GuiClass::PAUSE, button);
 		coordInitial += interspace;
 	}
-	Engine::GetInstance().uiManager.get()->Disable(GuiClass::PAUSE);
-	Engine::GetInstance().uiManager.get()->Disable(GuiClass::TPBONFIRE);
+	Engine::GetInstance().uiManager.get()->Show(GuiClass::PAUSE, false);
+	Engine::GetInstance().uiManager.get()->Show(GuiClass::TPBONFIRE, false);
 }
 
 // Called each loop iteration
@@ -274,7 +274,7 @@ void Scene::HandleGui() {
 		//Open Help
 		if (help) engine.render.get()->DrawTexture(helpMenu, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2, 100);
 
-		//Gui
+		//GUI
 		engine.render.get()->DrawTexture(gui, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 10);
 
 		//LIFES
@@ -308,29 +308,29 @@ void Scene::HandleGui() {
 			engine.render.get()->DrawTexture(pouch, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
 		}
 
-		if (showTp && !pause) Engine::GetInstance().uiManager->Active(GuiClass::TPBONFIRE);
-		else Engine::GetInstance().uiManager->Disable(GuiClass::TPBONFIRE);
+		if (showTp && !pause) Engine::GetInstance().uiManager->Show(GuiClass::TPBONFIRE, true);
+		else Engine::GetInstance().uiManager->Show(GuiClass::TPBONFIRE, false);
 
 		//Enable Settings UI
 		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
-			if (Engine::GetInstance().uiManager->IsActive(GuiClass::PAUSE) || Engine::GetInstance().uiManager->IsActive(GuiClass::SETTINGS)) {
+			if (Engine::GetInstance().uiManager->IsShowing(GuiClass::PAUSE) || Engine::GetInstance().uiManager->IsShowing(GuiClass::SETTINGS)) {
 				pause = false;
-				Engine::GetInstance().uiManager->Disable(GuiClass::PAUSE);
-				Engine::GetInstance().uiManager->Disable(GuiClass::SETTINGS);
+				Engine::GetInstance().uiManager->Show(GuiClass::PAUSE, false);
+				Engine::GetInstance().uiManager->Show(GuiClass::SETTINGS, false);
 			}
 			else {
 				pause = true;
-				Engine::GetInstance().uiManager->Active(GuiClass::PAUSE);
+				Engine::GetInstance().uiManager->Show(GuiClass::PAUSE, true);
 			}
 		}
 	}
 	else {
 		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 
-			if (Engine::GetInstance().uiManager->IsActive(GuiClass::SETTINGS)) {
-				Engine::GetInstance().uiManager->Active(GuiClass::MAIN_MENU);
+			if (Engine::GetInstance().uiManager->IsShowing(GuiClass::SETTINGS)) {
+				Engine::GetInstance().uiManager->Show(GuiClass::MAIN_MENU, true);
 				showSettings = false;
-				Engine::GetInstance().uiManager->Disable(GuiClass::SETTINGS);
+				Engine::GetInstance().uiManager->Show(GuiClass::SETTINGS, false);
 			}
 		}
 	}
@@ -378,10 +378,6 @@ bool Scene::Update(float dt)
 
 					bonfires.attribute("activated").set_value("true");
 					bonfires.append_attribute("id").set_value(idNameBonfire++);
-
-					GuiControlButton* button = (GuiControlButton*)engine.guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::TPBONFIRE), bonfires.attribute("name").as_string(), { 520, coordYMenuTp += 40, 180,60 }, this, GuiClass::TPBONFIRE);
-					button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed, menuButtonDisabled);
-					Engine::GetInstance().uiManager.get()->Add(GuiClass::TPBONFIRE, button);
 				}
 
 				saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());
@@ -450,6 +446,7 @@ bool Scene::PostUpdate()
 	//Next Level
 	if (player->GetLevel() == Level::NEXTLVL) {
 		level++;
+		coordYMenuTp = 350;
 		pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
 		Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
 		CreateEvents();
@@ -459,7 +456,7 @@ bool Scene::PostUpdate()
 		posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
 
 		player->SetPosition(posPlayer);
-		Engine::GetInstance().uiManager.get()->Disable(GuiClass::MAIN_MENU);
+		Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
 
 		player->SetLevel(Level::DISABLED);
 
@@ -501,7 +498,7 @@ bool Scene::PostUpdate()
 
 		player->SetPosition(posPlayer);
 		player->DisablePlayer();
-		Engine::GetInstance().uiManager.get()->Disable(GuiClass::MAIN_MENU);
+		Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
 
 		player->SetLevel(Level::DISABLED);
 	}
@@ -538,6 +535,8 @@ void Scene::DebugMode() {
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
+
+		RestartBonfires();
 		LoadState(LOAD::INITIAL);
 		player->Respawn();
 		CreateEvents();
@@ -589,13 +588,29 @@ void Scene::DebugMode() {
 void Scene::ActiveBonfires() {
 	for (auto bon : bonfireList) {
 		int posXBonfire = bon->GetPosition().getX();
-		pugi::xml_node bonfires = configParameters.child("   bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
+		pugi::xml_node bonfires = configParameters.child("bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
 
 		if (bonfires.attribute("activated").as_bool() == true) {
 			bon->ActiveBonfire();
 		}
 
 	}
+}
+
+void Scene::RestartBonfires() {
+	pugi::xml_document saveFile;
+	pugi::xml_parse_result result = saveFile.load_file("config.xml");
+	pugi::xml_node bonfireNodes = saveFile.child("config").child("scene").child("bonfires");
+
+	for (pugi::xml_node enemyNode = bonfireNodes.child("bonfire"); enemyNode; enemyNode = enemyNode.next_sibling("bonfire")) {
+		if (enemyNode.attribute("activated").as_bool() == true) {
+			Engine::GetInstance().uiManager.get()->Remove(GuiClass::TPBONFIRE, enemyNode.attribute("id").as_int() - 1);
+			enemyNode.attribute("activated") = "false";
+			enemyNode.remove_attribute("id");
+		}
+	}
+	saveFile.save_file("config.xml");
+
 }
 
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
@@ -620,7 +635,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
 
 			player->ActivePlayer();
-			Engine::GetInstance().uiManager.get()->Disable(GuiClass::MAIN_MENU);
+			Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
 			player->SetPosition(posPlayer);
 
 
@@ -629,13 +644,13 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		else if (control->id == 2) {
 		}
 		else if (control->id == 3) {
-			if (Engine::GetInstance().uiManager.get()->IsActive(GuiClass::SETTINGS)) {
-				Engine::GetInstance().uiManager.get()->Disable(GuiClass::SETTINGS);
+			if (Engine::GetInstance().uiManager.get()->IsShowing(GuiClass::SETTINGS)) {
+				Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, false);
 				showSettings = false;
 			}
 			else {
-				Engine::GetInstance().uiManager.get()->Disable(GuiClass::MAIN_MENU);
-				Engine::GetInstance().uiManager.get()->Active(GuiClass::SETTINGS);
+				Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
+				Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, true);
 				showSettings = true;
 			}
 		}
@@ -647,13 +662,13 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		break;
 	case GuiClass::PAUSE:
 		if (control->id == 1) {
-			Engine::GetInstance().uiManager.get()->Disable(GuiClass::PAUSE);
-			Engine::GetInstance().uiManager.get()->Disable(GuiClass::SETTINGS);
+			Engine::GetInstance().uiManager.get()->Show(GuiClass::PAUSE, false);
+			Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, false);
 			pause = false;
 		}
 		else if (control->id == 2) {
-			Engine::GetInstance().uiManager.get()->Active(GuiClass::SETTINGS);
-			Engine::GetInstance().uiManager.get()->Disable(GuiClass::PAUSE);
+			Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, true);
+			Engine::GetInstance().uiManager.get()->Show(GuiClass::PAUSE, false);
 		}
 		else if (control->id == 3) {
 			level = 0;
@@ -668,8 +683,8 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			posPlayer.setY(currentLevel.attribute("iy").as_int() - 16);
 
 			player->DisablePlayer();
-			Engine::GetInstance().uiManager.get()->Active(GuiClass::MAIN_MENU);
-			Engine::GetInstance().uiManager.get()->Disable(GuiClass::PAUSE);
+			Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, true);
+			Engine::GetInstance().uiManager.get()->Show(GuiClass::PAUSE, false);
 			player->SetPosition(posPlayer);
 			pause = false;
 
@@ -790,6 +805,7 @@ void Scene::CreateEvents() {
 		saveFile.child("config").child("scene").child("bonfires").remove_children();
 		saveFile.child("config").child("scene").child("enemies").remove_children();
 		saveFile.child("config").child("scene").child("items").remove_children();
+		saveFile.child("config").child("scene").child("npcs").remove_children();
 		saveFile.save_file("config.xml");
 		firstTimeLoad = true;
 	}
@@ -821,6 +837,11 @@ void Scene::CreateEvents() {
 
 			new_bonfire.append_attribute("name").set_value(name.c_str());
 			saveFile.save_file("config.xml");
+
+			GuiControlButton* button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::TPBONFIRE), name.c_str(), {100 + (level * 300), coordYMenuTp += 80, 180,60}, this, GuiClass::TPBONFIRE);
+			button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed);
+			button->Disable();
+			Engine::GetInstance().uiManager.get()->Add(GuiClass::TPBONFIRE, button);
 		}
 
 	}
