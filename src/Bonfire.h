@@ -25,7 +25,7 @@ public:
 
 	void DisableBonfire();
 
-	bool IsActive();
+	bool IsShowing();
 
 	bool Update(float dt);
 

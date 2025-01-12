@@ -49,7 +49,7 @@ void Bonfire::DisableBonfire() {
 	activeBonfire = false;
 }
 
-bool Bonfire::IsActive() {
+bool Bonfire::IsShowing() {
 	return activeBonfire;
 }
 

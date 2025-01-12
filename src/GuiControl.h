@@ -98,6 +98,18 @@ public:
 	void Enable() {
 		state = GuiControlState::NORMAL;
 	}
+
+	void ShowOn() {
+		show = true;
+	}
+
+	bool IsShowing() {
+		return show;
+	}
+
+	void ShowOff() {
+		show = false;
+	}
 public:
 
 	int id;
@@ -114,4 +126,5 @@ public:
 	Module* observer;        // Observer 
 
 	GuiClass typeClass;		//Control what type of button is
+	bool show = false;
 };

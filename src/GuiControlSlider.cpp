@@ -22,7 +22,7 @@ GuiControlSlider::~GuiControlSlider()
 bool GuiControlSlider::Update(float dt)
 {
 
-	if (state != GuiControlState::DISABLED)
+	if (show)
 	{
 		posHitbox.setX(bounds.x);
 		posTexture.setX(-(Engine::GetInstance().render.get()->camera.x / 2) + bounds.x);

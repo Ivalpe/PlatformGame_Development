@@ -9,7 +9,11 @@ public:
 
 	void Add(GuiClass gui, GuiControl* control);
 
+	void Remove(GuiClass gui, int id);
+
 	void Active(GuiClass gui);
+
+	void Show(GuiClass gui, bool show);
 
 	void Disable(GuiClass gui);
 
@@ -17,7 +21,7 @@ public:
 
 	int GetSize(GuiClass gui);
 
-	bool IsActive(GuiClass gui);
+	bool IsShowing(GuiClass gui);
 
 	void LoadTextures(SDL_Texture* title, SDL_Texture* options) {
 		TitleScreen = title;
