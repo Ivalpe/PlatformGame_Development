@@ -396,8 +396,9 @@ bool Scene::Update(float dt)
 		}
 
 		if (colRespawn <= 0) {
+			LoadState(LOAD::INITIAL);
 			player->Respawn();
-			LoadState(LOAD::RESPAWN);
+			CreateEvents();
 			colRespawn = 480;
 		}
 	}

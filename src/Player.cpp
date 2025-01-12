@@ -73,6 +73,7 @@ void Player::SetPosition(Vector2D posPlayer) {
 }
 
 void Player::Respawn() {
+	coins = 0;
 	isDying = false;
 	lifes = 5;
 	die.SetFrame(0);
