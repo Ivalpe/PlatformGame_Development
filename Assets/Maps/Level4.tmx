@@ -16898,6 +16898,16 @@
    <tile/>
    <tile/>
    <tile/>
+   <tile gid="12"/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile/>
+   <tile gid="12"/>
+   <tile/>
+   <tile/>
+   <tile gid="12"/>
    <tile/>
    <tile/>
    <tile/>
@@ -16909,17 +16919,7 @@
    <tile/>
    <tile/>
    <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
+   <tile gid="12"/>
    <tile/>
    <tile/>
    <tile/>

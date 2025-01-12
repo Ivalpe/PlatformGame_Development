@@ -37,11 +37,6 @@ public:
 		return pbody->body;
 	}
 
-	b2Body* getSensorBody() {
-		return sensor->body;
-	}
-
-
 private:
 
 	SDL_Texture* texture;
@@ -52,8 +47,11 @@ private:
 	Animation idle;
 
 	PhysBody* pbody;
-	PhysBody* sensor;
 	b2Vec2 velocity;
 	float speed;
 	int id;
+	bool isJumping = false;
+	float jumpForce = 0.37f;
+	int coolDown = 100;
+	SDL_RendererFlip flip;
 };
