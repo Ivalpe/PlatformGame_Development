@@ -25,10 +25,12 @@ bool Npc::Awake() {
 bool Npc::Start() {
 	speed = 1.9f;
 
+
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
+	flip = parameters.attribute("flip").as_bool() ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
 
 	//Load animations
 	idle.LoadAnimations(parameters.child("animations").child("idle"));
@@ -36,10 +38,6 @@ bool Npc::Start() {
 
 	//Add a physics to an item - initialize the physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY() + texW, texW / 2, bodyType::DYNAMIC);
-
-	sensor = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX(), (int)position.getY() + texH, texW * 4, bodyType::KINEMATIC);
-	sensor->ctype = ColliderType::SENSOR;
-	sensor->listener = this;
 
 	//Assign collider type
 	pbody->ctype = ColliderType::NPC;
@@ -51,14 +49,23 @@ bool Npc::Start() {
 bool Npc::Update(float dt) {
 	ZoneScoped;
 
+	velocity = b2Vec2(0, -GRAVITY_Y);
+
+	if (isJumping)
+		velocity = pbody->body->GetLinearVelocity();
+
 	pbody->body->SetLinearVelocity(velocity);
 
 	b2Transform pbodyPos = pbody->body->GetTransform();
 	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 
+	if (!isJumping) {
+		pbody->body->ApplyLinearImpulseToCenter(b2Vec2(0, -jumpForce), true);
+		isJumping = true;
+	}
 
-	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_HORIZONTAL, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
+	Engine::GetInstance().render.get()->DrawTexture(texture, flip, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 
 	return true;
@@ -80,6 +87,7 @@ void Npc::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
 	case ColliderType::GROUND:
+		isJumping = false;
 		LOG("Collision PLATFORM");
 		break;
 

@@ -498,6 +498,7 @@ bool Scene::PostUpdate()
 		posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
 
 		player->SetPosition(posPlayer);
+		player->DisablePlayer();
 		Engine::GetInstance().uiManager.get()->Disable(GuiClass::MAIN_MENU);
 
 		player->SetLevel(Level::DISABLED);
@@ -925,7 +926,7 @@ void Scene::CreateEvents() {
 				npcEnt->SetParameters(configParameters.child("entities").child("npcs").child("queen"), lowestId);
 			}
 			else {
-				npcEnt->SetParameters(configParameters.child("entities").child("npcs").child("king"), lowestId);
+				npcEnt->SetParameters(configParameters.child("entities").child("npcs").child("villager"), lowestId);
 			}
 			npcEnt->Start();
 			npcEnt->SetPosition({ npc.first.getX(), npc.first.getY() });

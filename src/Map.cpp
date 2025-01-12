@@ -272,6 +272,10 @@ bool Map::Load(std::string path, std::string fileName)
 							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
 							posNpcs.insert({ mapCoord, 2 });
 						}
+						else if (gid == 12) { // Npc
+							Vector2D mapCoord = { (float)i * 8, (float)j * 8 };
+							posNpcs.insert({ mapCoord, 3 });
+						}
 					}
 				}
 			}
