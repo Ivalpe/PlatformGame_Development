@@ -839,7 +839,7 @@ void Scene::CreateEvents() {
 			saveFile.save_file("config.xml");
 
 			GuiControlButton* button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::TPBONFIRE), name.c_str(), {100 + (level * 300), coordYMenuTp += 80, 180,60}, this, GuiClass::TPBONFIRE);
-			button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed);
+			button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed, menuButtonDisabled);
 			button->Disable();
 			Engine::GetInstance().uiManager.get()->Add(GuiClass::TPBONFIRE, button);
 		}
