@@ -11,11 +11,11 @@ public:
 
 	void Remove(GuiClass gui, int id);
 
-	void Active(GuiClass gui);
+	void Active(GuiClass gui, int id);
 
 	void Show(GuiClass gui, bool show);
 
-	void Disable(GuiClass gui);
+	void Disable(GuiClass gui, int id);
 
 	bool Update(float dt);
 
@@ -31,16 +31,9 @@ public:
 private:
 
 	std::vector<GuiControl*> tpMenu;
-	bool tpMenuActive;
-
 	std::vector<GuiControl*> pauseMenu;
-	bool pauseMenuActive;
-
 	std::vector<GuiControl*> mainMenu;
-	bool mainMenuActive;
-
 	std::vector<GuiControl*> settings;
-	bool settingsActive;
 
 	SDL_Texture* OptionsBook;
 	SDL_Texture* TitleScreen;

@@ -377,7 +377,7 @@ bool Scene::Update(float dt)
 					engine.audio.get()->PlayFx(bonfireSFX);
 
 					bonfires.attribute("activated").set_value("true");
-					bonfires.append_attribute("id").set_value(idNameBonfire++);
+					Engine::GetInstance().uiManager.get()->Active(GuiClass::TPBONFIRE, bonfires.attribute("id").as_int());
 				}
 
 				saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());
@@ -831,6 +831,7 @@ void Scene::CreateEvents() {
 			new_bonfire.append_attribute("activated").set_value("false");
 			new_bonfire.append_attribute("x").set_value(bonfire.getX());
 			new_bonfire.append_attribute("y").set_value(bonfire.getY());
+			new_bonfire.append_attribute("id").set_value(idNameBonfire++);
 
 			name = "Hoguera ";
 			name = name + std::to_string(idBonfire++);

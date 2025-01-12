@@ -54,87 +54,59 @@ void UI::Show(GuiClass gui, bool show) {
 			if (show) button->ShowOn();
 			else button->ShowOff();
 		}
-		pauseMenuActive = true;
 		break;
 	case GuiClass::TPBONFIRE:
 		for (auto button : tpMenu) {
 			if (show) button->ShowOn();
 			else button->ShowOff();
 		}
-		tpMenuActive = true;
 		break;
 	case GuiClass::MAIN_MENU:
 		for (auto button : mainMenu) {
 			if (show) button->ShowOn();
 			else button->ShowOff();
 		}
-		mainMenuActive = true;
 		break;
 	case GuiClass::SETTINGS:
 		for (auto button : settings) {
 			if (show) button->ShowOn();
 			else button->ShowOff();
 		}
-		settingsActive = true;
 		break;
 	}
 }
 
-void UI::Active(GuiClass gui) {
+void UI::Active(GuiClass gui, int id) {
 
 	switch (gui) {
 	case GuiClass::PAUSE:
-		for (auto button : pauseMenu) {
-			button->Enable();
-		}
-		pauseMenuActive = true;
+		pauseMenu[id - 1]->Enable();
 		break;
 	case GuiClass::TPBONFIRE:
-		for (auto button : tpMenu) {
-			button->Enable();
-		}
-		tpMenuActive = true;
+		tpMenu[id - 1]->Enable();
 		break;
 	case GuiClass::MAIN_MENU:
-		for (auto button : mainMenu) {
-			button->Enable();
-		}
-		mainMenuActive = true;
+		mainMenu[id - 1]->Enable();
 		break;
 	case GuiClass::SETTINGS:
-		for (auto button : settings) {
-			button->Enable();
-		}
-		settingsActive = true;
+		settings[id - 1]->Enable();
 		break;
 	}
 }
 
-void UI::Disable(GuiClass gui) {
+void UI::Disable(GuiClass gui, int id) {
 	switch (gui) {
 	case GuiClass::PAUSE:
-		for (auto button : pauseMenu) {
-			button->Disable();
-		}
-		pauseMenuActive = false;
+		pauseMenu[id - 1]->Disable();
 		break;
 	case GuiClass::TPBONFIRE:
-		for (auto button : tpMenu) {
-			button->Disable();
-		}
-		tpMenuActive = false;
+		tpMenu[id - 1]->Disable();
 		break;
 	case GuiClass::MAIN_MENU:
-		for (auto button : mainMenu) {
-			button->Disable();
-		}
-		mainMenuActive = false;
+		mainMenu[id - 1]->Disable();
 		break;
 	case GuiClass::SETTINGS:
-		for (auto button : settings) {
-			button->Disable();
-		}
-		settingsActive = false;
+		settings[id - 1]->Disable();
 		break;
 	}
 }
