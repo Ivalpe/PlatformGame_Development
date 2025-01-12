@@ -77,6 +77,8 @@ public:
 
 	void SaveState();
 
+	void ChangeMusic();
+
 	void CreateEvents();
 
 	// Called before all Updates
@@ -173,7 +175,10 @@ private:
 	int colRespawn;      // Column for respawn position
 	int coordYMenuTp;    // Y-coordinate for menu teleportation
 
-	// --- FINAL SCENE ---
+	// --- MUSIC ---
+	const char* mainMenuMusic;
+	const char* levelMusic;
+	const char* bossMusic;
 
 
 };

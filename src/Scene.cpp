@@ -63,28 +63,6 @@ bool Scene::Start()
 {
 	LoadAssets();
 
-	int levelNumber = configParameters.child("levels").child("map").attribute("number").as_int();
-
-	// Play different music based on the level number
-	switch (levelNumber)
-	{
-	case 0:
-		Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music1SFX").attribute("path").as_string(), 0.7f);
-		break;
-	case 1:
-		Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music2SFX").attribute("path").as_string(), 0.7f);
-		break;
-	case 2:
-		Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music3SFX").attribute("path").as_string(), 0.7f);
-		break;
-	case 3:
-		Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music4SFX").attribute("path").as_string(), 0.7f);
-		break;
-	default:
-		// Optional: handle cases where the level number is out of range
-		break;
-	}
-
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
 	RestartEnemies();
@@ -116,6 +94,10 @@ void Scene::LoadAssets() {
 	pouch = Engine::GetInstance().textures.get()->Load("Assets/Textures/pouch.png");
 	pouchfull = Engine::GetInstance().textures.get()->Load("Assets/Textures/pouchfull.png");
 	gameOver = Engine::GetInstance().textures.get()->Load("Assets/Menus/Die.png");
+
+	mainMenuMusic = configParameters.child("audio").child("music").child("MainMenuMusic").attribute("path").as_string();
+	levelMusic = configParameters.child("audio").child("music").child("LevelMusic").attribute("path").as_string();
+	bossMusic = configParameters.child("audio").child("music").child("BossMusic").attribute("path").as_string();
 
 	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
 	loadSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
@@ -460,31 +442,6 @@ bool Scene::PostUpdate()
 
 		player->SetLevel(Level::DISABLED);
 
-
-		std::string musicPath;
-
-		//Music in levels
-		switch (level) {
-		case 0:
-			Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music1SFX").attribute("path").as_string(), 0.7f);
-			break;
-		case 1:
-			Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music2SFX").attribute("path").as_string(), 0.7f);
-			break;
-		case 2:
-			Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music2SFX").attribute("path").as_string(), 0.7f);
-			break;
-		case 3:
-			Engine::GetInstance().audio->PlayMusic(configParameters.child("audio").child("music").child("Music3SFX").attribute("path").as_string(), 0.7f);
-			break;
-		default:
-			break;
-		}
-
-		// Play the music if the path is valid
-		if (!musicPath.empty()) {
-			Engine::GetInstance().audio->PlayMusic(musicPath.c_str(), 0.7f);
-		}
 	}
 	else if (player->GetLevel() == Level::WIN) {
 		level++;
@@ -772,7 +729,26 @@ void Scene::SaveState() {
 // Entity Creation and Management
 // -----------------------------
 
+void Scene::ChangeMusic() {
+	switch (level)
+	{
+	case 0:
+		Engine::GetInstance().audio->PlayMusic(mainMenuMusic, 0.7f);
+		break;
+	case 1:
+	case 2:
+		Engine::GetInstance().audio->PlayMusic(levelMusic, 0.7f);
+		break;
+	case 3:
+		Engine::GetInstance().audio->PlayMusic(bossMusic, 0.7f);
+		break;
+	default:
+		break;
+	}
+}
+
 void Scene::CreateEvents() {
+	ChangeMusic();
 	std::list<Vector2D> listBonfires;
 	std::map<Vector2D, int> listEnemy, listItems, listNpcs;
 	pugi::xml_document saveFile;
@@ -839,7 +815,7 @@ void Scene::CreateEvents() {
 			new_bonfire.append_attribute("name").set_value(name.c_str());
 			saveFile.save_file("config.xml");
 
-			GuiControlButton* button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::TPBONFIRE), name.c_str(), {100 + (level * 300), coordYMenuTp += 80, 180,60}, this, GuiClass::TPBONFIRE);
+			GuiControlButton* button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::TPBONFIRE), name.c_str(), { 100 + (level * 300), coordYMenuTp += 80, 180,60 }, this, GuiClass::TPBONFIRE);
 			button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed, menuButtonDisabled);
 			button->Disable();
 			Engine::GetInstance().uiManager.get()->Add(GuiClass::TPBONFIRE, button);
