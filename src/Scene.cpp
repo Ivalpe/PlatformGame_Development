@@ -102,6 +102,7 @@ void Scene::LoadAssets() {
 	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
 	loadSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
 	saveSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("saveSFX").attribute("path").as_string());
+	stone_doorSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("stone_doorSFX").attribute("path").as_string());
 
 	OptionsBook = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsBook.png");
 	TitleScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/TitleScreen.png");
@@ -404,6 +405,7 @@ bool Scene::PostUpdate()
 		Engine::GetInstance().render.get()->DrawRectangle(rec, 0, 0, 0, alpha, true, false);
 
 		if (!fadeIn) {
+			
 			// Fade out (darkening the screen)
 			if (alpha < 255) alpha += 5;
 			if (alpha >= 255) {
@@ -464,6 +466,7 @@ bool Scene::PostUpdate()
 
 	// Handle level transition when the player reaches the next level
 	if (player->GetLevel() == Level::NEXTLVL && !isTransitioning) {
+		Engine::GetInstance().audio.get()->PlayFx(stone_doorSFX);
 		isTransitioning = true;
 		fadeIn = false;
 	}
