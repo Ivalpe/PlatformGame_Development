@@ -92147,7 +92147,7 @@
   <object id="253" x="904" y="88" width="48" height="8"/>
   <object id="254" x="2536" y="192" width="48" height="8"/>
   <object id="255" x="2304" y="168" width="72" height="8"/>
-  <object id="256" x="1672" y="320" width="32" height="8"/>
+  <object id="256" x="1664" y="320" width="40" height="8"/>
  </objectgroup>
  <layer id="5" name="Navigation" width="400" height="46">
   <properties>
