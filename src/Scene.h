@@ -88,6 +88,8 @@ public:
 	bool CleanUp();
 
 	void RespawnPoison();
+	
+	void LoadNextLevel();
 
 	int GetActualLevel() {
 		return level;
@@ -140,7 +142,8 @@ private:
 	// --- AUDIO FX ---
 	int bonfireSFX;       // Sound effect for bonfire activation
 	int saveSFX;          // Sound effect for saving progress
-	int loadSFX;          // Sound effect for loading progress
+	int loadSFX;		  // Sound effect for loading progress
+	int stone_doorSFX;    // Sound effect for level cahnge
 
 	// --- USER INTERFACE (UI) ---
 	SDL_Texture* helpMenu;			 // Menu texture
@@ -167,6 +170,7 @@ private:
 	// --- FADE-IN EFFECT ---
 	Uint8 alpha;         // Alpha transparency for fade-in effect
 	bool fadeIn;         // Flag for fade-in state
+	bool isTransitioning = false;
 
 	// --- HELP AND TELEPORTATION ---
 	bool help;           // Flag for showing help

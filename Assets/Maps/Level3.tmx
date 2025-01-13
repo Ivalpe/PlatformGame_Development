@@ -40669,7 +40669,11 @@
    <tile/>
    <tile/>
    <tile/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
    <tile/>
+   <tile gid="7"/>
    <tile/>
    <tile/>
    <tile/>
@@ -41438,13 +41442,9 @@
    <tile/>
    <tile/>
    <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
-   <tile/>
+   <tile gid="8"/>
+   <tile gid="8"/>
+   <tile gid="8"/>
    <tile/>
    <tile/>
    <tile/>
