@@ -88,6 +88,8 @@ public:
 	bool CleanUp();
 
 	void RespawnPoison();
+	
+	void LoadNextLevel();
 
 	int GetActualLevel() {
 		return level;
@@ -167,6 +169,7 @@ private:
 	// --- FADE-IN EFFECT ---
 	Uint8 alpha;         // Alpha transparency for fade-in effect
 	bool fadeIn;         // Flag for fade-in state
+	bool isTransitioning = false;
 
 	// --- HELP AND TELEPORTATION ---
 	bool help;           // Flag for showing help

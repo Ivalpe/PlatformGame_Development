@@ -390,8 +390,41 @@ bool Scene::PostUpdate()
 {
 	bool ret = true;
 
+	
+
+	// Level transition effect
+	if (isTransitioning) {
+		SDL_Rect rec;
+		rec.x = 0;
+		rec.y = 0;
+		rec.w = 1500;
+		rec.h = 800;
+
+		// Draw the black rectangle for the fade effect
+		Engine::GetInstance().render.get()->DrawRectangle(rec, 0, 0, 0, alpha, true, false);
+
+		if (!fadeIn) {
+			// Fade out (darkening the screen)
+			if (alpha < 255) alpha += 5;
+			if (alpha >= 255) {
+				alpha = 255;
+				fadeIn = true;
+				LoadNextLevel();  // Load the next level when fade out is complete
+			}
+		}
+		else {
+			// Fade in (lightening the screen)
+			if (alpha > 0) alpha -= 5;
+			if (alpha <= 0) {
+				alpha = 0;
+				isTransitioning = false;  // End the transition
+			}
+		}
+	}
+
 	if (exitGame) ret = false;
 
+	// Activate boss when the player reaches a specific position
 	if (!bossActive && level == 3 && player->GetX() >= 470) {
 		for (auto e : enemyList) {
 			if (e->GetType() == EnemyType::BOSS) {
@@ -402,8 +435,8 @@ bool Scene::PostUpdate()
 		}
 	}
 
-	//Clear dead enemies
-	for (auto it = enemyList.begin(); it != enemyList.end(); ) {
+	// Clear dead enemies from the list
+	for (auto it = enemyList.begin(); it != enemyList.end();) {
 		if ((*it)->IsDead()) {
 			SaveKillEnemy((*it)->GetId());
 			Engine::GetInstance().physics->DeleteBody((*it)->getBody());
@@ -411,58 +444,61 @@ bool Scene::PostUpdate()
 			Engine::GetInstance().entityManager->DestroyEntity(*it);
 			it = enemyList.erase(it);
 		}
-		else ++it;
+		else {
+			++it;
+		}
 	}
 
-	//Clear Collected items
-	for (auto it = itemList.begin(); it != itemList.end(); ) {
+	// Clear collected items from the list
+	for (auto it = itemList.begin(); it != itemList.end();) {
 		if ((*it)->IsCollected()) {
 			SaveCollectedItem((*it)->GetId());
 			Engine::GetInstance().physics->DeleteBody((*it)->getBody());
 			Engine::GetInstance().entityManager->DestroyEntity(*it);
 			it = itemList.erase(it);
 		}
-		else ++it;
+		else {
+			++it;
+		}
 	}
 
-	//Next Level
-	if (player->GetLevel() == Level::NEXTLVL) {
-		level++;
-		coordYMenuTp = 350;
-		pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
-		Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-		CreateEvents();
-
-		Vector2D posPlayer;
-		posPlayer.setX(mapNode.attribute("ix").as_int());
-		posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
-
-		player->SetPosition(posPlayer);
-		Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
-
-		player->SetLevel(Level::DISABLED);
-
+	// Handle level transition when the player reaches the next level
+	if (player->GetLevel() == Level::NEXTLVL && !isTransitioning) {
+		isTransitioning = true;
+		fadeIn = false;
 	}
-	else if (player->GetLevel() == Level::WIN) {
-		level++;
-		pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
-		Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-		CreateEvents();
-
-		Vector2D posPlayer;
-		posPlayer.setX(mapNode.attribute("ix").as_int());
-		posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
-
-		player->SetPosition(posPlayer);
-		player->DisablePlayer();
-		Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
-
-		player->SetLevel(Level::DISABLED);
+	// Handle level transition when the player wins the level
+	else if (player->GetLevel() == Level::WIN && !isTransitioning) {
+		isTransitioning = true;
+		fadeIn = false;
 	}
 
 	HandleGui();
 
 	return ret;
+}
+
+void Scene::LoadNextLevel()
+{
+	level++;
+	coordYMenuTp = 350;
+
+	// Load the next level from the XML file
+	pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
+	Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+	CreateEvents();
+
+	// Set the player's initial position
+	Vector2D posPlayer;
+	posPlayer.setX(mapNode.attribute("ix").as_int());
+	posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
+	player->SetPosition(posPlayer);
+
+	// Hide the main menu
+	Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
+
+	// Temporarily disable player control
+	player->SetLevel(Level::DISABLED);
 }
 
 // -----------------------------
