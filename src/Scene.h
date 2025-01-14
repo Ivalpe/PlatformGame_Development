@@ -63,15 +63,11 @@ public:
 
 	void SaveKillEnemy(int id);
 
-	void SaveCollectedItem(int id);
-
 	void RestartEnemies();
 
 	void RemoveLevelEnemies(int level);
 
 	int GetLowestId(int type);
-
-	void RestartItems();
 
 	void LoadState(LOAD load);
 
@@ -162,6 +158,7 @@ private:
 	SDL_Texture* menuButtonPressed;
 	SDL_Texture* menuButtonDisabled;
 	SDL_Texture* gameOver;
+	SDL_Texture* gameWin;
 	
 	bool showSettings = false;       // Flag to show settings menu
 	bool showTp = false;
@@ -173,11 +170,12 @@ private:
 	bool isTransitioning = false;
 
 	// --- HELP AND TELEPORTATION ---
-	bool help;           // Flag for showing help
-	bool enableTp;       // Teleportation optimization flag
-	bool pause = false;	 // Flag for is pause the game or not
-	int colRespawn;      // Column for respawn position
-	int coordYMenuTp;    // Y-coordinate for menu teleportation
+	bool help;				// Flag for showing help
+	bool enableTp;			// Teleportation optimization flag
+	bool pause = false;		// Flag for is pause the game or not
+	int playerRespawnCool;  // Respawn position
+	int winRestartCool;      
+	int coordYMenuTp;		// Y-coordinate for menu teleportation
 
 	// --- MUSIC ---
 	const char* mainMenuMusic;

@@ -44,7 +44,8 @@ bool Scene::Awake()
 	exitGame = false;
 	firstTimeLoad = false;
 	help = false;
-	colRespawn = 480;
+	playerRespawnCool = 480;
+	winRestartCool = 480;
 	level = 0;
 	idBonfire = 1;
 	idNameBonfire = 1;
@@ -94,6 +95,7 @@ void Scene::LoadAssets() {
 	pouch = Engine::GetInstance().textures.get()->Load("Assets/Textures/pouch.png");
 	pouchfull = Engine::GetInstance().textures.get()->Load("Assets/Textures/pouchfull.png");
 	gameOver = Engine::GetInstance().textures.get()->Load("Assets/Menus/Die.png");
+	gameWin = Engine::GetInstance().textures.get()->Load("Assets/Menus/Victory.png");
 
 	mainMenuMusic = configParameters.child("audio").child("music").child("MainMenuMusic").attribute("path").as_string();
 	levelMusic = configParameters.child("audio").child("music").child("LevelMusic").attribute("path").as_string();
@@ -253,7 +255,10 @@ void Scene::HandlePowers() {
 void Scene::HandleGui() {
 	auto& engine = Engine::GetInstance();
 
-	if (level != 0) {
+	if (level == 4) {
+		Engine::GetInstance().render.get()->DrawTexture(gameWin, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2), 0);
+	}
+	else if (level != 0) {
 		//Open Help
 		if (help) engine.render.get()->DrawTexture(helpMenu, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2, 100);
 
@@ -372,14 +377,37 @@ bool Scene::Update(float dt)
 		//When player dies, dont move the hitbox
 		if (player->GetState() == StatePlayer::DIE) {
 			player->pbody->body->SetLinearVelocity({ 0,0 });
-			colRespawn--;
+			playerRespawnCool--;
 		}
 
-		if (colRespawn <= 0) {
+		if (playerRespawnCool <= 0) {
 			LoadState(LOAD::INITIAL);
 			player->Respawn();
 			CreateEvents();
-			colRespawn = 480;
+			playerRespawnCool = 480;
+		}
+
+		if (level == 4) {
+			winRestartCool--;
+		}
+
+		if (winRestartCool <= 0) {
+			level = 0;
+			pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
+			Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+			CreateEvents();
+
+			// Set the player's initial position
+			Vector2D posPlayer;
+			posPlayer.setX(mapNode.attribute("ix").as_int());
+			posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
+			player->SetPosition(posPlayer);
+
+			// Hide the main menu
+			Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, true);
+
+			player->SetLevel(Level::DISABLED);
+			winRestartCool = 480;
 		}
 	}
 
@@ -391,7 +419,7 @@ bool Scene::PostUpdate()
 {
 	bool ret = true;
 
-	
+
 
 	// Level transition effect
 	if (isTransitioning) {
@@ -405,7 +433,7 @@ bool Scene::PostUpdate()
 		Engine::GetInstance().render.get()->DrawRectangle(rec, 0, 0, 0, alpha, true, false);
 
 		if (!fadeIn) {
-			
+
 			// Fade out (darkening the screen)
 			if (alpha < 255) alpha += 5;
 			if (alpha >= 255) {
@@ -454,7 +482,6 @@ bool Scene::PostUpdate()
 	// Clear collected items from the list
 	for (auto it = itemList.begin(); it != itemList.end();) {
 		if ((*it)->IsCollected()) {
-			SaveCollectedItem((*it)->GetId());
 			Engine::GetInstance().physics->DeleteBody((*it)->getBody());
 			Engine::GetInstance().entityManager->DestroyEntity(*it);
 			it = itemList.erase(it);
@@ -472,6 +499,7 @@ bool Scene::PostUpdate()
 	}
 	// Handle level transition when the player wins the level
 	else if (player->GetLevel() == Level::WIN && !isTransitioning) {
+		player->DisablePlayer();
 		isTransitioning = true;
 		fadeIn = false;
 	}
@@ -484,7 +512,6 @@ bool Scene::PostUpdate()
 void Scene::LoadNextLevel()
 {
 	level++;
-	coordYMenuTp = 350;
 
 	// Load the next level from the XML file
 	pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
@@ -500,7 +527,6 @@ void Scene::LoadNextLevel()
 	// Hide the main menu
 	Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
 
-	// Temporarily disable player control
 	player->SetLevel(Level::DISABLED);
 }
 
@@ -815,6 +841,14 @@ void Scene::CreateEvents() {
 		i--;
 	}
 
+	//Npcs
+	for (int i = 0; i < npcList.size(); i++) {
+		Engine::GetInstance().physics->DeleteBody(npcList[i]->getBody());
+		Engine::GetInstance().entityManager->DestroyEntity(npcList[i]);
+		npcList.erase(npcList.begin() + i);
+		i--;
+	}
+
 
 	if (!firstTimeLoad) {
 		saveFile.child("config").child("scene").child("bonfires").remove_children();
@@ -936,7 +970,6 @@ void Scene::CreateEvents() {
 			pugi::xml_node newItem = saveFile.child("config").child("scene").child("items").append_child("item");
 			newItem.append_attribute("id").set_value(lowestId);
 			newItem.append_attribute("level").set_value(level);
-			newItem.append_attribute("collected").set_value("false");
 			newItem.append_attribute("x").set_value(item.first.getX());
 			newItem.append_attribute("y").set_value(item.first.getY());
 
@@ -1096,32 +1129,6 @@ int Scene::GetLowestId(int type) {
 
 	return lowest;
 }
-
-void Scene::SaveCollectedItem(int id) {
-	pugi::xml_document saveFile;
-	pugi::xml_parse_result result = saveFile.load_file("config.xml");
-	pugi::xml_node itemsNode = saveFile.child("config").child("scene").child("entities").child("items");
-
-	for (pugi::xml_node itemNode = itemsNode.child("item"); itemNode; itemNode = itemNode.next_sibling("item")) {
-		if (itemNode.attribute("id").as_int() == id) {
-			itemNode.attribute("collected") = "true";
-		}
-	}
-	saveFile.save_file("config.xml");
-}
-
-// Modify the XML and puts collected="false" to all items
-void Scene::RestartItems() {
-	pugi::xml_document saveFile;
-	pugi::xml_parse_result result = saveFile.load_file("config.xml");
-	pugi::xml_node itemsNode = saveFile.child("config").child("scene").child("entities").child("items");
-
-	for (pugi::xml_node itemNode = itemsNode.child("item"); itemNode; itemNode = itemNode.next_sibling("item")) {
-		itemNode.attribute("collected") = "false";
-	}
-	saveFile.save_file("config.xml");
-}
-
 
 //Clear and create the Poisons of the level
 void Scene::RespawnPoison() {
