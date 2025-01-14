@@ -374,22 +374,22 @@ bool Scene::Update(float dt)
 
 		// Active bonfire if player touch it
 		for (auto& bonfire : bonfireList) {
-			if (player->GetPosition().getX() >= bonfire->GetPosition().getX() - 16 && player->GetPosition().getX() <= bonfire->GetPosition().getX() + 8 &&
-				player->GetPosition().getY() >= bonfire->GetPosition().getY() - 16 && player->GetPosition().getY() <= bonfire->GetPosition().getY() + 8) {
+			if (bonfire.second == level && player->GetPosition().getX() >= bonfire.first->GetPosition().getX() - 16 && player->GetPosition().getX() <= bonfire.first->GetPosition().getX() + 8 &&
+				player->GetPosition().getY() >= bonfire.first->GetPosition().getY() - 16 && player->GetPosition().getY() <= bonfire.first->GetPosition().getY() + 8) {
 
-				int posXBonfire = bonfire->GetPosition().getX();
+				int posXBonfire = bonfire.first->GetPosition().getX();
 				pugi::xml_node bonfires = saveFile.child("config").child("scene").child("bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
 				showTp = true;
 				if (!bonfires.attribute("activated").as_bool()) {
-					bonfire->ActiveBonfire();
+					bonfire.first->ActiveBonfire();
 					engine.audio.get()->PlayFx(bonfireSFX);
 
 					bonfires.attribute("activated").set_value("true");
 					Engine::GetInstance().uiManager.get()->Active(GuiClass::TPBONFIRE, bonfires.attribute("id").as_int());
 				}
 
-				saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire->GetPosition().getX());
-				saveFile.child("config").child("scene").child("entities").child("player").attribute("y").set_value(bonfire->GetPosition().getY());
+				saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire.first->GetPosition().getX());
+				saveFile.child("config").child("scene").child("entities").child("player").attribute("y").set_value(bonfire.first->GetPosition().getY());
 				saveFile.save_file("config.xml");
 			}
 		}
@@ -427,6 +427,13 @@ bool Scene::Update(float dt)
 
 			player->SetLevel(Level::DISABLED);
 			winRestartCool = 480;
+		}
+	}
+
+	//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	if (engine.input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+		for (auto b : bonfireList) {
+			LOG("ID %d", b.first->getId());
 		}
 	}
 
@@ -628,12 +635,15 @@ void Scene::DebugMode() {
 }
 
 void Scene::ActiveBonfires() {
+	pugi::xml_document bonfiresParamateres;
+	pugi::xml_parse_result result = bonfiresParamateres.load_file("config.xml");
+
 	for (auto bon : bonfireList) {
-		int posXBonfire = bon->GetPosition().getX();
-		pugi::xml_node bonfires = configParameters.child("bonfires").find_child_by_attribute("x", std::to_string(posXBonfire).c_str());
+		int idBonfire = bon.first->getId();
+		pugi::xml_node bonfires = bonfiresParamateres.child("config").child("scene").child("bonfires").find_child_by_attribute("id", std::to_string(idBonfire).c_str());
 
 		if (bonfires.attribute("activated").as_bool() == true) {
-			bon->ActiveBonfire();
+			bon.first->ActiveBonfire();
 		}
 
 	}
@@ -643,14 +653,14 @@ void Scene::RestartBonfires() {
 	pugi::xml_document saveFile;
 	pugi::xml_parse_result result = saveFile.load_file("config.xml");
 	pugi::xml_node bonfireNodes = saveFile.child("config").child("scene").child("bonfires");
-
+	/*
 	for (pugi::xml_node enemyNode = bonfireNodes.child("bonfire"); enemyNode; enemyNode = enemyNode.next_sibling("bonfire")) {
 		if (enemyNode.attribute("activated").as_bool() == true) {
-			Engine::GetInstance().uiManager.get()->Remove(GuiClass::TPBONFIRE, enemyNode.attribute("id").as_int() - 1);
+			Engine::GetInstance().uiManager.get()->Disable(GuiClass::TPBONFIRE, enemyNode.attribute("id").as_int());
 			enemyNode.attribute("activated") = "false";
-			enemyNode.remove_attribute("id");
 		}
 	}
+	*/
 	saveFile.save_file("config.xml");
 
 }
@@ -839,11 +849,13 @@ void Scene::CreateEvents() {
 	pugi::xml_document saveFile;
 	pugi::xml_parse_result result = saveFile.load_file("config.xml");
 
+	/*
 	//Firecamps
 	for (int i = 0; i < bonfireList.size();) {
 		Engine::GetInstance().entityManager->DestroyEntity(bonfireList[i]);
 		bonfireList.erase(bonfireList.begin());
 	}
+	*/
 
 	//Enemies
 	for (int i = 0; i < enemyList.size();) {
@@ -887,14 +899,16 @@ void Scene::CreateEvents() {
 	}
 
 	listBonfires = Engine::GetInstance().map->GetBonfireList();
-	for (auto bonfire : listBonfires) {
-		Bonfire* fc = (Bonfire*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BONFIRE);
-		fc->SetParameters(configParameters.child("entities").child("firecamp"));
-		fc->SetPosition({ bonfire.getX(), bonfire.getY() });
-		fc->Start();
-		bonfireList.push_back(fc);
+	coordYMenuTp = 10;
+	if (!contains) {
+		for (auto bonfire : listBonfires) {
+			Bonfire* fc = (Bonfire*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BONFIRE);
+			fc->SetParameters(configParameters.child("entities").child("firecamp"), idNameBonfire);
+			fc->SetPosition({ bonfire.getX(), bonfire.getY() });
+			fc->Start();
+			bonfireList.emplace(fc, level);
 
-		if (!contains) {
+
 			pugi::xml_node new_bonfire = saveFile.child("config").child("scene").child("bonfires").append_child("bonfire");
 			new_bonfire.append_attribute("level").set_value(level);
 			new_bonfire.append_attribute("activated").set_value("false");
@@ -908,14 +922,21 @@ void Scene::CreateEvents() {
 			new_bonfire.append_attribute("name").set_value(name.c_str());
 			saveFile.save_file("config.xml");
 
-			GuiControlButton* button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::TPBONFIRE), name.c_str(), { 100 + (level * 300), coordYMenuTp += 80, 180,60 }, this, GuiClass::TPBONFIRE);
+			GuiControlButton* button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::TPBONFIRE), name.c_str(), { 100 + ((level - 1) * 300), coordYMenuTp += 80, 180,60 }, this, GuiClass::TPBONFIRE);
 			button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed, menuButtonDisabled);
 			button->Disable();
 			Engine::GetInstance().uiManager.get()->Add(GuiClass::TPBONFIRE, button);
-		}
 
+
+		}
+		levelsLoadedBonfire.push_back(level);
 	}
-	levelsLoadedBonfire.push_back(level);
+
+
+	for (auto b : bonfireList) {
+		if (b.second == level) b.first->ShowBonfire(true);
+		else b.first->ShowBonfire(false);
+	}
 
 	//ENEMIES
 

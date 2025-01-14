@@ -34,7 +34,7 @@ bool Bonfire::Start() {
 	currentAnimation = &idle;
 
 	//Load Fx
-	
+
 
 	return true;
 }
@@ -55,9 +55,10 @@ bool Bonfire::IsShowing() {
 
 bool Bonfire::Update(float dt)
 {
-
-	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	currentAnimation->Update();
+	if (showBonfire) {
+		Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		currentAnimation->Update();
+	}
 
 	return true;
 }

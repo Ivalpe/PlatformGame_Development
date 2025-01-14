@@ -3,6 +3,7 @@
 #include "SDL2/SDL.h"
 #include "Animation.h"
 #include "Pathfinding.h"
+#include "Log.h"
 
 struct SDL_Texture;
 
@@ -31,8 +32,9 @@ public:
 
 	bool CleanUp();
 
-	void SetParameters(pugi::xml_node parameters) {
+	void SetParameters(pugi::xml_node parameters, int idBonfire) {
 		this->parameters = parameters;
+		id = idBonfire;
 	}
 
 	StateBonfire GetState() {
@@ -47,6 +49,14 @@ public:
 		return pbody->body;
 	}
 
+	int getId() {
+		return id;
+	}
+
+	void ShowBonfire(bool show) {
+		showBonfire = show;
+	}
+
 public:
 
 private:
@@ -59,7 +69,8 @@ private:
 	PhysBody* pbody;
 	StateBonfire sf;
 	bool activeBonfire;
-
+	int id;
+	bool showBonfire = false;
 	
 	
 };

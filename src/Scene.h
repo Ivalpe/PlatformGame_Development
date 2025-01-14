@@ -121,7 +121,8 @@ private:
 	std::vector<Enemy*> enemyList;        // List of enemies
 	std::vector<Item*> itemList;          // List of items
 	std::vector<Power*> fireballList;     // List of fireballs
-	std::vector<Bonfire*> bonfireList;    // List of bonfires
+	//std::vector<Bonfire*> bonfireList;    // List of bonfires
+	std::map<Bonfire*, int> bonfireList;
 	std::vector<Poison*> poisonList;      // List of poison traps
 	std::vector<Npc*> npcList;			  // List of npcs
 	std::vector<int> levelsLoadedBonfire; // Levels with bonfires loaded
