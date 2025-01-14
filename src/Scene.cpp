@@ -128,11 +128,16 @@ void Scene::SetupUI() {
 	Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, true);
 
 	//Settings
-	GuiControlSlider* slider = (GuiControlSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDERBAR, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::SETTINGS), "Music", { 520 / 2, 200, 104,20 }, this, GuiClass::SETTINGS);
+	coordInitial = 100, interspace = 40;
+	GuiControlSlider* slider = (GuiControlSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDERBAR, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::SETTINGS), "Music     ", { 520 / 2, coordInitial += interspace, 104,20 }, this, GuiClass::SETTINGS);
 	slider->SetTexture(sliderBackground, sliderMovement);
 	Engine::GetInstance().uiManager.get()->Add(GuiClass::SETTINGS, slider);
 
-	GuiControlCheckbox* checkbox = (GuiControlCheckbox*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::CHECKBOX, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::SETTINGS), "FullScreen", { 520 / 2, 300, 104,20 }, this, GuiClass::SETTINGS);
+	slider = (GuiControlSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDERBAR, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::SETTINGS), "Audio     ", { 520 / 2, coordInitial += interspace, 104,20 }, this, GuiClass::SETTINGS);
+	slider->SetTexture(sliderBackground, sliderMovement);
+	Engine::GetInstance().uiManager.get()->Add(GuiClass::SETTINGS, slider);
+
+	GuiControlCheckbox* checkbox = (GuiControlCheckbox*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::CHECKBOX, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::SETTINGS), "FullScreen", { 520 / 2, coordInitial += interspace, 40,40 }, this, GuiClass::SETTINGS);
 	checkbox->SetTexture(checkOff, checkOn);
 	Engine::GetInstance().uiManager.get()->Add(GuiClass::SETTINGS, checkbox);
 

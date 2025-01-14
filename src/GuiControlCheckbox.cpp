@@ -68,7 +68,7 @@ bool GuiControlCheckbox::Update(float dt)
 			Engine::GetInstance().render->DrawTexture(actualCheck, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
 			break;
 		}
-		Engine::GetInstance().render->DrawText(text.c_str(), posHitbox.getX() * 2, (posHitbox.getY() * 2) - 48, bounds.w, text.size() * 10);
+		Engine::GetInstance().render->DrawText(text.c_str(), posHitbox.getX() * 2, (posHitbox.getY() * 2) - 48, 180, 60, { 0,0,0 });
 	}
 
 

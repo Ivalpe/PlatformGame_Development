@@ -37,7 +37,11 @@ bool GuiControlSlider::Update(float dt)
 			if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
 				state = GuiControlState::PRESSED;
 				posButton = -(Engine::GetInstance().render.get()->camera.x / 2) + mousePos.getX() - 8;
-				Engine::GetInstance().audio.get()->ChangeVolume((posButton - 255) * 2);
+				if (text == "Music     ")
+					Engine::GetInstance().audio.get()->ChangeVolume((posButton - 255) * 2, 1);
+				else
+					Engine::GetInstance().audio.get()->ChangeVolume((posButton - 255) * 2, 2);
+
 			}
 
 			if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP) {
@@ -68,7 +72,7 @@ bool GuiControlSlider::Update(float dt)
 			Engine::GetInstance().render->DrawTexture(checkboxOn, SDL_FLIP_NONE, posButton, bounds.y);
 			break;
 		}
-		Engine::GetInstance().render->DrawText(text.c_str(), posHitbox.getX() * 2, (posHitbox.getY() * 2) - 48, bounds.w, text.size()*10);
+		Engine::GetInstance().render->DrawText(text.c_str(), posHitbox.getX() * 2, (posHitbox.getY() * 2) - 48, 180, 60, { 0,0,0 });
 	}
 	else posButton = -(Engine::GetInstance().render.get()->camera.x / 2) + bounds.x;
 

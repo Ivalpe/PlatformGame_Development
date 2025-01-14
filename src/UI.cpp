@@ -6,7 +6,7 @@
 
 bool UI::Update(float dt) {
 	if (IsShowing(GuiClass::MAIN_MENU)) Engine::GetInstance().render.get()->DrawTexture(TitleScreen, SDL_FLIP_NONE, -Engine::GetInstance().render.get()->camera.x / 2 + 110, -Engine::GetInstance().render.get()->camera.y / 2);
-	if (IsShowing(GuiClass::PAUSE)) Engine::GetInstance().render.get()->DrawTexture(OptionsBook, SDL_FLIP_NONE, -Engine::GetInstance().render.get()->camera.x / 2 + 185, -Engine::GetInstance().render.get()->camera.y / 2 + 20);
+	if (IsShowing(GuiClass::PAUSE) || IsShowing(GuiClass::SETTINGS)) Engine::GetInstance().render.get()->DrawTexture(OptionsBook, SDL_FLIP_NONE, -Engine::GetInstance().render.get()->camera.x / 2 + 185, -Engine::GetInstance().render.get()->camera.y / 2 + 20);
 
 	return true;
 }
@@ -30,7 +30,7 @@ void UI::Add(GuiClass gui, GuiControl* control) {
 }
 
 bool UI::GetFullscreen() {
-	GuiControlCheckbox* ch = (GuiControlCheckbox*)settings[1];
+	GuiControlCheckbox* ch = (GuiControlCheckbox*)settings[2];
 	return ch->IsActiveFullScreen();
 }
 

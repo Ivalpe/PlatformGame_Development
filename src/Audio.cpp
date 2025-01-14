@@ -129,8 +129,9 @@ bool Audio::PlayMusic(const char* path, float fadeTime)
 	return ret;
 }
 
-void Audio::ChangeVolume(int volume) {
-	Mix_VolumeMusic(volume);
+void Audio::ChangeVolume(int volume, int channel) {
+	if (volume == 1) Mix_VolumeMusic(volume);
+	else Mix_Volume(channel, volume);
 }
 
 // Load WAV
@@ -168,7 +169,7 @@ bool Audio::PlayFx(int id, int repeat)
 	{
 		auto fxIt = fx.begin();
 		std::advance(fxIt, id - 1);
-		Mix_PlayChannel(-1, *fxIt, repeat);
+		Mix_PlayChannel(2, *fxIt, repeat);
 	}
 
 	return ret;
