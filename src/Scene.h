@@ -159,6 +159,8 @@ private:
 	SDL_Texture* menuButtonDisabled;
 	SDL_Texture* gameOver;
 	SDL_Texture* gameWin;
+	SDL_Texture* checkOff;
+	SDL_Texture* checkOn;
 	
 	bool showSettings = false;       // Flag to show settings menu
 	bool showTp = false;

@@ -52,20 +52,20 @@ bool GuiControlSlider::Update(float dt)
 		switch (state)
 		{
 		case GuiControlState::DISABLED:
-			Engine::GetInstance().render->DrawTexture(sliderBackground, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
-			Engine::GetInstance().render->DrawTexture(sliderMovement, SDL_FLIP_NONE, posButton, bounds.y);
+			Engine::GetInstance().render->DrawTexture(checkboxOff, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			Engine::GetInstance().render->DrawTexture(checkboxOn, SDL_FLIP_NONE, posButton, bounds.y);
 			break;
 		case GuiControlState::NORMAL:
-			Engine::GetInstance().render->DrawTexture(sliderBackground, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
-			Engine::GetInstance().render->DrawTexture(sliderMovement, SDL_FLIP_NONE, posButton, bounds.y);
+			Engine::GetInstance().render->DrawTexture(checkboxOff, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			Engine::GetInstance().render->DrawTexture(checkboxOn, SDL_FLIP_NONE, posButton, bounds.y);
 			break;
 		case GuiControlState::FOCUSED:
-			Engine::GetInstance().render->DrawTexture(sliderBackground, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
-			Engine::GetInstance().render->DrawTexture(sliderMovement, SDL_FLIP_NONE, posButton, bounds.y);
+			Engine::GetInstance().render->DrawTexture(checkboxOff, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			Engine::GetInstance().render->DrawTexture(checkboxOn, SDL_FLIP_NONE, posButton, bounds.y);
 			break;
 		case GuiControlState::PRESSED:
-			Engine::GetInstance().render->DrawTexture(sliderBackground, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
-			Engine::GetInstance().render->DrawTexture(sliderMovement, SDL_FLIP_NONE, posButton, bounds.y);
+			Engine::GetInstance().render->DrawTexture(checkboxOff, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			Engine::GetInstance().render->DrawTexture(checkboxOn, SDL_FLIP_NONE, posButton, bounds.y);
 			break;
 		}
 		Engine::GetInstance().render->DrawText(text.c_str(), posHitbox.getX() * 2, (posHitbox.getY() * 2) - 48, bounds.w, text.size()*10);

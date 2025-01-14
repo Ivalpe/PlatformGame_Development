@@ -18,6 +18,7 @@
 #include "GuiControlSlider.h"
 #include "tracy/Tracy.hpp"
 #include "Npc.h"
+#include "GuiControlCheckbox.h"
 
 // -----------------------------
 // Constructor and Destructor
@@ -85,6 +86,8 @@ void Scene::LoadAssets() {
 	lifePlayer = Engine::GetInstance().textures.get()->Load("Assets/Textures/life.png");
 	sliderBackground = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider1.png");
 	sliderMovement = Engine::GetInstance().textures.get()->Load("Assets/Textures/slider2.png");
+	checkOn = Engine::GetInstance().textures.get()->Load("Assets/Menus/CheckboxOn.png");
+	checkOff = Engine::GetInstance().textures.get()->Load("Assets/Menus/CheckboxOff.png");
 	menuButtonNormal = Engine::GetInstance().textures.get()->Load("Assets/Menus/button.png");
 	menuButtonFocused = Engine::GetInstance().textures.get()->Load("Assets/Menus/buttonfocus.png");
 	menuButtonPressed = Engine::GetInstance().textures.get()->Load("Assets/Menus/buttonPressed.png");
@@ -128,6 +131,11 @@ void Scene::SetupUI() {
 	GuiControlSlider* slider = (GuiControlSlider*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::SLIDERBAR, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::SETTINGS), "Music", { 520 / 2, 200, 104,20 }, this, GuiClass::SETTINGS);
 	slider->SetTexture(sliderBackground, sliderMovement);
 	Engine::GetInstance().uiManager.get()->Add(GuiClass::SETTINGS, slider);
+
+	GuiControlCheckbox* checkbox = (GuiControlCheckbox*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::CHECKBOX, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::SETTINGS), "FullScreen", { 520 / 2, 300, 104,20 }, this, GuiClass::SETTINGS);
+	checkbox->SetTexture(checkOff, checkOn);
+	Engine::GetInstance().uiManager.get()->Add(GuiClass::SETTINGS, checkbox);
+
 	Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, false);
 	showSettings = false;
 
@@ -147,6 +155,13 @@ void Scene::SetupUI() {
 // Called each loop iteration
 bool Scene::PreUpdate()
 {
+
+	if (Engine::GetInstance().uiManager.get()->IsShowing(GuiClass::SETTINGS)) {
+		if (Engine::GetInstance().uiManager.get()->GetFullscreen())
+			Engine::GetInstance().window.get()->Fullscreen(true);
+		else Engine::GetInstance().window.get()->Fullscreen(false);
+	}
+
 	return true;
 }
 
@@ -300,7 +315,7 @@ void Scene::HandleGui() {
 		else Engine::GetInstance().uiManager->Show(GuiClass::TPBONFIRE, false);
 
 		//Enable Settings UI
-		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
+		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN && player->GetLifes() >= 0) {
 			if (Engine::GetInstance().uiManager->IsShowing(GuiClass::PAUSE) || Engine::GetInstance().uiManager->IsShowing(GuiClass::SETTINGS)) {
 				pause = false;
 				Engine::GetInstance().uiManager->Show(GuiClass::PAUSE, false);
@@ -331,7 +346,7 @@ bool Scene::Update(float dt)
 	auto& engine = Engine::GetInstance();
 	HandleCamera(engine);
 
-	if (level != 0) {
+	if (level != 0 && level != 4) {
 		//Debug Mode
 		DebugMode();
 
@@ -386,10 +401,9 @@ bool Scene::Update(float dt)
 			CreateEvents();
 			playerRespawnCool = 480;
 		}
-
-		if (level == 4) {
-			winRestartCool--;
-		}
+	}
+	else if (level == 4) {
+		winRestartCool--;
 
 		if (winRestartCool <= 0) {
 			level = 0;
@@ -537,13 +551,14 @@ void Scene::LoadNextLevel()
 void Scene::DebugMode() {
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN ||
-		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
+		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN ||
+		Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F4) == KEY_DOWN) {
 
 		int previousLevel = level;
 
 		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) level = 1;
-		else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) level = 3;
-
+		else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) level = 2;
+		else if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F4) == KEY_DOWN) level = 3;
 
 		pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
 		if (level != previousLevel) {

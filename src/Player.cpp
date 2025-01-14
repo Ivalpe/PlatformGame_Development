@@ -73,6 +73,7 @@ void Player::SetPosition(Vector2D posPlayer) {
 }
 
 void Player::Respawn() {
+	firePower = false;
 	coins = 0;
 	isDying = false;
 	lifes = 5;

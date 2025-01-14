@@ -4,6 +4,7 @@
 
 #include "GuiControlButton.h"
 #include "GuiControlSlider.h"
+#include "GuiControlCheckbox.h"
 #include "Audio.h"
 
 GuiManager::GuiManager() :Module()
@@ -30,6 +31,10 @@ GuiControl* GuiManager::CreateGuiControl(GuiControlType type, int id, const char
 		break;
 	case GuiControlType::SLIDERBAR:
 		guiControl = new GuiControlSlider(id, bounds, text);
+		break;
+	case GuiControlType::CHECKBOX:
+		guiControl = new GuiControlCheckbox(id, bounds, text);
+		break;
 	}
 
 	//Set the observer

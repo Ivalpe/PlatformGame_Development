@@ -16,6 +16,8 @@ public:
 	// Called before render is available
 	bool Awake();
 
+	void Fullscreen(bool full);
+
 	// Called before quitting
 	bool CleanUp();
 

@@ -150,6 +150,7 @@
     <ClCompile Include="src\Enemy.cpp" />
     <ClCompile Include="src\Engine.cpp" />
     <ClCompile Include="src\EntityManager.cpp" />
+    <ClCompile Include="src\GuiControlCheckbox.cpp" />
     <ClCompile Include="src\GuiControlSlider.cpp" />
     <ClCompile Include="src\Npc.cpp" />
     <ClCompile Include="src\Power.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\Entity.h" />
     <ClInclude Include="src\EntityManager.h" />
+    <ClInclude Include="src\GuiControlCheckbox.h" />
     <ClInclude Include="src\GuiControlSlider.h" />
     <ClInclude Include="src\Npc.h" />
     <ClInclude Include="src\Power.h" />

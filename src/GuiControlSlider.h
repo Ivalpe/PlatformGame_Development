@@ -15,17 +15,16 @@ public:
 	bool Update(float dt);
 
 	void SetTexture(SDL_Texture* background, SDL_Texture* movement) {
-		sliderBackground = background;
-		sliderMovement = movement;
+		checkboxOff = background;
+		checkboxOn = movement;
 	}
 
 private:
 
-	SDL_Texture* sliderBackground;
-	SDL_Texture* sliderMovement;
+	SDL_Texture* checkboxOff;
+	SDL_Texture* checkboxOn;
 	int posButton;
 	Vector2D posHitbox;
 	Vector2D posTexture;
-	bool canClick = true;
 	bool drawBasic = false;
 };

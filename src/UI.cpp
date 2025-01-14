@@ -2,6 +2,7 @@
 #include "GuiControlButton.h"
 #include "UI.h"
 #include "Engine.h"
+#include "GuiControlCheckbox.h"
 
 bool UI::Update(float dt) {
 	if (IsShowing(GuiClass::MAIN_MENU)) Engine::GetInstance().render.get()->DrawTexture(TitleScreen, SDL_FLIP_NONE, -Engine::GetInstance().render.get()->camera.x / 2 + 110, -Engine::GetInstance().render.get()->camera.y / 2);
@@ -26,6 +27,11 @@ void UI::Add(GuiClass gui, GuiControl* control) {
 		settings.push_back(control);
 		break;
 	}
+}
+
+bool UI::GetFullscreen() {
+	GuiControlCheckbox* ch = (GuiControlCheckbox*)settings[1];
+	return ch->IsActiveFullScreen();
 }
 
 void UI::Remove(GuiClass gui, int id) {

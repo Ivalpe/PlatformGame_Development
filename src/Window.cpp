@@ -19,7 +19,7 @@ bool Window::Awake()
 	LOG("Init SDL window & surface");
 	bool ret = true;
 
-	if(SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		LOG("SDL_VIDEO could not initialize! SDL_Error: %s\n", SDL_GetError());
 		ret = false;
@@ -38,14 +38,14 @@ bool Window::Awake()
 		height = configParameters.child("resolution").attribute("height").as_int();
 		scale = configParameters.child("resolution").attribute("scale").as_int();
 
-		if(fullscreen == true) flags |= SDL_WINDOW_FULLSCREEN;
-		if(borderless == true) flags |= SDL_WINDOW_BORDERLESS;
-		if(resizable == true) flags |= SDL_WINDOW_RESIZABLE;
-		if(fullscreen_window == true) flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		if (fullscreen == true) flags |= SDL_WINDOW_FULLSCREEN;
+		if (borderless == true) flags |= SDL_WINDOW_BORDERLESS;
+		if (resizable == true) flags |= SDL_WINDOW_RESIZABLE;
+		if (fullscreen_window == true) flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
 		window = SDL_CreateWindow("The Ritual", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 
-		if(window == NULL)
+		if (window == NULL)
 		{
 			LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
 			ret = false;
@@ -55,13 +55,20 @@ bool Window::Awake()
 	return ret;
 }
 
+void Window::Fullscreen(bool full) {
+	Uint32 flags = SDL_WINDOW_SHOWN;
+	if (full == true) flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+
+	SDL_SetWindowFullscreen(window, flags);
+}
+
 // Called before quitting
 bool Window::CleanUp()
 {
 	LOG("Destroying SDL window and quitting all SDL systems");
 
 	// Destroy window
-	if(window != NULL)
+	if (window != NULL)
 	{
 		SDL_DestroyWindow(window);
 	}

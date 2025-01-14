@@ -9,6 +9,8 @@ public:
 
 	void Add(GuiClass gui, GuiControl* control);
 
+	bool GetFullscreen();
+
 	void Remove(GuiClass gui, int id);
 
 	void Active(GuiClass gui, int id);

@@ -111,6 +111,12 @@
     <ClCompile Include="src\GuiControlSlider.cpp">
       <Filter>Source Files\Gui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Npc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GuiControlCheckbox.cpp">
+      <Filter>Source Files\Gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Audio.h">
@@ -198,6 +204,10 @@
       <Filter>Source Files\Gui</Filter>
     </ClInclude>
     <ClInclude Include="src\GuiControlSlider.h">
+      <Filter>Source Files\Gui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Npc.h" />
+    <ClInclude Include="src\GuiControlCheckbox.h">
       <Filter>Source Files\Gui</Filter>
     </ClInclude>
   </ItemGroup>
