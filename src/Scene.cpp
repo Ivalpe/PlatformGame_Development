@@ -402,7 +402,7 @@ bool Scene::Update(float dt)
 		}
 
 		if (playerRespawnCool <= 0) {
-			LoadState(LOAD::INITIAL);
+			LoadState(LOAD::RESPAWN);
 			player->Respawn();
 			CreateEvents();
 			playerRespawnCool = 480;
