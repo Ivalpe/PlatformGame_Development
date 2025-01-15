@@ -219,40 +219,41 @@ void Scene::HandleCamera(Engine& engine) {
 
 void Scene::HandlePowers() {
 	//Power Player Fireball
-	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
+	if (!Engine::GetInstance().uiManager.get()->IsShowing(GuiClass::PAUSE) && !Engine::GetInstance().uiManager.get()->IsShowing(GuiClass::SETTINGS) && player->GetLifes() >= 0) {
+		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
 
-		Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALLPLAYER);
-		power->SetParameters(configParameters.child("entities").child("fireball"), TypePower::FIREBALL);
-		if (player->GetDirection() == DirectionPlayer::LEFT) power->Start(true);
-		else power->Start(false);
+			Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALLPLAYER);
+			power->SetParameters(configParameters.child("entities").child("fireball"), TypePower::FIREBALL);
+			if (player->GetDirection() == DirectionPlayer::LEFT) power->Start(true);
+			else power->Start(false);
 
-		Vector2D playerPos = player->GetPosition();
-		if (player->GetDirection() == DirectionPlayer::LEFT) power->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
-		else power->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
+			Vector2D playerPos = player->GetPosition();
+			if (player->GetDirection() == DirectionPlayer::LEFT) power->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
+			else power->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
 
-		fireballList.push_back(power);
+			fireballList.push_back(power);
+		}
+
+		if (player->GetfirePower() && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
+
+			Power* bigPower = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BIGFIREBALLPLAYER);
+			bigPower->SetParameters(configParameters.child("entities").child("bigfireball"), TypePower::BIGFIREBALL);
+			if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->Start(true);
+			else bigPower->Start(false);
+
+			Vector2D playerPos = player->GetPosition();
+			if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
+			else bigPower->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
+
+			fireballList.push_back(bigPower);
+
+			// Play the sound effect for the big fireball
+			//Engine::GetInstance().audio.get()->PlayFx(bigFireballSFX);
+
+			// Reset the firePower flag
+			player->SetfirePower(false);
+		}
 	}
-
-	if (player->GetfirePower() && Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-
-		Power* bigPower = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::BIGFIREBALLPLAYER);
-		bigPower->SetParameters(configParameters.child("entities").child("bigfireball"), TypePower::BIGFIREBALL);
-		if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->Start(true);
-		else bigPower->Start(false);
-
-		Vector2D playerPos = player->GetPosition();
-		if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
-		else bigPower->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
-
-		fireballList.push_back(bigPower);
-
-		// Play the sound effect for the big fireball
-		//Engine::GetInstance().audio.get()->PlayFx(bigFireballSFX);
-
-		// Reset the firePower flag
-		player->SetfirePower(false);
-	}
-
 	//Power Boss Fireball
 	for (auto& e : enemyList) {
 		if (e->GetType() == EnemyType::BOSS && e->GetBossFireball()) {
@@ -427,13 +428,6 @@ bool Scene::Update(float dt)
 
 			player->SetLevel(Level::DISABLED);
 			winRestartCool = 480;
-		}
-	}
-
-	//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-	if (engine.input.get()->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
-		for (auto b : bonfireList) {
-			LOG("ID %d", b.first->getId());
 		}
 	}
 
