@@ -44,13 +44,6 @@ bool Enemy::Start() {
 	dmg.LoadAnimations(parameters.child("animations").child("dmg"));
 	currentAnimation = &idle;
 
-	//Load Fx
-	pugi::xml_document audioFile;
-	pugi::xml_parse_result result = audioFile.load_file("config.xml");
-
-	enemydSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("enemydSFX").attribute("path").as_string());
-
-
 	//Add a physics to an item - initialize the physics body
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY() + texW, texW / 2, bodyType::DYNAMIC);
 
@@ -61,6 +54,16 @@ bool Enemy::Start() {
 	//Assign collider type
 	pbody->ctype = ColliderType::ENEMY;
 	pbody->listener = this;
+
+
+	// Set the gravity of the body
+	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
+
+	//Load Fx
+	pugi::xml_document audioFile;
+	pugi::xml_parse_result result = audioFile.load_file("config.xml");
+
+	enemydSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("enemydSFX").attribute("path").as_string());
 
 	switch (type)
 	{
@@ -77,9 +80,6 @@ bool Enemy::Start() {
 		break;
 	}
 
-	// Set the gravity of the body
-	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
-
 	if (type == EnemyType::BOSS) flipType = SDL_FLIP_HORIZONTAL;
 
 	// Initialize pathfinding
@@ -91,6 +91,32 @@ bool Enemy::Start() {
 
 void Enemy::SetEnemyType(EnemyType et) {
 	type = et;
+}
+
+void Enemy::ShowEnemy(bool show) {
+
+	if (!showing && show) {
+		showing = show;
+		//Add a physics to an item - initialize the physics body
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY() + texW, texW / 2, bodyType::DYNAMIC);
+
+		sensor = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX(), (int)position.getY() + texH, texW * 4, bodyType::KINEMATIC);
+		sensor->ctype = ColliderType::SENSOR;
+		sensor->listener = this;
+
+		//Assign collider type
+		pbody->ctype = ColliderType::ENEMY;
+		pbody->listener = this;
+
+
+		// Set the gravity of the body
+		if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
+	}
+	else if (showing && !show) {
+		showing = show;
+		Engine::GetInstance().physics->DeleteBody(pbody->body);
+		Engine::GetInstance().physics->DeleteBody(sensor->body);
+	}
 }
 
 void Enemy::BossPattern(float dt) {
@@ -233,11 +259,14 @@ void Enemy::EnemyPattern(float dt) {
 bool Enemy::Update(float dt) {
 	ZoneScoped;
 
-	if (lifes <= 0) currentAnimation = &die;
+	if (showing) {
+		if (lifes <= 0) currentAnimation = &die;
 
-	if (type != EnemyType::BOSS) EnemyPattern(dt);
-	else BossPattern(dt);
+		//if (currentAnimation == &die && currentAnimation->HasFinished()) ShowEnemy(false);
 
+		if (type != EnemyType::BOSS) EnemyPattern(dt);
+		else BossPattern(dt);
+	}
 	return true;
 }
 

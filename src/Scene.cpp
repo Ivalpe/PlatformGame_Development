@@ -254,6 +254,7 @@ void Scene::HandlePowers() {
 			player->SetfirePower(false);
 		}
 	}
+	/*
 	//Power Boss Fireball
 	for (auto& e : enemyList) {
 		if (e->GetType() == EnemyType::BOSS && e->GetBossFireball()) {
@@ -270,7 +271,7 @@ void Scene::HandlePowers() {
 			break;
 		}
 
-	}
+	}*/
 }
 
 void Scene::HandleGui() {
@@ -439,8 +440,6 @@ bool Scene::PostUpdate()
 {
 	bool ret = true;
 
-
-
 	// Level transition effect
 	if (isTransitioning) {
 		SDL_Rect rec;
@@ -477,8 +476,8 @@ bool Scene::PostUpdate()
 	// Activate boss when the player reaches a specific position
 	if (!bossActive && level == 3 && player->GetX() >= 470) {
 		for (auto e : enemyList) {
-			if (e->GetType() == EnemyType::BOSS) {
-				e->ActiveBoss();
+			if (e.first->GetType() == EnemyType::BOSS) {
+				e.first->ActiveBoss();
 				bossActive = true;
 				break;
 			}
@@ -486,18 +485,13 @@ bool Scene::PostUpdate()
 	}
 
 	// Clear dead enemies from the list
-	for (auto it = enemyList.begin(); it != enemyList.end();) {
-		if ((*it)->IsDead()) {
-			SaveKillEnemy((*it)->GetId());
-			Engine::GetInstance().physics->DeleteBody((*it)->getBody());
-			Engine::GetInstance().physics->DeleteBody((*it)->getSensorBody());
-			Engine::GetInstance().entityManager->DestroyEntity(*it);
-			it = enemyList.erase(it);
-		}
-		else {
-			++it;
+	for (auto it = enemyList.begin(); it != enemyList.end(); it++) {
+		if (it->first->IsDead() && it->first->IsShowing()) {
+			SaveKillEnemy(it->first->GetId());
+			it->first->ShowEnemy(false);
 		}
 	}
+
 
 	// Clear collected items from the list
 	for (auto it = itemList.begin(); it != itemList.end();) {
@@ -571,15 +565,14 @@ void Scene::DebugMode() {
 			Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
 		}
 		LoadState(LOAD::INITIAL);
-		RemoveLevelEnemies(level);
+		RestartEnemies();
+		//RemoveLevelEnemies(level);
 		CreateEvents();
 
 		player->SetLevel(Level::DISABLED);
 	}
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
-
-		RestartBonfires();
 		LoadState(LOAD::INITIAL);
 		player->Respawn();
 		CreateEvents();
@@ -641,22 +634,6 @@ void Scene::ActiveBonfires() {
 		}
 
 	}
-}
-
-void Scene::RestartBonfires() {
-	pugi::xml_document saveFile;
-	pugi::xml_parse_result result = saveFile.load_file("config.xml");
-	pugi::xml_node bonfireNodes = saveFile.child("config").child("scene").child("bonfires");
-	/*
-	for (pugi::xml_node enemyNode = bonfireNodes.child("bonfire"); enemyNode; enemyNode = enemyNode.next_sibling("bonfire")) {
-		if (enemyNode.attribute("activated").as_bool() == true) {
-			Engine::GetInstance().uiManager.get()->Disable(GuiClass::TPBONFIRE, enemyNode.attribute("id").as_int());
-			enemyNode.attribute("activated") = "false";
-		}
-	}
-	*/
-	saveFile.save_file("config.xml");
-
 }
 
 bool Scene::OnGuiMouseClickEvent(GuiControl* control)
@@ -842,15 +819,7 @@ void Scene::CreateEvents() {
 	std::map<Vector2D, int> listEnemy, listItems, listNpcs;
 	pugi::xml_document saveFile;
 	pugi::xml_parse_result result = saveFile.load_file("config.xml");
-
 	/*
-	//Firecamps
-	for (int i = 0; i < bonfireList.size();) {
-		Engine::GetInstance().entityManager->DestroyEntity(bonfireList[i]);
-		bonfireList.erase(bonfireList.begin());
-	}
-	*/
-
 	//Enemies
 	for (int i = 0; i < enemyList.size();) {
 		Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
@@ -858,7 +827,7 @@ void Scene::CreateEvents() {
 		Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
 		enemyList.erase(enemyList.begin() + i);
 	}
-
+	*/
 	//Items
 	for (int i = 0; i < itemList.size(); i++) {
 		Engine::GetInstance().physics->DeleteBody(itemList[i]->getBody());
@@ -902,7 +871,6 @@ void Scene::CreateEvents() {
 			fc->Start();
 			bonfireList.emplace(fc, level);
 
-
 			pugi::xml_node new_bonfire = saveFile.child("config").child("scene").child("bonfires").append_child("bonfire");
 			new_bonfire.append_attribute("level").set_value(level);
 			new_bonfire.append_attribute("activated").set_value("false");
@@ -939,27 +907,32 @@ void Scene::CreateEvents() {
 		if (levelsLoadedEnemies[i] == level) contains = true;
 	}
 
-	listEnemy = Engine::GetInstance().map->GetEnemyList();
-	for (auto enemy : listEnemy) {
-		int lowestId = GetLowestId(1);
-		Enemy* en = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
-		if (enemy.second == 1) {
-			en->SetParameters(configParameters.child("entities").child("enemies").child("evilwizard"), lowestId);
-			en->SetEnemyType(EnemyType::EV_WIZARD);
-		}
-		else if (enemy.second == 2) {
-			en->SetParameters(configParameters.child("entities").child("enemies").child("bat"), lowestId);
-			en->SetEnemyType(EnemyType::BAT);
-		}
-		else {
-			en->SetParameters(configParameters.child("entities").child("enemies").child("boss"), lowestId);
-			en->SetEnemyType(EnemyType::BOSS);
-		}
-		en->Start();
-		en->SetPosition({ enemy.first.getX(), enemy.first.getY() });
-		enemyList.push_back(en);
+	for (auto b : enemyList) {
+		if (b.second == level) b.first->ShowEnemy(true);
+		else b.first->ShowEnemy(false);
+	}
 
-		if (!contains) {
+	if (!contains) {
+		listEnemy = Engine::GetInstance().map->GetEnemyList();
+		for (auto enemy : listEnemy) {
+			int lowestId = GetLowestId(1);
+			Enemy* en = (Enemy*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ENEMY);
+			if (enemy.second == 1) {
+				en->SetParameters(configParameters.child("entities").child("enemies").child("evilwizard"), lowestId);
+				en->SetEnemyType(EnemyType::EV_WIZARD);
+			}
+			else if (enemy.second == 2) {
+				en->SetParameters(configParameters.child("entities").child("enemies").child("bat"), lowestId);
+				en->SetEnemyType(EnemyType::BAT);
+			}
+			else {
+				en->SetParameters(configParameters.child("entities").child("enemies").child("boss"), lowestId);
+				en->SetEnemyType(EnemyType::BOSS);
+			}
+			en->Start();
+			en->SetPosition({ enemy.first.getX(), enemy.first.getY() });
+			enemyList.emplace(en, level);
+
 			pugi::xml_node newEnemy = saveFile.child("config").child("scene").child("enemies").append_child("enemy");
 			newEnemy.append_attribute("id").set_value(lowestId);
 			newEnemy.append_attribute("level").set_value(level);
@@ -969,7 +942,6 @@ void Scene::CreateEvents() {
 
 			saveFile.save_file("config.xml");
 		}
-
 	}
 
 	levelsLoadedEnemies.push_back(level);
@@ -1077,6 +1049,10 @@ void Scene::RestartEnemies() {
 
 	for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
 		enemyNode.attribute("dead") = "false";
+	}
+
+	for (auto b : enemyList) {
+		b.first->Respawn();
 	}
 	saveFile.save_file("config.xml");
 

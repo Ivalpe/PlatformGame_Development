@@ -62,6 +62,24 @@ public:
 
 	bool IsDead();
 
+	void Respawn() {
+		dead = false;
+		switch (type)
+		{
+		case EnemyType::EV_WIZARD:
+			lifes = 3;
+			break;
+		case EnemyType::BAT:
+			lifes = 4;
+			break;
+		case EnemyType::BOSS:
+			lifes = 10;
+			break;
+		default:
+			break;
+		}
+	}
+
 	void EnemyPattern(float dt);
 	void BossPattern(float dt);
 
@@ -79,7 +97,7 @@ public:
 		bossActive = true;
 	}
 
-	bool GetBossFireball(){
+	bool GetBossFireball() {
 		return fireball;
 	}
 
@@ -91,6 +109,11 @@ public:
 		return de;
 	}
 
+	void ShowEnemy(bool show);
+
+	bool IsShowing() {
+		return showing;
+	}
 
 private:
 
@@ -127,4 +150,5 @@ private:
 	int bossCooldown = 120;
 	int lifes;
 	bool isJumping = false;
+	bool showing = true;
 };
