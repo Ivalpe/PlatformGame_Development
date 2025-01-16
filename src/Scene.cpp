@@ -42,6 +42,7 @@ bool Scene::Awake()
 	LOG("Loading Scene");
 	bool ret = true;
 
+	countTime = Timer();
 	exitGame = false;
 	firstTimeLoad = false;
 	help = false;
@@ -335,6 +336,10 @@ void Scene::HandleGui() {
 				Engine::GetInstance().uiManager->Show(GuiClass::PAUSE, true);
 			}
 		}
+
+		timer = countTime.ReadSec() - start;
+		Engine::GetInstance().render.get()->DrawText("Time:     ", Engine::GetInstance().window.get()->width - 150, 100, 180, 60);
+		Engine::GetInstance().render.get()->DrawText(std::to_string(timer).c_str(), Engine::GetInstance().window.get()->width - 50, 100, (std::to_string(timer).size()) * 20, 60);
 	}
 	else {
 		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
@@ -668,6 +673,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
 			player->SetPosition(posPlayer);
 
+			start = countTime.ReadSec();
 
 			player->SetLevel(Level::DISABLED);
 		}

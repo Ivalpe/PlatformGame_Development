@@ -185,5 +185,8 @@ private:
 	const char* bossMusic;
 
 	bool load = false;
+	int timer = 0;
+	int start = 0;
+	Timer countTime;
 
 };
