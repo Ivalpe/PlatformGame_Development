@@ -68,6 +68,7 @@ bool Scene::Start()
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
 	RestartEnemies();
+	RestartSave();
 	CreateEvents();
 
 	SetupUI();
@@ -125,6 +126,7 @@ void Scene::SetupUI() {
 		Engine::GetInstance().uiManager.get()->Add(GuiClass::MAIN_MENU, button);
 		coordInitial += interspace;
 	}
+	Engine::GetInstance().uiManager.get()->Disable(GuiClass::MAIN_MENU, 2);
 	Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, true);
 
 	//Settings
@@ -392,6 +394,10 @@ bool Scene::Update(float dt)
 
 				saveFile.child("config").child("scene").child("entities").child("player").attribute("x").set_value(bonfire.first->GetPosition().getX());
 				saveFile.child("config").child("scene").child("entities").child("player").attribute("y").set_value(bonfire.first->GetPosition().getY());
+				saveFile.child("config").child("scene").child("savedGame").attribute("value").set_value("true");
+				saveFile.child("config").child("scene").child("savedGame").attribute("level").set_value(level);
+				saveFile.child("config").child("scene").child("savedGame").attribute("x").set_value(bonfire.first->GetPosition().getX());
+				saveFile.child("config").child("scene").child("savedGame").attribute("y").set_value(bonfire.first->GetPosition().getY());
 				saveFile.save_file("config.xml");
 			}
 		}
@@ -403,6 +409,7 @@ bool Scene::Update(float dt)
 		}
 
 		if (playerRespawnCool <= 0) {
+			RestartEnemies();
 			LoadState(LOAD::RESPAWN);
 			player->Respawn();
 			CreateEvents();
@@ -665,6 +672,18 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			player->SetLevel(Level::DISABLED);
 		}
 		else if (control->id == 2) {
+			level = nodes.child("savedGame").attribute("level").as_int();
+			pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", nodes.child("savedGame").attribute("level").as_string());
+			Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+			LoadState(LOAD::INITIAL);
+			player->SetPosition({ nodes.child("savedGame").attribute("x").as_float() , nodes.child("savedGame").attribute("y").as_float() });
+			RestartEnemies();
+			CreateEvents();
+
+			player->ActivePlayer();
+			Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
+
+			player->SetLevel(Level::DISABLED);
 		}
 		else if (control->id == 3) {
 			if (Engine::GetInstance().uiManager.get()->IsShowing(GuiClass::SETTINGS)) {
@@ -711,6 +730,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 			player->SetPosition(posPlayer);
 			pause = false;
 
+			if (nodes.child("savedGame").attribute("value").as_bool()) Engine::GetInstance().uiManager.get()->Active(GuiClass::MAIN_MENU, 2);
 
 			player->SetLevel(Level::DISABLED);
 		}
@@ -1054,6 +1074,19 @@ void Scene::RestartEnemies() {
 	for (auto b : enemyList) {
 		b.first->Respawn();
 	}
+	saveFile.save_file("config.xml");
+
+}
+
+//Modify the XML and restart the save level
+void Scene::RestartSave() {
+	pugi::xml_document saveFile;
+	pugi::xml_parse_result result = saveFile.load_file("config.xml");
+	pugi::xml_node saveNode = saveFile.child("config").child("scene").child("savedGame");
+
+
+	saveNode.attribute("value") = "false";
+
 	saveFile.save_file("config.xml");
 
 }

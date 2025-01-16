@@ -63,6 +63,8 @@ public:
 
 	void RestartEnemies();
 
+	void RestartSave();
+
 	void RemoveLevelEnemies(int level);
 
 	int GetLowestId(int type);
@@ -182,5 +184,6 @@ private:
 	const char* levelMusic;
 	const char* bossMusic;
 
+	bool load = false;
 
 };
