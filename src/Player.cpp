@@ -325,6 +325,9 @@ void Player::OnCollisionEnd(PhysBody* physA, PhysBody* physB)
 	case ColliderType::UNKNOWN:
 		LOG("End Collision UNKNOWN");
 		break;
+	case ColliderType::WIN:
+		LOG("Collision LOAD");
+		lvl = Level::DISABLED;
 	default:
 		break;
 	}
