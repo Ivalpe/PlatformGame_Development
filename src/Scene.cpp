@@ -111,6 +111,7 @@ void Scene::LoadAssets() {
 	saveSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("saveSFX").attribute("path").as_string());
 	stone_doorSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("stone_doorSFX").attribute("path").as_string());
 
+
 	OptionsBook = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsBook.png");
 	TitleScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/TitleScreen.png");
 	Engine::GetInstance().uiManager.get()->LoadTextures(TitleScreen, OptionsBook);

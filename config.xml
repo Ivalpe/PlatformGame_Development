@@ -351,6 +351,8 @@
 				<jumpSFX path="Assets/Audio/Fx/jump.ogg" />
 				<damageSFX path="Assets/Audio/Fx/damage_player.ogg" />
 				<stone_doorSFX path="Assets/Audio/Fx/stone_door.ogg" />
+				<button_clickSFX path="Assets/Audio/Fx/button_click.ogg" />
+				<item_pickupSFX path="Assets/Audio/Fx/item_pickup.ogg" />
 			</fx>
 			<music>
 				<MainMenuMusic path="Assets/Audio/Music/Medieval Vol. 2 4 (Loop).wav" />

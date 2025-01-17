@@ -11,6 +11,8 @@ public:
 	GuiControlButton(int id, SDL_Rect bounds, const char* text);
 	virtual ~GuiControlButton();
 
+	bool Start();
+
 	// Called each loop iteration
 	bool Update(float dt);
 
@@ -32,6 +34,7 @@ private:
 	SDL_Texture* buttonDisabled;
 	Vector2D posHitbox;
 	Vector2D posTexture;
+	int button_clickSFX;  // Sound effect for button clicked
 };
 
 #pragma once

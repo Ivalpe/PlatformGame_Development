@@ -8,6 +8,7 @@
 #include "Log.h"
 #include "Physics.h"
 #include "Map.h"
+#include "Module.h"
 
 Item::Item() : Entity(EntityType::ITEM)
 {
@@ -35,6 +36,9 @@ bool Item::Start() {
 	collect.LoadAnimations(parameters.child("animations").child("collect"));
 	currentAnimation = &idle;
 
+	pugi::xml_document audioFile;
+	pugi::xml_parse_result result = audioFile.load_file("config.xml");
+	item_pickupSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("pdeathSFX").attribute("path").as_string());
 
 	// L08 TODO 4: Add a physics to an item - initialize the physics body
 	//Engine::GetInstance().textures.get()->GetSize(texture, texW, texH);
@@ -122,6 +126,7 @@ void Item::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::PLAYER:
 		if (stItem != StateItem::DIE && physB->ctype != ColliderType::SENSOR) {
 			stItem = StateItem::DIE;
+			Engine::GetInstance().audio.get()->PlayFx(item_pickupSFX);
 			currentAnimation = &idle;
 			collected = true;
 

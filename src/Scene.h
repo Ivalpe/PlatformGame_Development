@@ -140,6 +140,7 @@ private:
 	int saveSFX;          // Sound effect for saving progress
 	int loadSFX;		  // Sound effect for loading progress
 	int stone_doorSFX;    // Sound effect for level cahnge
+	
 
 	// --- USER INTERFACE (UI) ---
 	SDL_Texture* helpMenu;			 // Menu texture
