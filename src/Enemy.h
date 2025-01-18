@@ -83,8 +83,6 @@ public:
 	void EnemyPattern(float dt);
 	void BossPattern(float dt);
 
-public:
-
 	b2Body* getBody() {
 		return pbody->body;
 	}
@@ -139,7 +137,7 @@ private:
 	float speed;
 	int id;
 
-	int enemydSFX;
+	int enemydSFX, bossSword, bossDie;
 	int tempChangeAnimation;
 	bool directionLeft;
 	bool coolDownPathFinding = false;
@@ -151,4 +149,6 @@ private:
 	int lifes;
 	bool isJumping = false;
 	bool showing = true;
+	int randomAttack = 0;
+	bool audioDie = false;
 };

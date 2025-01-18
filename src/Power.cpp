@@ -51,9 +51,9 @@ bool Power::Start(bool inv) {
 		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texH / 2, bodyType::DYNAMIC);
 		pbody->ctype = ColliderType::FIREBALLPLAYER;
 	}
-	else if (type == EntityType::FIREBALLENEMY) {
-		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texH / 2, bodyType::DYNAMIC);
-		pbody->ctype = ColliderType::FIREBALLENEMY;
+	else if (type == EntityType::ATTACKBOSS) {
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texH / 3, bodyType::DYNAMIC);
+		pbody->ctype = ColliderType::ATTACKBOSS;
 	}
 	else if (type == EntityType::BIGFIREBALLPLAYER) {
 		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY(), texH / 2, bodyType::DYNAMIC);
@@ -71,15 +71,20 @@ bool Power::Start(bool inv) {
 	return true;
 }
 
-bool Power::Update(float dt)
-{
-
-
-	if (statePower == StatePower::DIE && currentAnimation->HasFinished()) col = true;
-	else if (statePower == StatePower::DIE) pbody->body->SetLinearVelocity({ 0, 0 });
+bool Power::Update(float dt) {
+	if (!Engine::GetInstance().scene.get()->IsPause()) {
+		if (statePower == StatePower::DIE && currentAnimation->HasFinished()) col = true;
+		else if (statePower == StatePower::DIE) pbody->body->SetLinearVelocity({ 0, 0 });
+		else {
+			float speed = inverted ? -5.0f : 5.0f;
+			pbody->body->SetLinearVelocity({ speed, 0 });
+		}
+	}
 	else {
-		float speed = inverted ? -5.0f : 5.0f;
-		pbody->body->SetLinearVelocity({ speed, 0 });
+		pbody->body->SetLinearVelocity({ 0,0 });
+		b2Transform pbodyPos = pbody->body->GetTransform();
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH / 2);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 	}
 
 
@@ -93,8 +98,10 @@ bool Power::Update(float dt)
 	else position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - texW / 2);
 	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH);
 
-
-	Engine::GetInstance().render.get()->DrawTexture(texture, inverted ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	if (type == EntityType::ATTACKBOSS)
+		Engine::GetInstance().render.get()->DrawTexture(texture, inverted ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE, (int)position.getX(), (int)position.getY() + 20, &currentAnimation->GetCurrentFrame());
+	else
+		Engine::GetInstance().render.get()->DrawTexture(texture, inverted ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
@@ -133,10 +140,8 @@ void Power::OnCollision(PhysBody* physA, PhysBody* physB) {
 		statePower = StatePower::DIE;
 		currentAnimation = &explode;
 
-		// Verifica el tipo de entidad y reproduce el sonido correspondiente
 		switch (type) {
 		case EntityType::FIREBALLPLAYER:
-		case EntityType::FIREBALLENEMY:
 			Engine::GetInstance().audio.get()->PlayFx(fireball2SFX);
 			break;
 

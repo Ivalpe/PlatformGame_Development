@@ -38,8 +38,6 @@ public:
 		return ittype;
 	}
 
-	bool HasCollision();
-
 	bool Update(float dt);
 
 	bool CleanUp();
@@ -53,15 +51,30 @@ public:
 		return id;
 	}
 
-	
+	bool HasCollision() {
+		return col;
+	}
+
+	bool IsCollected() {
+		return collected;
+	}
 	
 	void OnCollision(PhysBody* physA, PhysBody* physB);
 	void OnCollisionEnd(PhysBody* physA, PhysBody* physB);
 
-	bool IsCollected();
-
 	b2Body* getBody() {
 		return pbody->body;
+	}
+
+	void ShowItem(bool show);
+
+	bool IsShowing() {
+		return showing;
+	}
+
+	void Respawn() {
+		collected = false;
+		stItem = StateItem::IDLE;
 	}
 
 private:
@@ -86,7 +99,5 @@ private:
 	float speed;
 	int id;
 	bool col;
-
-	//L08 TODO 4: Add a physics to an item
-
+	bool showing = true;
 };

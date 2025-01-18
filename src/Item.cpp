@@ -40,14 +40,12 @@ bool Item::Start() {
 	pugi::xml_parse_result result = audioFile.load_file("config.xml");
 	item_pickupSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("item_pickupSFX").attribute("path").as_string());
 
-	// L08 TODO 4: Add a physics to an item - initialize the physics body
 	//Engine::GetInstance().textures.get()->GetSize(texture, texW, texH);
 	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH, (int)position.getY() + texH, texH / 2, bodyType::DYNAMIC);
 
-	// L08 TODO 7: Assign collider type
 	if (ittype == ItemType::COIN)
 		pbody->ctype = ColliderType::COIN;
-	else if (ittype == ItemType:: FIREUP)
+	else if (ittype == ItemType::FIREUP)
 		pbody->ctype = ColliderType::FIREUP;
 	else if (ittype == ItemType::HEALTH)
 		pbody->ctype = ColliderType::HEALTH;
@@ -58,37 +56,59 @@ bool Item::Start() {
 	return true;
 }
 
+void Item::ShowItem(bool show) {
+	if (!showing && show) {
+		showing = show;
+
+		//Engine::GetInstance().textures.get()->GetSize(texture, texW, texH);
+		pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX() + texH, (int)position.getY() + texH, texH / 2, bodyType::DYNAMIC);
+
+		if (ittype == ItemType::COIN)
+			pbody->ctype = ColliderType::COIN;
+		else if (ittype == ItemType::FIREUP)
+			pbody->ctype = ColliderType::FIREUP;
+		else if (ittype == ItemType::HEALTH)
+			pbody->ctype = ColliderType::HEALTH;
+		pbody->listener = this;
+
+		pbody->body->SetGravityScale(0);
+	}
+	else if (showing && !show) {
+		showing = show;
+		Engine::GetInstance().physics->DeleteBody(pbody->body);
+	}
+}
+
 void Item::SetItemType(ItemType it) {
 	ittype = it;
 }
 
 bool Item::Update(float dt)
 {
+	if (showing) {
+		if (stItem == StateItem::DIE) {
+			if (currentAnimation->HasFinished()) {
 
-	if (stItem == StateItem::DIE) {
-		if (currentAnimation->HasFinished()) {
-			
-			collected = true;
-			return false;  
+				collected = true;
+				return false;
+			}
+			pbody->body->SetLinearVelocity({ 0, 0 });
 		}
-		pbody->body->SetLinearVelocity({ 0, 0 });
+
+		if (stItem == StateItem::IDLE) {
+			currentAnimation = &idle;
+		}
+
+		velocity = b2Vec2(0, 0);
+		pbody->body->SetLinearVelocity(velocity);
+
+		b2Transform pbodyPos = pbody->body->GetTransform();
+		position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH);
+		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texW - texW / 2);
+
+		Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+		currentAnimation->Update();
 	}
-
-	if (stItem == StateItem::IDLE) {
-		currentAnimation = &idle;
-	}
-
-	velocity = b2Vec2(0, 0);
-	pbody->body->SetLinearVelocity(velocity);
-
-	b2Transform pbodyPos = pbody->body->GetTransform();
-	position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texH);
-	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texW - texW/2);
-
-	Engine::GetInstance().render.get()->DrawTexture(texture, SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-	currentAnimation->Update();
-
-
 	return true;
 }
 
@@ -112,7 +132,7 @@ void Item::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::GROUND:
 		LOG("Collision PLATFORM");
 		break;
-	
+
 	case ColliderType::UNKNOWN:
 		LOG("Collision UNKNOWN");
 		break;
@@ -131,7 +151,7 @@ void Item::OnCollision(PhysBody* physA, PhysBody* physB) {
 			collected = true;
 
 			//currentAnimation->Reset();
-			pbody->body->SetLinearVelocity({ 0, 0 }); 
+			pbody->body->SetLinearVelocity({ 0, 0 });
 		}
 		break;
 
@@ -148,14 +168,6 @@ void Item::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
 	default:
 		break;
 	}
-}
-
-bool Item::HasCollision() {
-	return col;
-}
-
-bool Item::IsCollected() {
-	return collected;
 }
 
 Vector2D Item::GetPosition() {

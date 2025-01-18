@@ -100,7 +100,7 @@ void Npc::OnCollision(PhysBody* physA, PhysBody* physB) {
 	case ColliderType::FIREBALLPLAYER:
 	case ColliderType::BIGFIREBALLPLAYER:
 		break;
-	case ColliderType::FIREBALLENEMY:
+	case ColliderType::ATTACKBOSS:
 		LOG("Collision FIREBALLENEMY");
 		break;
 	case ColliderType::PLAYER:

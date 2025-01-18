@@ -14,7 +14,7 @@
 struct SDL_Texture;
 
 enum class LOAD {
-	INITIAL, RESPAWN, DEBUG
+	INITIAL, RESPAWN, DEBUG, LOAD
 };
 
 enum class ENEMY {
@@ -61,7 +61,9 @@ public:
 
 	void SaveKillEnemy(int id);
 
-	void RestartEnemies();
+	void SaveGrabbedItem(int id);
+
+	void RestartEntities();
 
 	void RestartSave();
 
@@ -110,6 +112,7 @@ private:
 	int level;                     // Current level
 	bool firstTimeLoad;            // Flag for the first-time loading of the scene
 	bool exitGame;                 // Flag to exit the game
+	int coolIntro = 200;		   // Time for finish Credts screen
 
 	// --- TILE AND DEBUG ---
 	SDL_Texture* mouseTileTex = nullptr;  // Texture for the mouse tile
@@ -118,8 +121,8 @@ private:
 
 	// --- PLAYER AND ENTITIES ---
 	Player* player;                       // Player instance
-	std::map<Enemy*, int> enemyList;        // List of enemies
-	std::vector<Item*> itemList;          // List of items
+	std::map<Enemy*, int> enemyList;      // List of enemies
+	std::map<Item*, int> itemList;        // List of items
 	std::vector<Power*> fireballList;     // List of fireballs
 	std::map<Bonfire*, int> bonfireList;  // List of bonfires
 	std::vector<Poison*> poisonList;      // List of poison traps
@@ -144,9 +147,10 @@ private:
 
 
 	// --- USER INTERFACE (UI) ---
+	SDL_Texture* creditsScreen;
 	SDL_Texture* helpMenu;			 // Menu texture
 	SDL_Texture* OptionsBook;	     // Menu texture
-	SDL_Texture* TitleScreen;        //Title screen texture
+	SDL_Texture* TitleScreen;        // Title screen texture
 	SDL_Texture* gui;				 // General GUI texture
 	SDL_Texture* lifePlayer;         // Player life texture
 	SDL_Texture* powerOn;

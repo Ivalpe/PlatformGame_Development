@@ -68,7 +68,7 @@ bool Scene::Start()
 
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
-	RestartEnemies();
+	RestartEntities();
 	RestartSave();
 	CreateEvents();
 
@@ -83,6 +83,7 @@ bool Scene::Start()
 
 void Scene::LoadAssets() {
 	// Texture to highligh mouse position 
+	creditsScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/MainScreen.png");
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
 	gui = Engine::GetInstance().textures.get()->Load("Assets/Textures/hud.png");
 	lifePlayer = Engine::GetInstance().textures.get()->Load("Assets/Textures/life.png");
@@ -251,24 +252,21 @@ void Scene::HandlePowers() {
 
 			fireballList.push_back(bigPower);
 
-			// Play the sound effect for the big fireball
-			//Engine::GetInstance().audio.get()->PlayFx(bigFireballSFX);
-
 			// Reset the firePower flag
 			player->SetfirePower(false);
 		}
 	}
-	
+
 	//Power Boss Fireball
 	for (auto& e : enemyList) {
 		if (e.first->GetType() == EnemyType::BOSS && e.first->GetBossFireball()) {
-			Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALLENEMY);
-			power->SetParameters(configParameters.child("entities").child("fireball"), TypePower::FIREBALL);
+			Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ATTACKBOSS);
+			power->SetParameters(configParameters.child("entities").child("meleeattack"), TypePower::MELEEATTACKBOSS);
 			power->Start(e.first->GetDirection() == DirectionEnemy::LEFT);
 
 			Vector2D enemyPos = e.first->GetPosition();
-			if (e.first->GetDirection() == DirectionEnemy::LEFT) power->SetPosition({ enemyPos.getX() - 20, enemyPos.getY() - 10 });
-			else power->SetPosition({ enemyPos.getX() + 20, enemyPos.getY() - 10 });
+			if (e.first->GetDirection() == DirectionEnemy::LEFT) power->SetPosition({ enemyPos.getX() - 30, enemyPos.getY() - 40 });
+			else power->SetPosition({ enemyPos.getX() + 30, enemyPos.getY() - 50 });
 
 			fireballList.push_back(power);
 			e.first->SetBossFireball(false);
@@ -339,8 +337,8 @@ void Scene::HandleGui() {
 		}
 
 		timer = countTime.ReadSec() - start;
-		Engine::GetInstance().render.get()->DrawText("Time:     ", Engine::GetInstance().window.get()->width - 150, 100, 180, 60);
-		Engine::GetInstance().render.get()->DrawText(std::to_string(timer).c_str(), Engine::GetInstance().window.get()->width - 50, 100, (std::to_string(timer).size()) * 20, 60);
+		Engine::GetInstance().render.get()->DrawText("Time:     ", Engine::GetInstance().window.get()->width - 180, 100, 180, 60);
+		Engine::GetInstance().render.get()->DrawText(std::to_string(timer).c_str(), Engine::GetInstance().window.get()->width - 80, 100, (std::to_string(timer).size()) * 20, 60);
 	}
 	else {
 		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
@@ -350,6 +348,11 @@ void Scene::HandleGui() {
 				showSettings = false;
 				Engine::GetInstance().uiManager->Show(GuiClass::SETTINGS, false);
 			}
+		}
+
+		if (coolIntro >= 0) {
+			engine.render.get()->DrawTexture(creditsScreen, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2, 0);
+			coolIntro--;
 		}
 	}
 }
@@ -415,7 +418,7 @@ bool Scene::Update(float dt)
 		}
 
 		if (playerRespawnCool <= 0) {
-			RestartEnemies();
+			RestartEntities();
 			LoadState(LOAD::RESPAWN);
 			player->Respawn();
 			CreateEvents();
@@ -444,7 +447,7 @@ bool Scene::Update(float dt)
 			winRestartCool = 480;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -517,10 +520,9 @@ bool Scene::PostUpdate()
 
 	// Clear collected items from the list
 	for (auto it = itemList.begin(); it != itemList.end();) {
-		if ((*it)->IsCollected()) {
-			Engine::GetInstance().physics->DeleteBody((*it)->getBody());
-			Engine::GetInstance().entityManager->DestroyEntity(*it);
-			it = itemList.erase(it);
+		if (it->first->IsCollected() && it->first->IsShowing()) {
+			SaveGrabbedItem(it->first->GetId());
+			it->first->ShowItem(false);
 		}
 		else {
 			++it;
@@ -587,7 +589,6 @@ void Scene::DebugMode() {
 			Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
 		}
 		LoadState(LOAD::INITIAL);
-		RestartEnemies();
 		//RemoveLevelEnemies(level);
 		CreateEvents();
 
@@ -668,54 +669,56 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 	switch (control->GetType())
 	{
 	case GuiClass::MAIN_MENU:
-		if (control->id == 1) {
-			level++;
-			pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
+		if (coolIntro == -1) {
+			if (control->id == 1) {
+				level++;
+				pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
 
-			Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-			CreateEvents();
+				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				RestartEntities();
+				CreateEvents();
 
-			Vector2D posPlayer;
-			posPlayer.setX(mapNode.attribute("ix").as_int());
-			posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
+				Vector2D posPlayer;
+				posPlayer.setX(mapNode.attribute("ix").as_int());
+				posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
 
-			player->ActivePlayer();
-			Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
-			player->SetPosition(posPlayer);
-
-			start = countTime.ReadSec();
-
-			player->SetLevel(Level::DISABLED);
-		}
-		else if (control->id == 2) {
-			level = nodes.child("savedGame").attribute("level").as_int();
-			pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", nodes.child("savedGame").attribute("level").as_string());
-			Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-			LoadState(LOAD::INITIAL);
-			player->SetPosition({ nodes.child("savedGame").attribute("x").as_float() , nodes.child("savedGame").attribute("y").as_float() });
-			RestartEnemies();
-			CreateEvents();
-
-			player->ActivePlayer();
-			Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
-
-			player->SetLevel(Level::DISABLED);
-		}
-		else if (control->id == 3) {
-			if (Engine::GetInstance().uiManager.get()->IsShowing(GuiClass::SETTINGS)) {
-				Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, false);
-				showSettings = false;
-			}
-			else {
+				player->ActivePlayer();
 				Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
-				Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, true);
-				showSettings = true;
+				player->SetPosition(posPlayer);
+
+				start = countTime.ReadSec();
+
+				player->SetLevel(Level::DISABLED);
 			}
-		}
-		else if (control->id == 4) {
-		}
-		else if (control->id == 5) {
-			exitGame = true;
+			else if (control->id == 2) {
+				level = nodes.child("savedGame").attribute("level").as_int();
+				pugi::xml_node mapNode = nodes.child("levels").find_child_by_attribute("number", nodes.child("savedGame").attribute("level").as_string());
+				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				LoadState(LOAD::LOAD);
+				player->SetPosition({ nodes.child("savedGame").attribute("x").as_float() , nodes.child("savedGame").attribute("y").as_float() });
+				CreateEvents();
+
+				player->ActivePlayer();
+				Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
+
+				player->SetLevel(Level::DISABLED);
+			}
+			else if (control->id == 3) {
+				if (Engine::GetInstance().uiManager.get()->IsShowing(GuiClass::SETTINGS)) {
+					Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, false);
+					showSettings = false;
+				}
+				else {
+					Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
+					Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, true);
+					showSettings = true;
+				}
+			}
+			else if (control->id == 4) {
+			}
+			else if (control->id == 5) {
+				exitGame = true;
+			}
 		}
 		break;
 	case GuiClass::PAUSE:
@@ -793,11 +796,15 @@ void Scene::LoadState(LOAD load) {
 	if (load == LOAD::INITIAL) {
 		posPlayer.setX(mapNode.attribute("ix").as_int());
 		posPlayer.setY(mapNode.attribute("iy").as_int());
-		RestartEnemies();
+		RestartEntities();
 	}
 	else if (load == LOAD::RESPAWN) {
 		posPlayer.setX(playerNode.attribute("x").as_int());
 		posPlayer.setY(playerNode.attribute("y").as_int() - 16);
+	}
+	else if (load == LOAD::LOAD) {
+		posPlayer.setX(mapNode.attribute("ix").as_int());
+		posPlayer.setY(mapNode.attribute("iy").as_int());
 	}
 	else {
 		int lvlSave = playerNode.attribute("dlevel").as_int();
@@ -855,22 +862,6 @@ void Scene::CreateEvents() {
 	std::map<Vector2D, int> listEnemy, listItems, listNpcs;
 	pugi::xml_document saveFile;
 	pugi::xml_parse_result result = saveFile.load_file("config.xml");
-	/*
-	//Enemies
-	for (int i = 0; i < enemyList.size();) {
-		Engine::GetInstance().physics->DeleteBody(enemyList[i]->getBody());
-		Engine::GetInstance().physics->DeleteBody(enemyList[i]->getSensorBody());
-		Engine::GetInstance().entityManager->DestroyEntity(enemyList[i]);
-		enemyList.erase(enemyList.begin() + i);
-	}
-	*/
-	//Items
-	for (int i = 0; i < itemList.size(); i++) {
-		Engine::GetInstance().physics->DeleteBody(itemList[i]->getBody());
-		Engine::GetInstance().entityManager->DestroyEntity(itemList[i]);
-		itemList.erase(itemList.begin() + i);
-		i--;
-	}
 
 	//Npcs
 	for (int i = 0; i < npcList.size(); i++) {
@@ -989,30 +980,37 @@ void Scene::CreateEvents() {
 		if (levelsLoadedItems[i] == level) contains = true;
 	}
 
+	for (auto i : itemList) {
+		if (i.second == level) i.first->ShowItem(true);
+		else i.first->ShowItem(false);
+	}
+
 	listItems = Engine::GetInstance().map->GetItemList();
 	for (auto item : listItems) {
-		int lowestId = GetLowestId(2);
-		Item* it = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
-		if (item.second == 1) {
-			it->SetParameters(configParameters.child("entities").child("items").child("coin"), lowestId);
-			it->SetItemType(ItemType::COIN);
-		}
-		else if (item.second == 2) {
-			it->SetParameters(configParameters.child("entities").child("items").child("fireup"), lowestId);
-			it->SetItemType(ItemType::FIREUP);
-		}
-		else {
-			it->SetParameters(configParameters.child("entities").child("items").child("health"), lowestId);
-			it->SetItemType(ItemType::HEALTH);
-		}
-		it->Start();
-		it->SetPosition({ item.first.getX(), item.first.getY() });
-		itemList.push_back(it);
-
 		if (!contains) {
+			int lowestId = GetLowestId(2);
+			Item* it = (Item*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ITEM);
+			if (item.second == 1) {
+				it->SetParameters(configParameters.child("entities").child("items").child("coin"), lowestId);
+				it->SetItemType(ItemType::COIN);
+			}
+			else if (item.second == 2) {
+				it->SetParameters(configParameters.child("entities").child("items").child("fireup"), lowestId);
+				it->SetItemType(ItemType::FIREUP);
+			}
+			else {
+				it->SetParameters(configParameters.child("entities").child("items").child("health"), lowestId);
+				it->SetItemType(ItemType::HEALTH);
+			}
+			it->Start();
+			it->SetPosition({ item.first.getX(), item.first.getY() });
+			itemList.emplace(it, level);
+
+
 			pugi::xml_node newItem = saveFile.child("config").child("scene").child("items").append_child("item");
 			newItem.append_attribute("id").set_value(lowestId);
 			newItem.append_attribute("level").set_value(level);
+			newItem.append_attribute("grabbed").set_value("false");
 			newItem.append_attribute("x").set_value(item.first.getX());
 			newItem.append_attribute("y").set_value(item.first.getY());
 
@@ -1071,24 +1069,41 @@ void Scene::CreateEvents() {
 void Scene::SaveKillEnemy(int id) {
 	pugi::xml_document saveFile;
 	pugi::xml_parse_result result = saveFile.load_file("config.xml");
-	pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("enemies").find_child_by_attribute("id", std::to_string(id).c_str());;
+	pugi::xml_node node = saveFile.child("config").child("scene").child("enemies").find_child_by_attribute("id", std::to_string(id).c_str());;
 
-	enemiesNode.attribute("dead") = "true";
+	node.attribute("dead") = "true";
+	saveFile.save_file("config.xml");
+}
+
+void Scene::SaveGrabbedItem(int id) {
+	pugi::xml_document saveFile;
+	pugi::xml_parse_result result = saveFile.load_file("config.xml");
+	pugi::xml_node node = saveFile.child("config").child("scene").child("items").find_child_by_attribute("id", std::to_string(id).c_str());;
+
+	node.attribute("grabbed") = "true";
 	saveFile.save_file("config.xml");
 }
 
 //Modify the XML and puts dead="false" to all enemies
-void Scene::RestartEnemies() {
+void Scene::RestartEntities() {
 	pugi::xml_document saveFile;
 	pugi::xml_parse_result result = saveFile.load_file("config.xml");
-	pugi::xml_node enemiesNode = saveFile.child("config").child("scene").child("enemies");
+	pugi::xml_node node = saveFile.child("config").child("scene");
 
-	for (pugi::xml_node enemyNode = enemiesNode.child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
+	for (pugi::xml_node enemyNode = node.child("enemies").child("enemy"); enemyNode; enemyNode = enemyNode.next_sibling("enemy")) {
 		enemyNode.attribute("dead") = "false";
 	}
 
-	for (auto b : enemyList) {
-		b.first->Respawn();
+	for (pugi::xml_node itemNode = node.child("items").child("item"); itemNode; itemNode = itemNode.next_sibling("item")) {
+		itemNode.attribute("grabbed") = "false";
+	}
+
+	for (auto e : enemyList) {
+		e.first->Respawn();
+	}
+
+	for (auto i : itemList) {
+		i.first->Respawn();
 	}
 	saveFile.save_file("config.xml");
 

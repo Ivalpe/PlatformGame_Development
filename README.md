@@ -10,6 +10,9 @@ A 2D platformer game created using **Whimsy Hallow** assets.
 
 ### Credits
 - **Tileset & Assets:** [Whimsy Hallow by Crumpaloo](https://crumpaloo.itch.io/whimsy-hallow)
+- **Sound Effects:** [Dillon Becker](https://dillonbecker.itch.io/sdap)
+- **Boss Sprite:** [Szadi art](https://szadiart.itch.io/2d-soulslike-character)
+- **UI:** [Crusenho Agus Hennihuno](https://crusenho.itch.io/complete-ui-essential-pack)
 
 ---
 
@@ -22,15 +25,16 @@ A 2D platformer game created using **Whimsy Hallow** assets.
 | **Shift** | Run                                 |
 | **Space** | Jump                                |
 | **E**     | Shoot                               |
-| **H**     | Show Help Menu                     |
-| **F1**    | Start from Level 0                 |
-| **F2**    | Start from Level 1                 |
-| **F3**    | Start from Current Level           |
-| **F5**    | Save Current Game State            |
-| **F6**    | Load Previous Game State           |
-| **F9**    | View Colliders                     |
-| **F10**   | Toggle God Mode                    |
-| **F11**   | Limit FPS to 30                    |
+| **H**     | Show Help Menu                      |
+| **F1**    | Start from Level 0                  |
+| **F2**    | Start from Level 1                  |
+| **F3**    | Start from Current Level            |
+| **F4**    | Start from Boss Level               |
+| **F5**    | Save Current Game State             |
+| **F6**    | Load Previous Game State            |
+| **F9**    | View Colliders                      |
+| **F10**   | Toggle God Mode                     |
+| **F11**   | Limit FPS to 30                     |
 
 ---
 
