@@ -258,24 +258,24 @@ void Scene::HandlePowers() {
 			player->SetfirePower(false);
 		}
 	}
-	/*
+	
 	//Power Boss Fireball
 	for (auto& e : enemyList) {
-		if (e->GetType() == EnemyType::BOSS && e->GetBossFireball()) {
-			Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::MELEEATTACK);
-			power->SetParameters(configParameters.child("entities").child("meleeattack"), TypePower::MELEEATTACKBOSS);
-			power->Start(e->GetDirection() == DirectionEnemy::LEFT);
+		if (e.first->GetType() == EnemyType::BOSS && e.first->GetBossFireball()) {
+			Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALLENEMY);
+			power->SetParameters(configParameters.child("entities").child("fireball"), TypePower::FIREBALL);
+			power->Start(e.first->GetDirection() == DirectionEnemy::LEFT);
 
-			Vector2D enemyPos = e->GetPosition();
-			if (e->GetDirection() == DirectionEnemy::LEFT) power->SetPosition({ enemyPos.getX() - 20, enemyPos.getY() - 10 });
+			Vector2D enemyPos = e.first->GetPosition();
+			if (e.first->GetDirection() == DirectionEnemy::LEFT) power->SetPosition({ enemyPos.getX() - 20, enemyPos.getY() - 10 });
 			else power->SetPosition({ enemyPos.getX() + 20, enemyPos.getY() - 10 });
 
 			fireballList.push_back(power);
-			e->SetBossFireball(false);
+			e.first->SetBossFireball(false);
 			break;
 		}
 
-	}*/
+	}
 }
 
 void Scene::HandleGui() {
@@ -489,9 +489,18 @@ bool Scene::PostUpdate()
 	// Activate boss when the player reaches a specific position
 	if (!bossActive && level == 3 && player->GetX() >= 470) {
 		for (auto e : enemyList) {
-			if (e.first->GetType() == EnemyType::BOSS) {
+			if (e.first->GetType() == EnemyType::BOSS && !e.first->IsDead()) {
 				e.first->ActiveBoss();
 				bossActive = true;
+				break;
+			}
+		}
+	}
+
+	if (bossActive) {
+		for (auto e : enemyList) {
+			if (e.first->GetType() == EnemyType::BOSS && e.first->IsDead()) {
+				bossActive = false;
 				break;
 			}
 		}
@@ -525,7 +534,7 @@ bool Scene::PostUpdate()
 		fadeIn = false;
 	}
 	// Handle level transition when the player wins the level
-	else if (player->GetLevel() == Level::WIN && !isTransitioning) {
+	else if (player->GetLevel() == Level::WIN && !bossActive && !isTransitioning) {
 		player->DisablePlayer();
 		isTransitioning = true;
 		fadeIn = false;

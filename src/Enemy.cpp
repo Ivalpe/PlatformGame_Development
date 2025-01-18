@@ -27,7 +27,6 @@ bool Enemy::Start() {
 	tempChangeAnimation = 120;
 	followPlayer = false;
 	speed = 1.9f;
-	directionLeft = false;
 
 	//initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
@@ -69,11 +68,14 @@ bool Enemy::Start() {
 	{
 	case EnemyType::EV_WIZARD:
 		lifes = 3;
+		directionLeft = false;
 		break;
 	case EnemyType::BAT:
+		directionLeft = false;
 		lifes = 4;
 		break;
 	case EnemyType::BOSS:
+		directionLeft = true;
 		lifes = 10;
 		break;
 	default:
@@ -133,32 +135,45 @@ void Enemy::BossPattern(float dt) {
 		bossCooldown--;
 
 	if (bossCooldown <= 0) {
-		int random = rand() % 3 + 1;
-		random = 3;
 
-		switch (random) {
-		case 2:
-			currentAnimation = &attack;
-			currentAnimation->Reset();
-			bossCooldown = 120;
-			break;
-		case 3:
-			if (followPlayer) {
+		if (currentAnimation == &walk) {
+			currentAnimation = &idle;
+			bossCooldown = 60;
+		}
+		else {
+			int random = rand() % 2 + 1;
+
+			switch (random) {
+			case 2:
+				currentAnimation = &attack;
+				fireball = true;
+				currentAnimation->Reset();
+				bossCooldown = 120;
+				break;
+			default:
 				currentAnimation = &walk;
-				MovementEnemy(dt);
+				bossCooldown = 160;
+				de = directionLeft ? DirectionEnemy::LEFT : DirectionEnemy::RIGHT;
+				break;
 			}
-			else {
-				currentAnimation = &idle;
-			}
-			break;
-		default:
-			break;
+		}
+	}
+	else if (bossCooldown <= 1 && currentAnimation == &walk) {
+		directionLeft = !directionLeft;
+		de = directionLeft ? DirectionEnemy::LEFT : DirectionEnemy::RIGHT;
+	}
+
+	if (currentAnimation == &walk) {
+		if (directionLeft) {
+			velocity.x = -speed * 2;
+			flipType = SDL_FLIP_HORIZONTAL;
+		}
+		else {
+			velocity.x = +speed * 2;
+			flipType = SDL_FLIP_NONE;
 		}
 	}
 
-	if (currentAnimation == &attack &&
-		currentAnimation->GetCurrentFrame().x == 160.0f)
-		fireball = true;
 
 	if (isJumping)velocity = pbody->body->GetLinearVelocity();
 	pbody->body->SetLinearVelocity(velocity);
@@ -361,7 +376,7 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 			LOG("Collision FIREBALL");
 		}
 		else if (type == EnemyType::BOSS && currentAnimation == &idle) {
-			currentAnimation = &crouch;
+			//currentAnimation = &crouch;
 		}
 
 		break;

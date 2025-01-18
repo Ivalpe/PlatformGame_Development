@@ -25,8 +25,7 @@ bool Power::Start(bool inv) {
 	inverted = inv;
 	col = false;
 	//initilize textures
-	if (type != EntityType::MELEEATTACK)
-		texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
+	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	texW = parameters.attribute("w").as_int();
 	texH = parameters.attribute("h").as_int();
 
@@ -75,43 +74,37 @@ bool Power::Start(bool inv) {
 bool Power::Update(float dt)
 {
 
-	if (type != EntityType::MELEEATTACK) {
-		if (statePower == StatePower::DIE && currentAnimation->HasFinished()) col = true;
-		else if (statePower == StatePower::DIE) pbody->body->SetLinearVelocity({ 0, 0 });
-		else {
-			float speed = inverted ? -5.0f : 5.0f;
-			pbody->body->SetLinearVelocity({ speed, 0 });
-		}
 
-
-		if (statePower == StatePower::IDLE) currentAnimation = &idle;
-
-
-		b2Transform pbodyPos = pbody->body->GetTransform();
-
-
-		if (inverted) position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
-		else position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - texW / 2);
-		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH);
-
-
-		Engine::GetInstance().render.get()->DrawTexture(texture, inverted ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
-		currentAnimation->Update();
-
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
-			Engine::GetInstance().audio.get()->PlayFx(fireball1SFX);
-		}
-		if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-			Engine::GetInstance().audio.get()->PlayFx(bigfireball1SFX);
-		}
-	}
+	if (statePower == StatePower::DIE && currentAnimation->HasFinished()) col = true;
+	else if (statePower == StatePower::DIE) pbody->body->SetLinearVelocity({ 0, 0 });
 	else {
-		tempAttack--;
-
-		if (tempAttack <= 0) {
-			col = true;
-		}
+		float speed = inverted ? -5.0f : 5.0f;
+		pbody->body->SetLinearVelocity({ speed, 0 });
 	}
+
+
+	if (statePower == StatePower::IDLE) currentAnimation = &idle;
+
+
+	b2Transform pbodyPos = pbody->body->GetTransform();
+
+
+	if (inverted) position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW / 2);
+	else position.setX(METERS_TO_PIXELS(pbodyPos.p.x) - texW - texW / 2);
+	position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH);
+
+
+	Engine::GetInstance().render.get()->DrawTexture(texture, inverted ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE, (int)position.getX(), (int)position.getY(), &currentAnimation->GetCurrentFrame());
+	currentAnimation->Update();
+
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
+		Engine::GetInstance().audio.get()->PlayFx(fireball1SFX);
+	}
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
+		Engine::GetInstance().audio.get()->PlayFx(bigfireball1SFX);
+	}
+
+
 	return true;
 }
 
@@ -139,17 +132,17 @@ void Power::OnCollision(PhysBody* physA, PhysBody* physB) {
 	if (statePower != StatePower::DIE && physB->ctype != ColliderType::SENSOR) {
 		statePower = StatePower::DIE;
 		currentAnimation = &explode;
-		
+
 		// Verifica el tipo de entidad y reproduce el sonido correspondiente
 		switch (type) {
-			case EntityType::FIREBALLPLAYER:
-			case EntityType::FIREBALLENEMY:
-				Engine::GetInstance().audio.get()->PlayFx(fireball2SFX);
-				break;
+		case EntityType::FIREBALLPLAYER:
+		case EntityType::FIREBALLENEMY:
+			Engine::GetInstance().audio.get()->PlayFx(fireball2SFX);
+			break;
 
-			case EntityType::BIGFIREBALLPLAYER:
-				Engine::GetInstance().audio.get()->PlayFx(bigfireball2SFX);
-				break;
+		case EntityType::BIGFIREBALLPLAYER:
+			Engine::GetInstance().audio.get()->PlayFx(bigfireball2SFX);
+			break;
 		}
 
 		pbody->body->SetLinearVelocity({ 0, 0 });
