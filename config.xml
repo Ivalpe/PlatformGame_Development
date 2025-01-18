@@ -24,7 +24,7 @@
 			<map path="Assets/Maps/" name="Level4.tmx" number="4" ix="484" iy="212" />
 		</levels>
 		<entities>
-			<player dx="297" dy="127" dlevel="1" ix="452" iy="292" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
+			<player dx="52" dy="175" dlevel="1" ix="452" iy="292" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
 					<idle loop="true" speed="0.06">
 						<frame x="0" y="32" w="16" h="32" />
@@ -206,9 +206,11 @@
 					</explode>
 				</animations>
 			</bigfireball>
-			<meleeattack w="16" h="16">
+			<meleeattack texture="Assets/Textures/AttackBoss.png" w="32" h="48">
 				<animations>
-					<idle loop="false" speed="0.12" />
+					<idle loop="true" speed="0.12">
+						<frame x="0" y="0" w="32" h="48" />
+					</idle>
 				</animations>
 			</meleeattack>
 			<firecamp texture="Assets/Textures/Firecamp.png" w="16" h="16">
@@ -353,6 +355,8 @@
 				<stone_doorSFX path="Assets/Audio/Fx/stone_door.ogg" />
 				<button_clickSFX path="Assets/Audio/Fx/button_click.ogg" />
 				<item_pickupSFX path="Assets/Audio/Fx/item_pickup.ogg" />
+				<bossDieSFX path="Assets/Audio/Fx/bossDie.ogg" />
+				<bossSwordSFX path="Assets/Audio/Fx/bossSword.ogg" />
 			</fx>
 			<music>
 				<MainMenuMusic path="Assets/Audio/Music/Medieval Vol. 2 4 (Loop).wav" />
@@ -367,22 +371,22 @@
 		</bonfires>
 		<enemies>
 			<enemy id="1" level="1" dead="false" x="576" y="104" />
-			<enemy id="2" level="1" dead="true" x="680" y="224" />
+			<enemy id="2" level="1" dead="false" x="680" y="224" />
 			<enemy id="3" level="1" dead="false" x="888" y="136" />
 			<enemy id="4" level="1" dead="false" x="1120" y="320" />
 			<enemy id="5" level="1" dead="false" x="1352" y="168" />
 			<enemy id="6" level="1" dead="false" x="1992" y="304" />
 			<enemy id="7" level="1" dead="false" x="2128" y="304" />
 			<enemy id="8" level="1" dead="false" x="2416" y="304" />
-			<enemy id="9" level="1" dead="true" x="2712" y="240" />
+			<enemy id="9" level="1" dead="false" x="2712" y="240" />
 		</enemies>
 		<items>
-			<item id="1" level="1" grabbed="true" x="256" y="272" />
-			<item id="2" level="1" grabbed="true" x="288" y="256" />
-			<item id="3" level="1" grabbed="false" x="312" y="136" />
+			<item id="1" level="1" grabbed="false" x="256" y="272" />
+			<item id="2" level="1" grabbed="false" x="288" y="256" />
+			<item id="3" level="1" grabbed="true" x="312" y="136" />
 			<item id="4" level="1" grabbed="false" x="328" y="256" />
 			<item id="5" level="1" grabbed="false" x="368" y="136" />
-			<item id="6" level="1" grabbed="true" x="368" y="256" />
+			<item id="6" level="1" grabbed="false" x="368" y="256" />
 			<item id="7" level="1" grabbed="false" x="408" y="256" />
 			<item id="8" level="1" grabbed="false" x="424" y="136" />
 			<item id="9" level="1" grabbed="false" x="528" y="112" />
@@ -444,22 +448,22 @@
 			<item id="65" level="1" grabbed="false" x="2384" y="144" />
 			<item id="66" level="1" grabbed="false" x="2480" y="216" />
 			<item id="67" level="1" grabbed="false" x="2504" y="216" />
-			<item id="68" level="1" grabbed="false" x="2576" y="272" />
-			<item id="69" level="1" grabbed="false" x="2592" y="200" />
-			<item id="70" level="1" grabbed="false" x="2608" y="128" />
-			<item id="71" level="1" grabbed="false" x="2616" y="200" />
-			<item id="72" level="1" grabbed="false" x="2616" y="272" />
-			<item id="73" level="1" grabbed="false" x="2632" y="128" />
-			<item id="74" level="1" grabbed="false" x="2640" y="200" />
-			<item id="75" level="1" grabbed="false" x="2672" y="128" />
-			<item id="76" level="1" grabbed="false" x="2688" y="248" />
-			<item id="77" level="1" grabbed="false" x="2736" y="248" />
-			<item id="78" level="1" grabbed="false" x="2792" y="200" />
-			<item id="79" level="1" grabbed="false" x="2864" y="200" />
-			<item id="80" level="1" grabbed="false" x="2984" y="208" />
-			<item id="81" level="1" grabbed="false" x="3016" y="208" />
-			<item id="82" level="1" grabbed="false" x="3072" y="208" />
-			<item id="83" level="1" grabbed="false" x="3096" y="208" />
+			<item id="67" level="1" grabbed="false" x="2576" y="272" />
+			<item id="68" level="1" grabbed="false" x="2592" y="200" />
+			<item id="69" level="1" grabbed="false" x="2608" y="128" />
+			<item id="70" level="1" grabbed="false" x="2616" y="200" />
+			<item id="71" level="1" grabbed="false" x="2616" y="272" />
+			<item id="72" level="1" grabbed="false" x="2632" y="128" />
+			<item id="73" level="1" grabbed="false" x="2640" y="200" />
+			<item id="74" level="1" grabbed="false" x="2672" y="128" />
+			<item id="75" level="1" grabbed="false" x="2688" y="248" />
+			<item id="76" level="1" grabbed="false" x="2736" y="248" />
+			<item id="77" level="1" grabbed="false" x="2792" y="200" />
+			<item id="78" level="1" grabbed="false" x="2864" y="200" />
+			<item id="79" level="1" grabbed="false" x="2984" y="208" />
+			<item id="80" level="1" grabbed="false" x="3016" y="208" />
+			<item id="81" level="1" grabbed="false" x="3072" y="208" />
+			<item id="82" level="1" grabbed="false" x="3096" y="208" />
 		</items>
 		<npcs />
 	</scene>

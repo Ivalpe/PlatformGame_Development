@@ -277,7 +277,7 @@ void Player::OnCollision(PhysBody* physA, PhysBody* physB) {
 		lvl = Level::WIN;
 		break;
 	case ColliderType::ENEMY:
-	case ColliderType::FIREBALLENEMY:
+	case ColliderType::ATTACKBOSS:
 		if (!debugMode && currentAnimation != &dmg && currentAnimation != &die) {
 			if (lifes <= 0) {
 				lifes--;

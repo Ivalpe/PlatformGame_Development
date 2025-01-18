@@ -251,9 +251,6 @@ void Scene::HandlePowers() {
 
 			fireballList.push_back(bigPower);
 
-			// Play the sound effect for the big fireball
-			//Engine::GetInstance().audio.get()->PlayFx(bigFireballSFX);
-
 			// Reset the firePower flag
 			player->SetfirePower(false);
 		}
@@ -262,13 +259,13 @@ void Scene::HandlePowers() {
 	//Power Boss Fireball
 	for (auto& e : enemyList) {
 		if (e.first->GetType() == EnemyType::BOSS && e.first->GetBossFireball()) {
-			Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::FIREBALLENEMY);
-			power->SetParameters(configParameters.child("entities").child("fireball"), TypePower::FIREBALL);
+			Power* power = (Power*)Engine::GetInstance().entityManager->CreateEntity(EntityType::ATTACKBOSS);
+			power->SetParameters(configParameters.child("entities").child("meleeattack"), TypePower::MELEEATTACKBOSS);
 			power->Start(e.first->GetDirection() == DirectionEnemy::LEFT);
 
 			Vector2D enemyPos = e.first->GetPosition();
-			if (e.first->GetDirection() == DirectionEnemy::LEFT) power->SetPosition({ enemyPos.getX() - 20, enemyPos.getY() - 10 });
-			else power->SetPosition({ enemyPos.getX() + 20, enemyPos.getY() - 10 });
+			if (e.first->GetDirection() == DirectionEnemy::LEFT) power->SetPosition({ enemyPos.getX() - 30, enemyPos.getY() - 40 });
+			else power->SetPosition({ enemyPos.getX() + 30, enemyPos.getY() - 50 });
 
 			fireballList.push_back(power);
 			e.first->SetBossFireball(false);

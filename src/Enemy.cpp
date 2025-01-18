@@ -63,6 +63,9 @@ bool Enemy::Start() {
 	pugi::xml_parse_result result = audioFile.load_file("config.xml");
 
 	enemydSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("enemydSFX").attribute("path").as_string());
+	bossSword = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("bossSwordSFX").attribute("path").as_string());
+	bossDie = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("bossDieSFX").attribute("path").as_string());
+
 
 	switch (type)
 	{
@@ -131,49 +134,68 @@ void Enemy::BossPattern(float dt) {
 
 	if ((currentAnimation == &attack || currentAnimation == &dmg) && currentAnimation->HasFinished()) currentAnimation = &idle;
 
-	if (bossActive && bossCooldown >= 0)
-		bossCooldown--;
+	if (bossActive && !Engine::GetInstance().scene.get()->IsPause()) {
 
-	if (bossCooldown <= 0) {
+		if (bossCooldown >= 0)
+			bossCooldown--;
 
-		if (currentAnimation == &walk) {
-			currentAnimation = &idle;
-			bossCooldown = 60;
+		if (randomAttack == 2 && currentAnimation == &attack && bossCooldown == 100) {
+			fireball = true;
+			Engine::GetInstance().audio.get()->PlayFx(bossSword);
 		}
-		else {
-			int random = rand() % 2 + 1;
+		if (randomAttack == 3 && currentAnimation == &attack && (bossCooldown == 100 || bossCooldown == 80)) {
+			fireball = true;
+			Engine::GetInstance().audio.get()->PlayFx(bossSword);
+		}
 
-			switch (random) {
-			case 2:
-				currentAnimation = &attack;
-				fireball = true;
-				currentAnimation->Reset();
-				bossCooldown = 120;
-				break;
-			default:
-				currentAnimation = &walk;
-				bossCooldown = 160;
-				de = directionLeft ? DirectionEnemy::LEFT : DirectionEnemy::RIGHT;
-				break;
+
+		if (bossCooldown <= 0) {
+
+			if (currentAnimation == &walk) {
+				currentAnimation = &idle;
+				bossCooldown = 60;
+			}
+			else {
+				randomAttack = rand() % 3 + 1;
+
+				switch (randomAttack) {
+				case 2:
+					currentAnimation = &attack;
+
+					currentAnimation->Reset();
+					bossCooldown = 120;
+					break;
+				case 3:
+					currentAnimation = &attack;
+
+					currentAnimation->Reset();
+					bossCooldown = 120;
+					break;
+				default:
+					currentAnimation = &walk;
+					bossCooldown = 160;
+					de = directionLeft ? DirectionEnemy::LEFT : DirectionEnemy::RIGHT;
+					break;
+				}
 			}
 		}
-	}
-	else if (bossCooldown <= 1 && currentAnimation == &walk) {
-		directionLeft = !directionLeft;
-		de = directionLeft ? DirectionEnemy::LEFT : DirectionEnemy::RIGHT;
-	}
-
-	if (currentAnimation == &walk) {
-		if (directionLeft) {
-			velocity.x = -speed * 2;
-			flipType = SDL_FLIP_HORIZONTAL;
+		else if (bossCooldown <= 1 && currentAnimation == &walk) {
+			directionLeft = !directionLeft;
+			de = directionLeft ? DirectionEnemy::LEFT : DirectionEnemy::RIGHT;
 		}
-		else {
-			velocity.x = +speed * 2;
-			flipType = SDL_FLIP_NONE;
-		}
-	}
 
+		if (currentAnimation == &walk) {
+			if (directionLeft) {
+				velocity.x = -speed * 2;
+				flipType = SDL_FLIP_HORIZONTAL;
+			}
+			else {
+				velocity.x = +speed * 2;
+				flipType = SDL_FLIP_NONE;
+			}
+		}
+
+	}
 
 	if (isJumping)velocity = pbody->body->GetLinearVelocity();
 	pbody->body->SetLinearVelocity(velocity);
@@ -192,9 +214,12 @@ void Enemy::BossPattern(float dt) {
 	b2Vec2 enemyPos = pbody->body->GetPosition();
 	sensor->body->SetTransform({ enemyPos.x, enemyPos.y }, 0);
 
-	if (currentAnimation == &die && currentAnimation->HasFinished()) {
-		Engine::GetInstance().audio.get()->PlayFx(enemydSFX);
-		dead = true;
+	if (currentAnimation == &die) {
+		if (!audioDie) {
+			Engine::GetInstance().audio.get()->PlayFx(bossDie);
+			audioDie = true;
+		}
+		if (currentAnimation->HasFinished())dead = true;
 	}
 
 }
@@ -352,40 +377,24 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 	switch (physB->ctype)
 	{
 	case ColliderType::GROUND:
-		LOG("Collision PLATFORM");
 		isJumping = false;
 		break;
-
 	case ColliderType::UNKNOWN:
-		LOG("Collision UNKNOWN");
 		break;
 	case ColliderType::DIE:
 		dead = true;
-		LOG("Collision DIE");
+		LOG("BOSS DIE");
 		break;
 	case ColliderType::FIREBALLPLAYER:
 	case ColliderType::BIGFIREBALLPLAYER:
 		if (physA->ctype != ColliderType::SENSOR) {
 			if (physB->ctype == ColliderType::FIREBALLPLAYER) lifes--;
 			else lifes -= 4;
-			currentAnimation = &dmg;
-			currentAnimation->Reset();
+			if (type != EnemyType::BOSS) {
+				currentAnimation = &dmg;
+				currentAnimation->Reset();
+			}
 			LOG("Collision FIREBALL");
-		}
-		else if (type == EnemyType::BOSS && currentAnimation == &idle) {
-			//currentAnimation = &crouch;
-		}
-
-		break;
-	case ColliderType::FIREBALLENEMY:
-		LOG("Collision FIREBALLENEMY");
-		break;
-	case ColliderType::PLAYER:
-		if (physA->ctype == ColliderType::SENSOR) {
-			followPlayer = true;
-		}
-		else {
-			coolDownPathFinding = true;
 		}
 		break;
 	default:
@@ -402,8 +411,6 @@ void Enemy::OnCollisionEnd(PhysBody* physA, PhysBody* physB) {
 		}
 		break;
 	case ColliderType::FIREBALLPLAYER:
-		if (currentAnimation != &dmg)
-			currentAnimation = &idle;
 		break;
 	default:
 		break;
