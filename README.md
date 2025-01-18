@@ -10,6 +10,9 @@ A 2D platformer game created using **Whimsy Hallow** assets.
 
 ### Credits
 - **Tileset & Assets:** [Whimsy Hallow by Crumpaloo](https://crumpaloo.itch.io/whimsy-hallow)
+- **Sound Effects:** [Dillon Becker](https://dillonbecker.itch.io/sdap)
+- **Boss Sprite:** [Szadi art](https://szadiart.itch.io/2d-soulslike-character)
+- **UI:** [Crusenho Agus Hennihuno](https://crusenho.itch.io/complete-ui-essential-pack)
 
 ---
 
