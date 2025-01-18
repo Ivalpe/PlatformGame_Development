@@ -83,6 +83,7 @@ bool Scene::Start()
 
 void Scene::LoadAssets() {
 	// Texture to highligh mouse position 
+	creditsScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/MainScreen.png");
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
 	gui = Engine::GetInstance().textures.get()->Load("Assets/Textures/hud.png");
 	lifePlayer = Engine::GetInstance().textures.get()->Load("Assets/Textures/life.png");
@@ -347,6 +348,11 @@ void Scene::HandleGui() {
 				showSettings = false;
 				Engine::GetInstance().uiManager->Show(GuiClass::SETTINGS, false);
 			}
+		}
+
+		if (coolIntro >= 0) {
+			engine.render.get()->DrawTexture(creditsScreen, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2, 0);
+			coolIntro--;
 		}
 	}
 }
@@ -663,54 +669,56 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 	switch (control->GetType())
 	{
 	case GuiClass::MAIN_MENU:
-		if (control->id == 1) {
-			level++;
-			pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
+		if (coolIntro == -1) {
+			if (control->id == 1) {
+				level++;
+				pugi::xml_node mapNode = configParameters.child("levels").find_child_by_attribute("number", std::to_string(level).c_str());
 
-			Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-			RestartEntities();
-			CreateEvents();
+				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				RestartEntities();
+				CreateEvents();
 
-			Vector2D posPlayer;
-			posPlayer.setX(mapNode.attribute("ix").as_int());
-			posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
+				Vector2D posPlayer;
+				posPlayer.setX(mapNode.attribute("ix").as_int());
+				posPlayer.setY(mapNode.attribute("iy").as_int() - 16);
 
-			player->ActivePlayer();
-			Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
-			player->SetPosition(posPlayer);
-
-			start = countTime.ReadSec();
-
-			player->SetLevel(Level::DISABLED);
-		}
-		else if (control->id == 2) {
-			level = nodes.child("savedGame").attribute("level").as_int();
-			pugi::xml_node mapNode = nodes.child("levels").find_child_by_attribute("number", nodes.child("savedGame").attribute("level").as_string());
-			Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
-			LoadState(LOAD::LOAD);
-			player->SetPosition({ nodes.child("savedGame").attribute("x").as_float() , nodes.child("savedGame").attribute("y").as_float() });
-			CreateEvents();
-
-			player->ActivePlayer();
-			Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
-
-			player->SetLevel(Level::DISABLED);
-		}
-		else if (control->id == 3) {
-			if (Engine::GetInstance().uiManager.get()->IsShowing(GuiClass::SETTINGS)) {
-				Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, false);
-				showSettings = false;
-			}
-			else {
+				player->ActivePlayer();
 				Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
-				Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, true);
-				showSettings = true;
+				player->SetPosition(posPlayer);
+
+				start = countTime.ReadSec();
+
+				player->SetLevel(Level::DISABLED);
 			}
-		}
-		else if (control->id == 4) {
-		}
-		else if (control->id == 5) {
-			exitGame = true;
+			else if (control->id == 2) {
+				level = nodes.child("savedGame").attribute("level").as_int();
+				pugi::xml_node mapNode = nodes.child("levels").find_child_by_attribute("number", nodes.child("savedGame").attribute("level").as_string());
+				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
+				LoadState(LOAD::LOAD);
+				player->SetPosition({ nodes.child("savedGame").attribute("x").as_float() , nodes.child("savedGame").attribute("y").as_float() });
+				CreateEvents();
+
+				player->ActivePlayer();
+				Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
+
+				player->SetLevel(Level::DISABLED);
+			}
+			else if (control->id == 3) {
+				if (Engine::GetInstance().uiManager.get()->IsShowing(GuiClass::SETTINGS)) {
+					Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, false);
+					showSettings = false;
+				}
+				else {
+					Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
+					Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, true);
+					showSettings = true;
+				}
+			}
+			else if (control->id == 4) {
+			}
+			else if (control->id == 5) {
+				exitGame = true;
+			}
 		}
 		break;
 	case GuiClass::PAUSE:
