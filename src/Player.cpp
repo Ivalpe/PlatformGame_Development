@@ -98,7 +98,7 @@ bool Player::Update(float dt)
 
 		if (isDmg) {
 			//pbody->body->SetType(b2_staticBody);
-			if (dmg.HasFinished()) {
+ 			if (dmg.HasFinished()) {
 				stPlayer = StatePlayer::IDLE;
 				isDmg = false;
 				currentAnimation = &idle;
@@ -205,6 +205,7 @@ bool Player::Update(float dt)
 		}
 		else {
 			pbody->body->SetType(b2_staticBody);
+			stPlayer = StatePlayer::DIE;
 			currentAnimation = &die;
 		}
 
