@@ -351,6 +351,8 @@
 				<jumpSFX path="Assets/Audio/Fx/jump.ogg" />
 				<damageSFX path="Assets/Audio/Fx/damage_player.ogg" />
 				<stone_doorSFX path="Assets/Audio/Fx/stone_door.ogg" />
+				<button_clickSFX path="Assets/Audio/Fx/button_click.ogg" />
+				<item_pickupSFX path="Assets/Audio/Fx/item_pickup.ogg" />
 			</fx>
 			<music>
 				<MainMenuMusic path="Assets/Audio/Music/Medieval Vol. 2 4 (Loop).wav" />
@@ -406,6 +408,7 @@
 			<item id="27" level="1" x="1080" y="328" />
 			<item id="28" level="1" x="1088" y="192" />
 			<item id="29" level="1" x="1112" y="192" />
+
 			<item id="30" level="1" x="1136" y="152" />
 			<item id="31" level="1" x="1152" y="328" />
 			<item id="32" level="1" x="1160" y="152" />
@@ -419,6 +422,7 @@
 			<item id="40" level="1" x="1376" y="176" />
 			<item id="41" level="1" x="1472" y="280" />
 			<item id="42" level="1" x="1544" y="280" />
+
 			<item id="42" level="1" x="1568" y="280" />
 			<item id="43" level="1" x="1664" y="280" />
 			<item id="44" level="1" x="1712" y="280" />
@@ -436,6 +440,7 @@
 			<item id="56" level="1" x="2160" y="176" />
 			<item id="57" level="1" x="2192" y="176" />
 			<item id="58" level="1" x="2200" y="176" />
+
 			<item id="58" level="1" x="2200" y="312" />
 			<item id="59" level="1" x="2320" y="224" />
 			<item id="60" level="1" x="2328" y="224" />
@@ -467,6 +472,7 @@
 			<item id="86" level="3" x="440" y="192" />
 			<item id="87" level="3" x="448" y="192" />
 			<item id="88" level="3" x="464" y="192" />
+
 		</items>
 		<npcs>
 			<npc id="1" level="4" x="232" y="208" />

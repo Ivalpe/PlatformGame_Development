@@ -140,6 +140,8 @@ private:
 	int saveSFX;          // Sound effect for saving progress
 	int loadSFX;		  // Sound effect for loading progress
 	int stone_doorSFX;    // Sound effect for level cahnge
+	int button_clickSFX;  // Sound effect for button clicked
+
 
 	// --- USER INTERFACE (UI) ---
 	SDL_Texture* helpMenu;			 // Menu texture
@@ -161,6 +163,7 @@ private:
 	SDL_Texture* gameWin;
 	SDL_Texture* checkOff;
 	SDL_Texture* checkOn;
+	bool pressedSoundPlayed = false;// checks if button is pressed and sound played
 	
 	bool showSettings = false;       // Flag to show settings menu
 	bool showTp = false;

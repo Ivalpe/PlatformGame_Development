@@ -4,6 +4,7 @@
 #include "SDL2/SDL.h"
 #include "Animation.h"
 #include "Pathfinding.h"
+#include "Module.h"
 
 struct SDL_Texture;
 
@@ -80,6 +81,7 @@ private:
 	PhysBody* pbody;
 	int levelItem;
 	bool collected;
+	int item_pickupSFX;   
 	
 	float speed;
 	int id;
