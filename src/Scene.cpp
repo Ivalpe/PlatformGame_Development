@@ -110,7 +110,7 @@ void Scene::LoadAssets() {
 	loadSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
 	saveSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("saveSFX").attribute("path").as_string());
 	stone_doorSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("stone_doorSFX").attribute("path").as_string());
-
+	button_clickSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("button_clickSFX").attribute("path").as_string());
 
 	OptionsBook = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsBook.png");
 	TitleScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/TitleScreen.png");
@@ -444,7 +444,7 @@ bool Scene::Update(float dt)
 			winRestartCool = 480;
 		}
 	}
-
+	
 	return true;
 }
 

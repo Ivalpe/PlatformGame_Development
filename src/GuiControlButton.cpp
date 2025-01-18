@@ -10,14 +10,15 @@ GuiControlButton::GuiControlButton(int id, SDL_Rect bounds, const char* text) : 
 	posTexture.setY(bounds.y / 2);
 	posHitbox.setY(bounds.y);
 	drawBasic = false;
+
+	button_clickSFX = Engine::GetInstance().audio.get()->LoadFx("Assets/Audio/Fx/button_click.ogg");
+	pressedSoundPlayed = false;
 }
 
-bool GuiControlButton::Start() {
-	pugi::xml_document audioFile;
-	pugi::xml_parse_result result = audioFile.load_file("config.xml");
-	button_clickSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("button_clickSFX").attribute("path").as_string());
 
-}
+	
+
+
 
 GuiControlButton::~GuiControlButton()
 {
@@ -41,11 +42,20 @@ bool GuiControlButton::Update(float dt)
 
 				if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT) {
 					state = GuiControlState::PRESSED;
+
+					
+					if (!pressedSoundPlayed) {
+						Engine::GetInstance().audio.get()->PlayFx(button_clickSFX);
+						pressedSoundPlayed = true;
+					}
 				}
 
 				if (Engine::GetInstance().input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP) {
 					NotifyObserver();
+					
+					pressedSoundPlayed = false;
 				}
+
 			}
 			else {
 				state = GuiControlState::NORMAL;
@@ -65,8 +75,6 @@ bool GuiControlButton::Update(float dt)
 			break;
 		case GuiControlState::PRESSED:
 			Engine::GetInstance().render->DrawTexture(buttonPressed, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
-			Engine::GetInstance().audio.get()->PlayFx(button_clickSFX);
-
 			break;
 		}
 
