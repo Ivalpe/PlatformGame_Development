@@ -276,9 +276,6 @@ bool Enemy::Update(float dt) {
 
 	if (showing) {
 		if (lifes <= 0) currentAnimation = &die;
-
-		//if (currentAnimation == &die && currentAnimation->HasFinished()) ShowEnemy(false);
-
 		if (type != EnemyType::BOSS) EnemyPattern(dt);
 		else BossPattern(dt);
 	}

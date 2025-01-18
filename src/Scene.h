@@ -14,7 +14,7 @@
 struct SDL_Texture;
 
 enum class LOAD {
-	INITIAL, RESPAWN, DEBUG
+	INITIAL, RESPAWN, DEBUG, LOAD
 };
 
 enum class ENEMY {
@@ -61,7 +61,9 @@ public:
 
 	void SaveKillEnemy(int id);
 
-	void RestartEnemies();
+	void SaveGrabbedItem(int id);
+
+	void RestartEntities();
 
 	void RestartSave();
 
@@ -119,7 +121,7 @@ private:
 	// --- PLAYER AND ENTITIES ---
 	Player* player;                       // Player instance
 	std::map<Enemy*, int> enemyList;        // List of enemies
-	std::vector<Item*> itemList;          // List of items
+	std::map<Item*, int> itemList;          // List of items
 	std::vector<Power*> fireballList;     // List of fireballs
 	std::map<Bonfire*, int> bonfireList;  // List of bonfires
 	std::vector<Poison*> poisonList;      // List of poison traps
