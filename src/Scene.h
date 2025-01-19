@@ -169,10 +169,14 @@ private:
 	SDL_Texture* gameWin;
 	SDL_Texture* checkOff;
 	SDL_Texture* checkOn;
+	SDL_Texture* creditsScreenMenu;
+	SDL_Texture* escapeExit;
+
 	bool pressedSoundPlayed = false;// checks if button is pressed and sound played
-	
 	bool showSettings = false;       // Flag to show settings menu
+	bool showCreditsMenu = false;
 	bool showTp = false;
+	bool showExitHelp = false;
 	          
 
 	// --- FADE-IN EFFECT ---

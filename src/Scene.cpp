@@ -85,6 +85,7 @@ bool Scene::Start()
 void Scene::LoadAssets() {
 	// Texture to highligh mouse position 
 	creditsScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/MainScreen.png");
+	creditsScreenMenu = Engine::GetInstance().textures.get()->Load("Assets/Menus/CreditsScreen.png");
 	mouseTileTex = Engine::GetInstance().textures.get()->Load("Assets/Maps/MapMetadata.png");
 	gui = Engine::GetInstance().textures.get()->Load("Assets/Textures/hud.png");
 	lifePlayer = Engine::GetInstance().textures.get()->Load("Assets/Textures/life.png");
@@ -103,6 +104,7 @@ void Scene::LoadAssets() {
 	pouchfull = Engine::GetInstance().textures.get()->Load("Assets/Textures/pouchfull.png");
 	gameOver = Engine::GetInstance().textures.get()->Load("Assets/Menus/Die.png");
 	gameWin = Engine::GetInstance().textures.get()->Load("Assets/Menus/Victory.png");
+	escapeExit = Engine::GetInstance().textures.get()->Load("Assets/Menus/exitHelp.png");
 
 	mainMenuMusic = configParameters.child("audio").child("music").child("MainMenuMusic").attribute("path").as_string();
 	levelMusic = configParameters.child("audio").child("music").child("LevelMusic").attribute("path").as_string();
@@ -331,6 +333,7 @@ void Scene::HandleGui() {
 		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN && player->GetLifes() >= 0) {
 			if (engine.uiManager->IsShowing(GuiClass::PAUSE) || engine.uiManager->IsShowing(GuiClass::SETTINGS)) {
 				pause = false;
+				showExitHelp = false;
 				engine.uiManager->Show(GuiClass::PAUSE, false);
 				engine.uiManager->Show(GuiClass::SETTINGS, false);
 			}
@@ -350,8 +353,15 @@ void Scene::HandleGui() {
 			if (engine.uiManager->IsShowing(GuiClass::SETTINGS)) {
 				engine.uiManager->Show(GuiClass::MAIN_MENU, true);
 				showSettings = false;
+				showExitHelp = false;
 				LoadFx();
 				engine.uiManager->Show(GuiClass::SETTINGS, false);
+			}
+
+			if (showCreditsMenu) {
+				showCreditsMenu = false;
+				showExitHelp = false;
+				engine.uiManager->Show(GuiClass::MAIN_MENU, true);
 			}
 		}
 
@@ -359,6 +369,16 @@ void Scene::HandleGui() {
 			engine.render.get()->DrawTexture(creditsScreen, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2, 0);
 			coolIntro--;
 		}
+
+		if (showCreditsMenu) {
+			engine.render.get()->DrawTexture(creditsScreenMenu, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2, 0);
+		}
+
+
+	}
+
+	if (showExitHelp) {
+		engine.render.get()->DrawTexture(escapeExit, SDL_FLIP_NONE, -engine.render.get()->camera.x / 2, engine.window.get()->height / 3 + 100);
 	}
 }
 
@@ -714,15 +734,20 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 				if (Engine::GetInstance().uiManager.get()->IsShowing(GuiClass::SETTINGS)) {
 					Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, false);
 					showSettings = false;
+					showExitHelp = false;
 					LoadFx();
 				}
 				else {
 					Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
 					Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, true);
 					showSettings = true;
+					showExitHelp = true;
 				}
 			}
 			else if (control->id == 4) {
+				Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
+				showCreditsMenu = true;
+				showExitHelp = true;
 			}
 			else if (control->id == 5) {
 				exitGame = true;
@@ -738,6 +763,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 		else if (control->id == 2) {
 			Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, true);
 			Engine::GetInstance().uiManager.get()->Show(GuiClass::PAUSE, false);
+			showExitHelp = true;
 		}
 		else if (control->id == 3) {
 			level = 0;
