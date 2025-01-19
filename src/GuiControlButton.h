@@ -34,8 +34,6 @@ private:
 	SDL_Texture* buttonDisabled;
 	Vector2D posHitbox;
 	Vector2D posTexture;
-	int button_clickSFX;
-	bool pressedSoundPlayed;
 };
 
 #pragma once

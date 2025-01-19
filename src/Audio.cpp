@@ -130,7 +130,7 @@ bool Audio::PlayMusic(const char* path, float fadeTime)
 }
 
 void Audio::ChangeVolume(int volume, int channel) {
-	if (volume == 1) Mix_VolumeMusic(volume);
+	if (channel == 2) Mix_VolumeMusic(volume);
 	else Mix_Volume(channel, volume);
 }
 
@@ -169,7 +169,7 @@ bool Audio::PlayFx(int id, int repeat)
 	{
 		auto fxIt = fx.begin();
 		std::advance(fxIt, id - 1);
-		Mix_PlayChannel(2, *fxIt, repeat);
+		Mix_PlayChannel(3, *fxIt, repeat);
 	}
 
 	return ret;

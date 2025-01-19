@@ -41,6 +41,8 @@ public:
 
 	void LoadAssets();
 
+	void LoadFx();
+
 	void SetupUI();
 
 	// Called before all Updates

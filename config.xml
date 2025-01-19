@@ -15,7 +15,7 @@
 		<fullscreen_window value="false" />
 	</window>
 	<scene>
-		<savedGame value="true" x="144" y="184" level="1" />
+		<savedGame value="false" x="144" y="184" level="1" />
 		<levels>
 			<map path="Assets/Maps/" name="Level0.tmx" number="0" ix="452" iy="292" />
 			<map path="Assets/Maps/" name="Level1.tmx" number="1" ix="60" iy="192" />
@@ -364,11 +364,9 @@
 				<BossMusic path="Assets/Audio/Music/1. Abyssal Tyrant (Loop).wav" />
 			</music>
 		</audio>
-
 		<bonfires />
 		<enemies />
 		<items />
-
 		<npcs />
 	</scene>
 </config>

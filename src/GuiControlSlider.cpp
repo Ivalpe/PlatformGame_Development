@@ -38,9 +38,9 @@ bool GuiControlSlider::Update(float dt)
 				state = GuiControlState::PRESSED;
 				posButton = -(Engine::GetInstance().render.get()->camera.x / 2) + mousePos.getX() - 8;
 				if (text == "Music     ")
-					Engine::GetInstance().audio.get()->ChangeVolume((posButton - 255) * 2, 1);
+					Engine::GetInstance().audio.get()->ChangeVolume(((posButton - 255) * 2) + Engine::GetInstance().render.get()->camera.x, 2);
 				else
-					Engine::GetInstance().audio.get()->ChangeVolume((posButton - 255) * 2, 2);
+					Engine::GetInstance().audio.get()->ChangeVolume(((posButton - 255) * 2) + Engine::GetInstance().render.get()->camera.x, 3);
 
 			}
 

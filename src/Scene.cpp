@@ -65,6 +65,7 @@ bool Scene::Awake()
 bool Scene::Start()
 {
 	LoadAssets();
+	LoadFx();
 
 	//Call the function to load the map. 
 	Engine::GetInstance().map->Load("Assets/Maps/", configParameters.child("levels").child("map").attribute("name").as_string());
@@ -107,15 +108,18 @@ void Scene::LoadAssets() {
 	levelMusic = configParameters.child("audio").child("music").child("LevelMusic").attribute("path").as_string();
 	bossMusic = configParameters.child("audio").child("music").child("BossMusic").attribute("path").as_string();
 
+	OptionsBook = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsBook.png");
+	TitleScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/TitleScreen.png");
+	Engine::GetInstance().uiManager.get()->LoadTextures(TitleScreen, OptionsBook);
+}
+
+// Separated from Load Assets for calling every time effects volume is changed
+void Scene::LoadFx() {
 	bonfireSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("bonfireSFX").attribute("path").as_string());
 	loadSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("loadsSFX").attribute("path").as_string());
 	saveSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("saveSFX").attribute("path").as_string());
 	stone_doorSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("stone_doorSFX").attribute("path").as_string());
 	button_clickSFX = Engine::GetInstance().audio.get()->LoadFx(configParameters.child("audio").child("fx").child("button_clickSFX").attribute("path").as_string());
-
-	OptionsBook = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsBook.png");
-	TitleScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/TitleScreen.png");
-	Engine::GetInstance().uiManager.get()->LoadTextures(TitleScreen, OptionsBook);
 }
 
 void Scene::SetupUI() {
@@ -280,7 +284,7 @@ void Scene::HandleGui() {
 	auto& engine = Engine::GetInstance();
 
 	if (level == 4) {
-		Engine::GetInstance().render.get()->DrawTexture(gameWin, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2), 0);
+		engine.render.get()->DrawTexture(gameWin, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2), 0);
 	}
 	else if (level != 0) {
 		//Open Help
@@ -299,7 +303,7 @@ void Scene::HandleGui() {
 			}
 		}
 		else {
-			Engine::GetInstance().render.get()->DrawTexture(gameOver, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2), 0);
+			engine.render.get()->DrawTexture(gameOver, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2), 0);
 		}
 
 		int powerCoordX = -(engine.render.get()->camera.x / 2) + (32 * 3);
@@ -312,41 +316,42 @@ void Scene::HandleGui() {
 
 		//COINS
 		if (player->GetCoins() > 0) {
-			Engine::GetInstance().render->DrawText(coinText.c_str(), 60, 60, 80, 44);
+			engine.render->DrawText(coinText.c_str(), 60, 60, 80, 44);
 			engine.render.get()->DrawTexture(pouchfull, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
 		}
 		else {
-			Engine::GetInstance().render->DrawText(coinText.c_str(), 60, 60, 80, 44);
+			engine.render->DrawText(coinText.c_str(), 60, 60, 80, 44);
 			engine.render.get()->DrawTexture(pouch, SDL_FLIP_NONE, -(engine.render.get()->camera.x / 2) + 10, 30);
 		}
 
-		if (showTp && !pause) Engine::GetInstance().uiManager->Show(GuiClass::TPBONFIRE, true);
-		else Engine::GetInstance().uiManager->Show(GuiClass::TPBONFIRE, false);
+		if (showTp && !pause) engine.uiManager->Show(GuiClass::TPBONFIRE, true);
+		else engine.uiManager->Show(GuiClass::TPBONFIRE, false);
 
 		//Enable Settings UI
 		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN && player->GetLifes() >= 0) {
-			if (Engine::GetInstance().uiManager->IsShowing(GuiClass::PAUSE) || Engine::GetInstance().uiManager->IsShowing(GuiClass::SETTINGS)) {
+			if (engine.uiManager->IsShowing(GuiClass::PAUSE) || engine.uiManager->IsShowing(GuiClass::SETTINGS)) {
 				pause = false;
-				Engine::GetInstance().uiManager->Show(GuiClass::PAUSE, false);
-				Engine::GetInstance().uiManager->Show(GuiClass::SETTINGS, false);
+				engine.uiManager->Show(GuiClass::PAUSE, false);
+				engine.uiManager->Show(GuiClass::SETTINGS, false);
 			}
 			else {
 				pause = true;
-				Engine::GetInstance().uiManager->Show(GuiClass::PAUSE, true);
+				engine.uiManager->Show(GuiClass::PAUSE, true);
 			}
 		}
 
 		timer = countTime.ReadSec() - start;
-		Engine::GetInstance().render.get()->DrawText("Time:     ", Engine::GetInstance().window.get()->width - 180, 100, 180, 60);
-		Engine::GetInstance().render.get()->DrawText(std::to_string(timer).c_str(), Engine::GetInstance().window.get()->width - 80, 100, (std::to_string(timer).size()) * 20, 60);
+		engine.render.get()->DrawText("Time:     ", engine.window.get()->width - 180, 100, 180, 60);
+		engine.render.get()->DrawText(std::to_string(timer).c_str(), engine.window.get()->width - 80, 100, (std::to_string(timer).size()) * 20, 60);
 	}
 	else {
 		if (engine.input.get()->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 
-			if (Engine::GetInstance().uiManager->IsShowing(GuiClass::SETTINGS)) {
-				Engine::GetInstance().uiManager->Show(GuiClass::MAIN_MENU, true);
+			if (engine.uiManager->IsShowing(GuiClass::SETTINGS)) {
+				engine.uiManager->Show(GuiClass::MAIN_MENU, true);
 				showSettings = false;
-				Engine::GetInstance().uiManager->Show(GuiClass::SETTINGS, false);
+				LoadFx();
+				engine.uiManager->Show(GuiClass::SETTINGS, false);
 			}
 		}
 
@@ -666,6 +671,8 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 	pugi::xml_parse_result result = bonfireParameters.load_file("config.xml");
 	pugi::xml_node nodes = bonfireParameters.child("config").child("scene");
 
+	Engine::GetInstance().audio.get()->PlayFx(button_clickSFX);
+
 	switch (control->GetType())
 	{
 	case GuiClass::MAIN_MENU:
@@ -707,6 +714,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 				if (Engine::GetInstance().uiManager.get()->IsShowing(GuiClass::SETTINGS)) {
 					Engine::GetInstance().uiManager.get()->Show(GuiClass::SETTINGS, false);
 					showSettings = false;
+					LoadFx();
 				}
 				else {
 					Engine::GetInstance().uiManager.get()->Show(GuiClass::MAIN_MENU, false);
