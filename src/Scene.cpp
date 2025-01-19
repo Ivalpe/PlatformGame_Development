@@ -1274,6 +1274,36 @@ bool Scene::CleanUp()
 	fireballList.clear();
 	bonfireList.clear();
 	poisonList.clear();
+	npcList.clear();
+	levelsLoadedBonfire.clear();
+	levelsLoadedEnemies.clear();
+	levelsLoadedItems.clear();
+	levelsLoadedNpcs.clear();
+
+
+	Engine::GetInstance().textures.get()->UnLoad(mouseTileTex);
+	Engine::GetInstance().textures.get()->UnLoad(creditsScreen);
+	Engine::GetInstance().textures.get()->UnLoad(helpMenu);
+	Engine::GetInstance().textures.get()->UnLoad(OptionsBook);
+	Engine::GetInstance().textures.get()->UnLoad(TitleScreen);
+	Engine::GetInstance().textures.get()->UnLoad(gui);
+	Engine::GetInstance().textures.get()->UnLoad(lifePlayer);
+	Engine::GetInstance().textures.get()->UnLoad(powerOn);
+	Engine::GetInstance().textures.get()->UnLoad(pouch);
+	Engine::GetInstance().textures.get()->UnLoad(pouchfull);
+	Engine::GetInstance().textures.get()->UnLoad(powerOff);
+	Engine::GetInstance().textures.get()->UnLoad(sliderBackground);
+	Engine::GetInstance().textures.get()->UnLoad(sliderMovement);
+	Engine::GetInstance().textures.get()->UnLoad(menuButtonNormal);
+	Engine::GetInstance().textures.get()->UnLoad(menuButtonFocused);
+	Engine::GetInstance().textures.get()->UnLoad(menuButtonPressed);
+	Engine::GetInstance().textures.get()->UnLoad(menuButtonDisabled);
+	Engine::GetInstance().textures.get()->UnLoad(gameOver);
+	Engine::GetInstance().textures.get()->UnLoad(gameWin);
+	Engine::GetInstance().textures.get()->UnLoad(checkOff);
+	Engine::GetInstance().textures.get()->UnLoad(checkOn);
+	Engine::GetInstance().textures.get()->UnLoad(creditsScreenMenu);
+	Engine::GetInstance().textures.get()->UnLoad(escapeExit);
 
 	return true;
 }

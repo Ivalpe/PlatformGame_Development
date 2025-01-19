@@ -1,6 +1,16 @@
 #pragma once
 #include <vector>
 #include "GuiControlButton.h"
+#include "Module.h"
+#include "Player.h"
+#include "Power.h"
+#include "Enemy.h"
+#include "Item.h"
+#include "Bonfire.h"
+#include "Poison.h"
+#include "GuiControlButton.h"
+#include "UI.h"
+#include "Npc.h"
 
 class UI : public Module {
 public:
@@ -29,6 +39,8 @@ public:
 		TitleScreen = title;
 		OptionsBook = options;
 	}
+
+	bool CleanUp();
 
 private:
 

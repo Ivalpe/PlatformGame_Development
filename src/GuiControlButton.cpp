@@ -63,7 +63,6 @@ bool GuiControlButton::Update(float dt)
 		std::string name = "   ";
 		name = name + text.c_str();
 		Engine::GetInstance().render->DrawText(name.c_str(), bounds.x, bounds.y, bounds.w, bounds.h);
-
 	}
 
 	return false;

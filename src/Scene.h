@@ -103,8 +103,6 @@ public:
 		return player->GetPosition();
 	}
 
-
-
 	// Handles multiple Gui Event methods
 	bool OnGuiMouseClickEvent(GuiControl* control);
 
@@ -176,8 +174,7 @@ private:
 	bool showSettings = false;       // Flag to show settings menu
 	bool showCreditsMenu = false;
 	bool showTp = false;
-	bool showExitHelp = false;
-	          
+	bool showExitHelp = false;          
 
 	// --- FADE-IN EFFECT ---
 	Uint8 alpha;         // Alpha transparency for fade-in effect

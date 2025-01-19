@@ -350,6 +350,7 @@ void Enemy::MovementEnemy(float dt) {
 
 bool Enemy::CleanUp()
 {
+	Engine::GetInstance().textures.get()->UnLoad(texture);
 	return true;
 }
 

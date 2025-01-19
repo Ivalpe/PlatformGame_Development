@@ -89,18 +89,23 @@ bool Map::CleanUp()
 {
 	LOG("Unloading map");
 
-	// L06: TODO 2: Make sure you clean up any memory allocated from tilesets/map
 	for (const auto& tileset : mapData.tilesets) {
 		delete tileset;
 	}
 	mapData.tilesets.clear();
 
-	// L07 TODO 2: clean up all layer data
 	for (const auto& layer : mapData.layers)
 	{
 		delete layer;
 	}
 	mapData.layers.clear();
+
+	collisions.clear();
+	posBonfire.clear();
+	posPoison.clear();
+	posEnemy.clear();
+	posItems.clear();
+	posNpcs.clear();
 
 	return true;
 }

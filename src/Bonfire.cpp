@@ -65,6 +65,7 @@ bool Bonfire::Update(float dt)
 
 bool Bonfire::CleanUp()
 {
+	Engine::GetInstance().textures.get()->UnLoad(texture);
 	return true;
 }
 

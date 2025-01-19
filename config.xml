@@ -15,7 +15,7 @@
 		<fullscreen_window value="false" />
 	</window>
 	<scene>
-		<savedGame value="true" x="144" y="184" level="1" coins="4" />
+		<savedGame value="false" x="144" y="184" level="1" coins="4" />
 		<levels>
 			<map path="Assets/Maps/" name="Level0.tmx" number="0" ix="452" iy="292" />
 			<map path="Assets/Maps/" name="Level1.tmx" number="1" ix="60" iy="192" />
@@ -365,7 +365,7 @@
 			</music>
 		</audio>
 		<bonfires>
-			<bonfire level="1" activated="true" x="144" y="184" id="1" name="Hoguera 1" />
+			<bonfire level="1" activated="false" x="144" y="184" id="1" name="Hoguera 1" />
 			<bonfire level="1" activated="false" x="1504" y="272" id="2" name="Hoguera 2" />
 			<bonfire level="1" activated="false" x="3048" y="200" id="3" name="Hoguera 3" />
 		</bonfires>
@@ -382,12 +382,12 @@
 		</enemies>
 		<items>
 			<item id="1" level="1" grabbed="false" x="256" y="272" />
-			<item id="2" level="1" grabbed="true" x="288" y="256" />
+			<item id="2" level="1" grabbed="false" x="288" y="256" />
 			<item id="3" level="1" grabbed="false" x="312" y="136" />
-			<item id="4" level="1" grabbed="true" x="328" y="256" />
+			<item id="4" level="1" grabbed="false" x="328" y="256" />
 			<item id="5" level="1" grabbed="false" x="368" y="136" />
-			<item id="6" level="1" grabbed="true" x="368" y="256" />
-			<item id="7" level="1" grabbed="true" x="408" y="256" />
+			<item id="6" level="1" grabbed="false" x="368" y="256" />
+			<item id="7" level="1" grabbed="false" x="408" y="256" />
 			<item id="8" level="1" grabbed="false" x="424" y="136" />
 			<item id="9" level="1" grabbed="false" x="528" y="112" />
 			<item id="10" level="1" grabbed="false" x="528" y="248" />
@@ -461,9 +461,9 @@
 			<item id="78" level="1" grabbed="false" x="2792" y="200" />
 			<item id="79" level="1" grabbed="false" x="2864" y="200" />
 			<item id="80" level="1" grabbed="false" x="2984" y="208" />
-			<item id="80" level="1" grabbed="false" x="3016" y="208" />
-			<item id="81" level="1" grabbed="false" x="3072" y="208" />
-			<item id="82" level="1" grabbed="false" x="3096" y="208" />
+			<item id="81" level="1" grabbed="false" x="3016" y="208" />
+			<item id="82" level="1" grabbed="false" x="3072" y="208" />
+			<item id="83" level="1" grabbed="false" x="3096" y="208" />
 		</items>
 		<npcs />
 	</scene>

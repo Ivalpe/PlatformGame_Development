@@ -155,3 +155,15 @@ bool UI::IsShowing(GuiClass gui) {
 		break;
 	}
 }
+
+bool UI::CleanUp()
+{
+	tpMenu.clear();
+	pauseMenu.clear();
+	mainMenu.clear();
+	settings.clear();
+	SDL_DestroyTexture(OptionsBook);
+	SDL_DestroyTexture(TitleScreen);
+
+	return true;
+}

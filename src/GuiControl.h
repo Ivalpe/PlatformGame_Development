@@ -51,7 +51,6 @@ public:
 		text(text)
 	{
 		color.r = 255; color.g = 255; color.b = 255;
-		texture = NULL;
 	}
 
 	void SetType(GuiClass gc) {
@@ -70,13 +69,6 @@ public:
 	virtual bool Update(float dt)
 	{
 		return true;
-	}
-
-	// 
-	void SetTexture(SDL_Texture* tex)
-	{
-		texture = tex;
-		section = { 0, 0, 0, 0 };
 	}
 
 	// 
@@ -116,11 +108,10 @@ public:
 	GuiControlType type;
 	GuiControlState state;
 
-	std::string text;           // Control text (if required)
+	std::string text;       // Control text (if required)
 	SDL_Rect bounds;        // Position and size
 	SDL_Color color;        // Tint color
 
-	SDL_Texture* texture;   // Texture atlas reference
 	SDL_Rect section;       // Texture atlas base section
 
 	Module* observer;        // Observer 

@@ -114,6 +114,7 @@ bool Item::Update(float dt)
 
 bool Item::CleanUp()
 {
+	Engine::GetInstance().textures.get()->UnLoad(texture);
 	return true;
 }
 
