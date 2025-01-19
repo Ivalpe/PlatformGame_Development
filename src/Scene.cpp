@@ -432,6 +432,7 @@ bool Scene::Update(float dt)
 				saveFile.child("config").child("scene").child("savedGame").attribute("level").set_value(level);
 				saveFile.child("config").child("scene").child("savedGame").attribute("x").set_value(bonfire.first->GetPosition().getX());
 				saveFile.child("config").child("scene").child("savedGame").attribute("y").set_value(bonfire.first->GetPosition().getY());
+				saveFile.child("config").child("scene").child("savedGame").attribute("coins").set_value(player->GetCoins());
 				saveFile.save_file("config.xml");
 			}
 		}
@@ -723,6 +724,7 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 				Engine::GetInstance().map->Load("Assets/Maps/", mapNode.attribute("name").as_string());
 				LoadState(LOAD::LOAD);
 				player->SetPosition({ nodes.child("savedGame").attribute("x").as_float() , nodes.child("savedGame").attribute("y").as_float() });
+				player->SetCoins(nodes.child("savedGame").attribute("coins").as_int());
 				CreateEvents();
 
 				player->ActivePlayer();

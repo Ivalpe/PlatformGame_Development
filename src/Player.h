@@ -99,6 +99,10 @@ public:
 		return coins;
 	}
 
+	void SetCoins(int c) {
+		coins = c;
+	}
+
 	void SetfirePower(bool value) { firePower = value; }
 	
 public:
