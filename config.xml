@@ -15,7 +15,7 @@
 		<fullscreen_window value="false" />
 	</window>
 	<scene>
-		<savedGame value="true" x="1504" y="272" level="1" coins="4" />
+		<savedGame value="true" x="144" y="184" level="1" coins="0" />
 		<levels>
 			<map path="Assets/Maps/" name="Level0.tmx" number="0" ix="452" iy="292" />
 			<map path="Assets/Maps/" name="Level1.tmx" number="1" ix="60" iy="192" />
@@ -24,7 +24,7 @@
 			<map path="Assets/Maps/" name="Level4.tmx" number="4" ix="484" iy="212" />
 		</levels>
 		<entities>
-			<player dx="52" dy="175" dlevel="1" ix="452" iy="292" x="1504" y="272" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
+			<player dx="52" dy="175" dlevel="1" ix="452" iy="292" x="144" y="184" w="16" h="32" texture="Assets/Textures/PlayerV2.png">
 				<animations>
 					<idle loop="true" speed="0.06">
 						<frame x="0" y="32" w="16" h="32" />
@@ -366,19 +366,19 @@
 		</audio>
 		<bonfires>
 			<bonfire level="1" activated="true" x="144" y="184" id="1" name="Hoguera 1" />
-			<bonfire level="1" activated="true" x="1504" y="272" id="2" name="Hoguera 2" />
+			<bonfire level="1" activated="false" x="1504" y="272" id="2" name="Hoguera 2" />
 			<bonfire level="1" activated="false" x="3048" y="200" id="3" name="Hoguera 3" />
 		</bonfires>
 		<enemies>
-			<enemy id="1" level="1" dead="false" x="576" y="104" />
-			<enemy id="2" level="1" dead="false" x="680" y="224" />
+			<enemy id="1" level="1" dead="true" x="576" y="104" />
+			<enemy id="2" level="1" dead="true" x="680" y="224" />
 			<enemy id="3" level="1" dead="false" x="888" y="136" />
 			<enemy id="4" level="1" dead="false" x="1120" y="320" />
 			<enemy id="5" level="1" dead="false" x="1352" y="168" />
 			<enemy id="6" level="1" dead="false" x="1992" y="304" />
 			<enemy id="7" level="1" dead="false" x="2128" y="304" />
 			<enemy id="8" level="1" dead="false" x="2416" y="304" />
-			<enemy id="9" level="1" dead="true" x="2712" y="240" />
+			<enemy id="9" level="1" dead="false" x="2712" y="240" />
 		</enemies>
 		<items>
 			<item id="1" level="1" grabbed="false" x="256" y="272" />
@@ -395,10 +395,10 @@
 			<item id="12" level="1" grabbed="false" x="544" y="232" />
 			<item id="13" level="1" grabbed="false" x="552" y="248" />
 			<item id="14" level="1" grabbed="false" x="560" y="112" />
-			<item id="15" level="1" grabbed="false" x="608" y="112" />
+			<item id="15" level="1" grabbed="true" x="608" y="112" />
 			<item id="16" level="1" grabbed="false" x="648" y="232" />
-			<item id="17" level="1" grabbed="false" x="672" y="112" />
-			<item id="18" level="1" grabbed="false" x="712" y="112" />
+			<item id="17" level="1" grabbed="true" x="672" y="112" />
+			<item id="18" level="1" grabbed="true" x="712" y="112" />
 			<item id="19" level="1" grabbed="false" x="720" y="232" />
 			<item id="20" level="1" grabbed="false" x="736" y="232" />
 			<item id="21" level="1" grabbed="false" x="784" y="208" />
@@ -411,59 +411,59 @@
 			<item id="28" level="1" grabbed="false" x="1088" y="192" />
 			<item id="29" level="1" grabbed="false" x="1112" y="192" />
 			<item id="30" level="1" grabbed="false" x="1136" y="152" />
-			<item id="30" level="1" grabbed="false" x="1152" y="328" />
-			<item id="31" level="1" grabbed="false" x="1160" y="152" />
-			<item id="32" level="1" grabbed="false" x="1192" y="152" />
-			<item id="33" level="1" grabbed="false" x="1192" y="328" />
-			<item id="34" level="1" grabbed="false" x="1224" y="328" />
-			<item id="35" level="1" grabbed="false" x="1264" y="296" />
-			<item id="36" level="1" grabbed="false" x="1296" y="296" />
-			<item id="37" level="1" grabbed="false" x="1320" y="296" />
-			<item id="38" level="1" grabbed="false" x="1328" y="176" />
-			<item id="39" level="1" grabbed="false" x="1376" y="176" />
-			<item id="40" level="1" grabbed="false" x="1472" y="280" />
-			<item id="41" level="1" grabbed="false" x="1544" y="280" />
-			<item id="42" level="1" grabbed="false" x="1568" y="280" />
-			<item id="43" level="1" grabbed="false" x="1664" y="280" />
-			<item id="44" level="1" grabbed="false" x="1712" y="280" />
-			<item id="45" level="1" grabbed="false" x="1776" y="240" />
-			<item id="46" level="1" grabbed="false" x="1816" y="240" />
-			<item id="47" level="1" grabbed="false" x="1856" y="240" />
-			<item id="48" level="1" grabbed="false" x="1936" y="312" />
-			<item id="49" level="1" grabbed="false" x="1976" y="208" />
-			<item id="50" level="1" grabbed="false" x="2008" y="208" />
-			<item id="51" level="1" grabbed="false" x="2008" y="312" />
-			<item id="52" level="1" grabbed="false" x="2048" y="208" />
-			<item id="53" level="1" grabbed="false" x="2048" y="312" />
-			<item id="54" level="1" grabbed="false" x="2088" y="312" />
-			<item id="55" level="1" grabbed="false" x="2152" y="176" />
-			<item id="56" level="1" grabbed="false" x="2160" y="176" />
-			<item id="57" level="1" grabbed="false" x="2192" y="176" />
-			<item id="58" level="1" grabbed="false" x="2200" y="176" />
-			<item id="59" level="1" grabbed="false" x="2200" y="312" />
-			<item id="60" level="1" grabbed="false" x="2320" y="224" />
-			<item id="61" level="1" grabbed="false" x="2328" y="224" />
-			<item id="62" level="1" grabbed="false" x="2336" y="144" />
-			<item id="63" level="1" grabbed="false" x="2336" y="224" />
-			<item id="64" level="1" grabbed="false" x="2384" y="144" />
-			<item id="65" level="1" grabbed="false" x="2480" y="216" />
-			<item id="66" level="1" grabbed="false" x="2504" y="216" />
-			<item id="67" level="1" grabbed="false" x="2576" y="272" />
-			<item id="68" level="1" grabbed="false" x="2592" y="200" />
-			<item id="69" level="1" grabbed="false" x="2608" y="128" />
-			<item id="70" level="1" grabbed="false" x="2616" y="200" />
-			<item id="71" level="1" grabbed="false" x="2616" y="272" />
-			<item id="72" level="1" grabbed="false" x="2632" y="128" />
-			<item id="73" level="1" grabbed="false" x="2640" y="200" />
-			<item id="74" level="1" grabbed="false" x="2672" y="128" />
-			<item id="75" level="1" grabbed="false" x="2688" y="248" />
-			<item id="76" level="1" grabbed="false" x="2736" y="248" />
-			<item id="77" level="1" grabbed="false" x="2792" y="200" />
-			<item id="78" level="1" grabbed="false" x="2864" y="200" />
-			<item id="79" level="1" grabbed="false" x="2984" y="208" />
-			<item id="80" level="1" grabbed="false" x="3016" y="208" />
-			<item id="81" level="1" grabbed="false" x="3072" y="208" />
-			<item id="82" level="1" grabbed="false" x="3096" y="208" />
+			<item id="31" level="1" grabbed="false" x="1152" y="328" />
+			<item id="32" level="1" grabbed="false" x="1160" y="152" />
+			<item id="33" level="1" grabbed="false" x="1192" y="152" />
+			<item id="34" level="1" grabbed="false" x="1192" y="328" />
+			<item id="35" level="1" grabbed="false" x="1224" y="328" />
+			<item id="36" level="1" grabbed="false" x="1264" y="296" />
+			<item id="37" level="1" grabbed="false" x="1296" y="296" />
+			<item id="38" level="1" grabbed="false" x="1320" y="296" />
+			<item id="39" level="1" grabbed="false" x="1328" y="176" />
+			<item id="40" level="1" grabbed="false" x="1376" y="176" />
+			<item id="41" level="1" grabbed="false" x="1472" y="280" />
+			<item id="42" level="1" grabbed="false" x="1544" y="280" />
+			<item id="43" level="1" grabbed="false" x="1568" y="280" />
+			<item id="44" level="1" grabbed="false" x="1664" y="280" />
+			<item id="45" level="1" grabbed="false" x="1712" y="280" />
+			<item id="46" level="1" grabbed="false" x="1776" y="240" />
+			<item id="47" level="1" grabbed="false" x="1816" y="240" />
+			<item id="48" level="1" grabbed="false" x="1856" y="240" />
+			<item id="49" level="1" grabbed="false" x="1936" y="312" />
+			<item id="50" level="1" grabbed="false" x="1976" y="208" />
+			<item id="51" level="1" grabbed="false" x="2008" y="208" />
+			<item id="52" level="1" grabbed="false" x="2008" y="312" />
+			<item id="53" level="1" grabbed="false" x="2048" y="208" />
+			<item id="54" level="1" grabbed="false" x="2048" y="312" />
+			<item id="55" level="1" grabbed="false" x="2088" y="312" />
+			<item id="56" level="1" grabbed="false" x="2152" y="176" />
+			<item id="57" level="1" grabbed="false" x="2160" y="176" />
+			<item id="58" level="1" grabbed="false" x="2192" y="176" />
+			<item id="59" level="1" grabbed="false" x="2200" y="176" />
+			<item id="60" level="1" grabbed="false" x="2200" y="312" />
+			<item id="61" level="1" grabbed="false" x="2320" y="224" />
+			<item id="62" level="1" grabbed="false" x="2328" y="224" />
+			<item id="63" level="1" grabbed="false" x="2336" y="144" />
+			<item id="64" level="1" grabbed="false" x="2336" y="224" />
+			<item id="65" level="1" grabbed="false" x="2384" y="144" />
+			<item id="66" level="1" grabbed="false" x="2480" y="216" />
+			<item id="67" level="1" grabbed="false" x="2504" y="216" />
+			<item id="68" level="1" grabbed="false" x="2576" y="272" />
+			<item id="69" level="1" grabbed="false" x="2592" y="200" />
+			<item id="70" level="1" grabbed="false" x="2608" y="128" />
+			<item id="71" level="1" grabbed="false" x="2616" y="200" />
+			<item id="72" level="1" grabbed="false" x="2616" y="272" />
+			<item id="73" level="1" grabbed="false" x="2632" y="128" />
+			<item id="74" level="1" grabbed="false" x="2640" y="200" />
+			<item id="75" level="1" grabbed="false" x="2672" y="128" />
+			<item id="76" level="1" grabbed="false" x="2688" y="248" />
+			<item id="77" level="1" grabbed="false" x="2736" y="248" />
+			<item id="78" level="1" grabbed="false" x="2792" y="200" />
+			<item id="79" level="1" grabbed="false" x="2864" y="200" />
+			<item id="80" level="1" grabbed="false" x="2984" y="208" />
+			<item id="81" level="1" grabbed="false" x="3016" y="208" />
+			<item id="82" level="1" grabbed="false" x="3072" y="208" />
+			<item id="83" level="1" grabbed="false" x="3096" y="208" />
 		</items>
 		<npcs />
 	</scene>

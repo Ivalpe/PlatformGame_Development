@@ -314,36 +314,41 @@ void Enemy::MovementEnemy(float dt) {
 	Vector2D tilePos = Engine::GetInstance().map.get()->WorldToMap(pos.getX(), pos.getY());
 	pathfinding->ResetPath(tilePos);
 
+	int max = 80;
 	bool found = false;
 	while (!found) {
 		found = pathfinding->PropagateAStar(MANHATTAN);
+		max--;
+		if (max == 0) break;
 		if (Engine::GetInstance().physics.get()->GetDebug())
 			pathfinding->DrawPath();
 	}
 
-	int sizeBread = pathfinding->breadcrumbs.size();
-	Vector2D posBread;
-	if (sizeBread >= 2) posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 2];
-	else posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 1];
+	if (found) {
+		int sizeBread = pathfinding->breadcrumbs.size();
+		Vector2D posBread;
+		if (sizeBread >= 2) posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 2];
+		else posBread = pathfinding->breadcrumbs[pathfinding->breadcrumbs.size() - 1];
 
-	//Movement Enemy
-	if (currentAnimation != &die) {
-		if (posBread.getX() <= tilePos.getX()) {
-			velocity.x = -speed;
-			flipType = SDL_FLIP_HORIZONTAL;
-		}
-		else {
-			velocity.x = speed;
-			flipType = SDL_FLIP_NONE;
-		}
-
-
-		if (type == EnemyType::BAT) {
-			if (posBread.getY() <= tilePos.getY()) {
-				velocity.y = -speed;
+		//Movement Enemy
+		if (currentAnimation != &die) {
+			if (posBread.getX() <= tilePos.getX()) {
+				velocity.x = -speed;
+				flipType = SDL_FLIP_HORIZONTAL;
 			}
 			else {
-				velocity.y = speed;
+				velocity.x = speed;
+				flipType = SDL_FLIP_NONE;
+			}
+
+
+			if (type == EnemyType::BAT) {
+				if (posBread.getY() <= tilePos.getY()) {
+					velocity.y = -speed;
+				}
+				else {
+					velocity.y = speed;
+				}
 			}
 		}
 	}
