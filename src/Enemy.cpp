@@ -28,7 +28,7 @@ bool Enemy::Start() {
 	followPlayer = false;
 	speed = 1.9f;
 
-	//initilize textures
+	//Initilize textures
 	texture = Engine::GetInstance().textures.get()->Load(parameters.attribute("texture").as_string());
 	levelEnemy = parameters.attribute("level").as_int();
 	texW = parameters.attribute("w").as_int();
@@ -44,16 +44,17 @@ bool Enemy::Start() {
 	currentAnimation = &idle;
 
 	//Add a physics to an item - initialize the physics body
-	pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY() + texW, texW / 2, bodyType::DYNAMIC);
-
-	sensor = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX(), (int)position.getY() + texH, texW * 4, bodyType::KINEMATIC);
-	sensor->ctype = ColliderType::SENSOR;
-	sensor->listener = this;
+	if (type == EnemyType::BAT) pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY() + texW, texW / 2, bodyType::DYNAMIC);
+	else pbody = Engine::GetInstance().physics.get()->CreateCircle((int)position.getX(), (int)position.getY() + texW, texW / 2, bodyType::DYNAMIC);
 
 	//Assign collider type
 	pbody->ctype = ColliderType::ENEMY;
 	pbody->listener = this;
 
+	//Sensor
+	sensor = Engine::GetInstance().physics.get()->CreateCircleSensor((int)position.getX(), (int)position.getY() + texH, texW * 4, bodyType::KINEMATIC);
+	sensor->ctype = ColliderType::SENSOR;
+	sensor->listener = this;
 
 	// Set the gravity of the body
 	if (!parameters.attribute("gravity").as_bool()) pbody->body->SetGravityScale(0);
@@ -239,6 +240,8 @@ void Enemy::EnemyPattern(float dt) {
 			coolDown = 100;
 		}
 
+		LOG("%d %d", followPlayer, coolDownPathFinding);
+
 		if (followPlayer && !coolDownPathFinding) {
 			MovementEnemy(dt);
 		}
@@ -396,6 +399,14 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 				currentAnimation->Reset();
 			}
 			LOG("Collision FIREBALL");
+		}
+		break;
+	case ColliderType::PLAYER:
+		if (physA->ctype == ColliderType::SENSOR) {
+			followPlayer = true;
+		}
+		else {
+			coolDownPathFinding = true;
 		}
 		break;
 	default:
