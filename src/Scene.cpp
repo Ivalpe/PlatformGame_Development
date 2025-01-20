@@ -391,7 +391,7 @@ bool Scene::Update(float dt)
 
 	if (level != 0 && level != 4) {
 		//Debug Mode
-		DebugMode();
+		if (player->GetLifes() >= 0) DebugMode();
 
 		// Shoot
 		HandlePowers();
