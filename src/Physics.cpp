@@ -258,6 +258,9 @@ bool Physics::PostUpdate()
 	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
 		debug = !debug;
 
+	if (Engine::GetInstance().input.get()->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
+		debugMenu = !debugMenu;
+
 	//  Iterate all objects in the world and draw the bodies
 	if (debug)
 	{

@@ -86,6 +86,10 @@ public:
 		return debug;
 	}
 
+	bool GetDebugMenu() {
+		return debugMenu;
+	}
+
 	// Create basic physics objects
 	PhysBody* CreateRectangle(int x, int y, int width, int height, bodyType type);
 	PhysBody* CreateCircle(int x, int y, int radious, bodyType type);
@@ -106,6 +110,7 @@ private:
 
 	// Debug mode
 	bool debug;
+	bool debugMenu = false;
 
 	// Box2D World
 	b2World* world;

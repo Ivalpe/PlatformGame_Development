@@ -48,20 +48,27 @@ bool GuiControlButton::Update(float dt)
 		{
 		case GuiControlState::DISABLED:
 			Engine::GetInstance().render->DrawTexture(buttonDisabled, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			if (Engine::GetInstance().physics.get()->GetDebugMenu())
+				Engine::GetInstance().render->DrawRectangle({ (int)posTexture.getX(), (int)posTexture.getY(), bounds.w / 2 , bounds.h / 2 }, 255, 0, 0, 255, false);
 			break;
 		case GuiControlState::NORMAL:
 			Engine::GetInstance().render->DrawTexture(buttonNormal, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			if (Engine::GetInstance().physics.get()->GetDebugMenu())
+				Engine::GetInstance().render->DrawRectangle({ (int)posTexture.getX(), (int)posTexture.getY(), bounds.w / 2 , bounds.h / 2 }, 0, 255, 0, 255, false);
 			break;
 		case GuiControlState::FOCUSED:
 			Engine::GetInstance().render->DrawTexture(buttonFocused, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			if (Engine::GetInstance().physics.get()->GetDebugMenu())
+				Engine::GetInstance().render->DrawRectangle({ (int)posTexture.getX(), (int)posTexture.getY(), bounds.w / 2 , bounds.h / 2 }, 0, 0, 255, 255, false);
 			break;
 		case GuiControlState::PRESSED:
 			Engine::GetInstance().render->DrawTexture(buttonPressed, SDL_FLIP_NONE, posTexture.getX(), posTexture.getY());
+			if (Engine::GetInstance().physics.get()->GetDebugMenu())
+				Engine::GetInstance().render->DrawRectangle({ (int)posTexture.getX(), (int)posTexture.getY(), bounds.w / 2 , bounds.h / 2 }, 0, 255, 255, 255, false);
 			break;
 		}
-
-		std::string name = "   ";
-		name = name + text.c_str();
+		std::string name = "  ";
+		name = name + text.c_str() + name;
 		Engine::GetInstance().render->DrawText(name.c_str(), bounds.x, bounds.y, bounds.w, bounds.h);
 	}
 

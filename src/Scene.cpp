@@ -130,7 +130,7 @@ void Scene::SetupUI() {
 	int coordInitial = 360, interspace = 70;
 	GuiControlButton* button;
 	for (auto n : names) {
-		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::MAIN_MENU), n, { 480, coordInitial, 200,60 }, this, GuiClass::MAIN_MENU);
+		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::MAIN_MENU), n, { 480, coordInitial, 250,60 }, this, GuiClass::MAIN_MENU);
 		button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed, menuButtonDisabled);
 		Engine::GetInstance().uiManager.get()->Add(GuiClass::MAIN_MENU, button);
 		coordInitial += interspace;
@@ -159,7 +159,7 @@ void Scene::SetupUI() {
 	names = { "Resume", "Settings", "Back To Title", "Exit" };
 	coordInitial = 240, interspace = 70;
 	for (auto n : names) {
-		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::PAUSE), n, { 480, coordInitial, 180,60 }, this, GuiClass::PAUSE);
+		button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::PAUSE), n, { 480, coordInitial, 250,60 }, this, GuiClass::PAUSE);
 		button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed, menuButtonDisabled);
 		Engine::GetInstance().uiManager.get()->Add(GuiClass::PAUSE, button);
 		coordInitial += interspace;
@@ -171,7 +171,6 @@ void Scene::SetupUI() {
 // Called each loop iteration
 bool Scene::PreUpdate()
 {
-
 	if (Engine::GetInstance().uiManager.get()->IsShowing(GuiClass::SETTINGS)) {
 		if (Engine::GetInstance().uiManager.get()->GetFullscreen())
 			Engine::GetInstance().window.get()->Fullscreen(true);
@@ -949,7 +948,7 @@ void Scene::CreateEvents() {
 			new_bonfire.append_attribute("name").set_value(name.c_str());
 			saveFile.save_file("config.xml");
 
-			GuiControlButton* button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::TPBONFIRE), name.c_str(), { 100 + ((level - 1) * 300), coordYMenuTp += 80, 180,60 }, this, GuiClass::TPBONFIRE);
+			GuiControlButton* button = (GuiControlButton*)Engine::GetInstance().guiManager->CreateGuiControl(GuiControlType::BUTTON, Engine::GetInstance().uiManager.get()->GetSize(GuiClass::TPBONFIRE), name.c_str(), { 100 + ((level - 1) * 300), coordYMenuTp += 80, 250,60 }, this, GuiClass::TPBONFIRE);
 			button->SetTexture(menuButtonNormal, menuButtonFocused, menuButtonPressed, menuButtonDisabled);
 			button->Disable();
 			Engine::GetInstance().uiManager.get()->Add(GuiClass::TPBONFIRE, button);
