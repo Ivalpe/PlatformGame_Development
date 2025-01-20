@@ -137,7 +137,7 @@ private:
 	float speed;
 	int id;
 
-	int enemydSFX, bossSword, bossDie;
+	int enemydSFX, bossSword, bossDie, bossDmg;
 	int tempChangeAnimation;
 	bool directionLeft;
 	bool coolDownPathFinding = false;

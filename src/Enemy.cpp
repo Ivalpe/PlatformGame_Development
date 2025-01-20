@@ -62,10 +62,15 @@ bool Enemy::Start() {
 	//Load Fx
 	pugi::xml_document audioFile;
 	pugi::xml_parse_result result = audioFile.load_file("config.xml");
+	if (type == EnemyType::BOSS) {
+		bossSword = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("bossSwordSFX").attribute("path").as_string());
+		bossDie = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("bossDieSFX").attribute("path").as_string());
+		bossDmg = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("bossDmgSFX").attribute("path").as_string());
+	}
+	else {
+		enemydSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("enemydSFX").attribute("path").as_string());
 
-	enemydSFX = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("enemydSFX").attribute("path").as_string());
-	bossSword = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("bossSwordSFX").attribute("path").as_string());
-	bossDie = Engine::GetInstance().audio.get()->LoadFx(audioFile.child("config").child("scene").child("audio").child("fx").child("bossDieSFX").attribute("path").as_string());
+	}
 
 
 	switch (type)
@@ -400,6 +405,10 @@ void Enemy::OnCollision(PhysBody* physA, PhysBody* physB) {
 			if (type != EnemyType::BOSS) {
 				currentAnimation = &dmg;
 				currentAnimation->Reset();
+			}
+			else {
+				//Don't sound well because only one channel of audio
+				Engine::GetInstance().audio.get()->PlayFx(bossDmg);
 			}
 			LOG("Collision FIREBALL");
 		}
