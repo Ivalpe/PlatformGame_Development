@@ -109,6 +109,7 @@ void Scene::LoadAssets() {
 	mainMenuMusic = configParameters.child("audio").child("music").child("MainMenuMusic").attribute("path").as_string();
 	levelMusic = configParameters.child("audio").child("music").child("LevelMusic").attribute("path").as_string();
 	bossMusic = configParameters.child("audio").child("music").child("BossMusic").attribute("path").as_string();
+	Ending = configParameters.child("audio").child("music").child("Ending").attribute("path").as_string();
 
 	OptionsBook = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsBook.png");
 	TitleScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/TitleScreen.png");
@@ -887,6 +888,9 @@ void Scene::ChangeMusic() {
 		break;
 	case 3:
 		Engine::GetInstance().audio->PlayMusic(bossMusic, 0.7f);
+		break;
+	case 4:
+		Engine::GetInstance().audio->PlayMusic(Ending, 0.7f);
 		break;
 	default:
 		break;

@@ -44935,7 +44935,7 @@
   <object id="146" x="1120" y="200" width="8" height="16"/>
   <object id="147" x="1120" y="88" width="16" height="112"/>
   <object id="148" x="1136" y="88" width="8" height="64"/>
-  <object id="149" x="1130.36" y="288.364" width="27.4545" height="23.6364">
+  <object id="149" x="1143.86" y="288.364" width="13.9545" height="23.6364">
    <properties>
     <property name="TYPE" value="WIN"/>
    </properties>
