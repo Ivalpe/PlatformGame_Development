@@ -1,4 +1,6 @@
-# PlatformGame
+# The Ritual
+
+![logo](https://github.com/Ivalpe/TheRitual_PlatformDevelopment/blob/main/Assets/Menus/TitleScreen.png)
 
 A 2D platformer game created using **Whimsy Hallow** assets.
 
