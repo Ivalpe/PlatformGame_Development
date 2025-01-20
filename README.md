@@ -1,4 +1,6 @@
-# PlatformGame
+# The Ritual
+
+![logo](https://github.com/Ivalpe/TheRitual_PlatformDevelopment/blob/main/Assets/Menus/TitleScreen.png)
 
 A 2D platformer game created using **Whimsy Hallow** assets.
 
@@ -32,6 +34,7 @@ A 2D platformer game created using **Whimsy Hallow** assets.
 | **F4**    | Start from Boss Level               |
 | **F5**    | Save Current Game State             |
 | **F6**    | Load Previous Game State            |
+| **F8**    | View Button Colliders               |
 | **F9**    | View Colliders                      |
 | **F10**   | Toggle God Mode                     |
 | **F11**   | Limit FPS to 30                     |
