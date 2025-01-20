@@ -363,6 +363,7 @@
 				<MainMenuMusic path="Assets/Audio/Music/Medieval Vol. 2 4 (Loop).wav" />
 				<LevelMusic path="Assets/Audio/Music/Action 3 Loop.wav" />
 				<BossMusic path="Assets/Audio/Music/1. Abyssal Tyrant (Loop).wav" />
+				<Ending path="Assets/Audio/Music/festive mood.wav" />
 			</music>
 		</audio>
 		<bonfires>
