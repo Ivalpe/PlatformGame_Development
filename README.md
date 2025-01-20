@@ -47,8 +47,7 @@ A 2D platformer game created using **Whimsy Hallow** assets.
 
 - **Enemies**:  
   - Two types of enemies: ground-based and flying.  
-  - Pathfinding system for both enemy types to chase the player.  
-  - Enemies feature dynamic movement for a more alive game world.
+  - Pathfinding system for both enemy types to chase the player.
 
 - **Environment**:  
   - Fully interactive levels with precise collision detection.  
@@ -92,3 +91,8 @@ A 2D platformer game created using **Whimsy Hallow** assets.
 - **Main Menu**:  
   - A main menu with options for starting a new game, loading a saved game, adjusting settings, viewing credits, and exiting.  
   - The settings menu features sliders for adjusting music and sound effects volumes, and a checkbox for toggling fullscreen mode.
+
+## Fixes from Previous Releases
+
+- **Enemy Movement**:  
+  - Dynamic movement for enemies to make the game world feel more alive.
