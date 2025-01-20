@@ -716,6 +716,8 @@ bool Scene::OnGuiMouseClickEvent(GuiControl* control)
 
 				start = countTime.ReadSec();
 
+				player->SetCoins(0);
+				player->SetfirePower(false);
 				player->SetLevel(Level::DISABLED);
 			}
 			else if (control->id == 2) {

@@ -240,8 +240,6 @@ void Enemy::EnemyPattern(float dt) {
 			coolDown = 100;
 		}
 
-		LOG("%d %d", followPlayer, coolDownPathFinding);
-
 		if (followPlayer && !coolDownPathFinding) {
 			MovementEnemy(dt);
 		}
@@ -282,7 +280,7 @@ void Enemy::EnemyPattern(float dt) {
 		position.setY(METERS_TO_PIXELS(pbodyPos.p.y) - texH / 2);
 	}
 
-	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX() + texW / 3, (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
+	Engine::GetInstance().render.get()->DrawTexture(texture, flipType, (int)position.getX(), (int)position.getY() - texH / 4, &currentAnimation->GetCurrentFrame());
 	currentAnimation->Update();
 
 	if (!Engine::GetInstance().scene.get()->IsPause()) {
