@@ -15,6 +15,7 @@ A 2D platformer game created using **Whimsy Hallow** assets.
 - **Sound Effects:** [Dillon Becker](https://dillonbecker.itch.io/sdap)
 - **Boss Sprite:** [Szadi art](https://szadiart.itch.io/2d-soulslike-character)
 - **UI:** [Crusenho Agus Hennihuno](https://crusenho.itch.io/complete-ui-essential-pack)
+- **Fireball Sprite:** [BDragon1727](https://bdragon1727.itch.io/fire-pixel-bullet-16x16)
 
 ---
 
