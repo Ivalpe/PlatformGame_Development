@@ -193,7 +193,7 @@ private:
 	const char* mainMenuMusic;
 	const char* levelMusic;
 	const char* bossMusic;
-	const char* Ending;
+	const char* endingMusic;
 
 
 	bool load = false;

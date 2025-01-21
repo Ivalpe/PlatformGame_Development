@@ -109,7 +109,7 @@ void Scene::LoadAssets() {
 	mainMenuMusic = configParameters.child("audio").child("music").child("MainMenuMusic").attribute("path").as_string();
 	levelMusic = configParameters.child("audio").child("music").child("LevelMusic").attribute("path").as_string();
 	bossMusic = configParameters.child("audio").child("music").child("BossMusic").attribute("path").as_string();
-	Ending = configParameters.child("audio").child("music").child("Ending").attribute("path").as_string();
+	endingMusic = configParameters.child("audio").child("music").child("Ending").attribute("path").as_string();
 
 	OptionsBook = Engine::GetInstance().textures.get()->Load("Assets/Menus/OptionsBook.png");
 	TitleScreen = Engine::GetInstance().textures.get()->Load("Assets/Menus/TitleScreen.png");
@@ -253,8 +253,8 @@ void Scene::HandlePowers() {
 			else bigPower->Start(false);
 
 			Vector2D playerPos = player->GetPosition();
-			if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->SetPosition({ playerPos.getX() - 4, playerPos.getY() + 14 });
-			else bigPower->SetPosition({ playerPos.getX() + 32, playerPos.getY() + 14 });
+			if (player->GetDirection() == DirectionPlayer::LEFT) bigPower->SetPosition({ playerPos.getX() - 4, playerPos.getY() });
+			else bigPower->SetPosition({ playerPos.getX() + 32, playerPos.getY()  });
 
 			fireballList.push_back(bigPower);
 
@@ -890,7 +890,7 @@ void Scene::ChangeMusic() {
 		Engine::GetInstance().audio->PlayMusic(bossMusic, 0.7f);
 		break;
 	case 4:
-		Engine::GetInstance().audio->PlayMusic(Ending, 0.7f);
+		Engine::GetInstance().audio->PlayMusic(endingMusic, 0.7f);
 		break;
 	default:
 		break;
